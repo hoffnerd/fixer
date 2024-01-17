@@ -1,0 +1,154 @@
+/* Keyframes */
+
+@keyframes bars-shrink-grow {
+    0% {
+        transform: scaleY(0);
+        -webkit-transform: scaleY(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scaleY(1);
+        -webkit-transform: scaleY(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scaleY(0);
+        -webkit-transform: scaleY(0);
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes dots-shrink-grow {
+    0% {
+        transform: scale(0.7);
+        -webkit-transform: scale(0.7);
+        opacity: 0.5;
+    }
+
+    70% {
+        transform: scale(0.7);
+        -webkit-transform: scale(0.7);
+        opacity: 0.5;
+    }
+
+    85% {
+        transform: scale(1);
+        -webkit-transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.7);
+        -webkit-transform: scale(0.7);
+        opacity: 0.5;
+    }
+}
+
+/* Container */
+
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    height: 1.5em;
+}
+
+/* Text */
+
+.darkThemeText {
+    color: #b3b3b3;
+}
+
+
+/* Bars */
+
+.bars {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25em;
+}
+
+.bars div {
+    width: 0.5em;
+    height: 1.6em;
+    background-color: var(--loading-color, #1974fc);
+    animation: bars-shrink-grow 1.2s linear -0.8s infinite;
+    -webkit-animation: bars-shrink-grow 1.2s linear -0.8s infinite;
+}
+
+.bars div:nth-child(2) {
+    animation: bars-shrink-grow 1.2s linear -0.4s infinite;
+    -webkit-animation: bars-shrink-grow 1.2s linear -0.4s infinite;
+}
+
+.bars div:nth-child(3) {
+    animation: bars-shrink-grow 1.2s linear infinite;
+    -webkit-animation: bars-shrink-grow 1.2s linear infinite;
+}
+
+.darkThemeBars div {
+    background-color: #b3b3b3;
+}
+
+/* Quarter Spinner */
+
+.quarterSpinner {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 1.5em;
+    border: 0.25em solid #00000030;
+    border-top: 0.25em solid var(--loading-color, #1974fc);
+    animation: spin 1s linear infinite;
+    -webkit-animation: spin 1s linear infinite;
+}
+
+.darkThemeQuarterSpinner {
+    border-color: #ffffff30;
+    border-top-color: #b3b3b3;
+}
+
+/* Dots */
+
+.dots {
+    display: flex;
+    flex-direction: row;
+    gap: 0.1em;
+}
+
+.dots div {
+    background-color: var(--loading-color, #1974fc);
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    margin-top: 0.4em;
+    animation: dots-shrink-grow 1.2s linear -0.6s infinite;
+    -webkit-animation: dots-shrink-grow 1.2s linear -0.6s infinite;
+}
+
+.dots div:nth-child(2) {
+    animation: dots-shrink-grow 1.2s linear -0.3s infinite;
+    -webkit-animation: dots-shrink-grow 1.2s linear -0.3s infinite;
+}
+
+.dots div:nth-child(3) {
+    animation: dots-shrink-grow 1.2s linear infinite;
+    -webkit-animation: dots-shrink-grow 1.2s linear infinite;
+}
+
+.darkThemeDots div {
+    background-color: #b3b3b3;
+}

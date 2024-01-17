@@ -1,0 +1,16 @@
+export const variantsNeonBackgrounds = {
+    neonPurple: "text-primary-foreground neonBackground purple",
+    neonPurpleWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow purple",
+    neonBlue: "text-primary-foreground neonBackground blue",
+    neonBlueWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow blue",
+    neonYellow: "text-primary-foreground neonBackground yellow",
+    neonYellowWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow yellow",
+    neonGreen: "text-primary-foreground neonBackground green",
+    neonGreenWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow green",
+    neonPink: "text-primary-foreground neonBackground pink",
+    neonPinkWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow pink",
+    neonRed: "text-primary-foreground neonBackground red",
+    neonRedWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow red",
+    neonWhite: "text-primary-foreground neonBackground white",
+    neonWhiteWithGlow: "text-primary-foreground neonBackground neonBoxShadowGlow neonTextGlow white",
+}

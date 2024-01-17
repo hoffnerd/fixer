@@ -1,0 +1,256 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* ================== SHADCN-UI START ================== */
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+/* ================== SHADCN-UI END ================== */
+
+
+
+:root {
+    --colorMainForeground: #fff;
+    --colorMainBackground: #1e1e1e;
+    /* --colorMainBackground: #383838; */
+
+    /* https://www.color-hex.com/color-palette/1024522 */
+    --colorCyberpunkYellow: #fded00;
+    --colorCyberpunkLightRed: #f26849;
+    --colorCyberpunkDarkRed: #5e2122;
+    --colorCyberpunkDarkBlue: #001b2d;
+    --colorCyberpunkCyan: #7dbaf2;
+
+    /* https://codepen.io/argyleink/pen/MWymQGj */
+    --colorNeonPurple: #9461fd;
+    --colorNeonPurpleGlow: #4003e6;
+    --colorNeonBlue: #2dd9fe;
+    --colorNeonBlueGlow: #00a3d5;
+    --colorNeonYellow: #ffdb4e;
+    --colorNeonYellowGlow: #b48505;
+    --colorNeonGreen: #00fe9b;
+    --colorNeonGreenGlow: #02c435;
+    --colorNeonPink: #FF53cd;
+    --colorNeonPinkGlow: #e10361;
+    --colorNeonRed: #FF5161;
+    --colorNeonRedGlow: #D30302;
+    --colorNeonWhite: #fefefe;
+    --colorNeonWhiteGlow: #ffffff;
+}
+
+/* body {
+    color: var(--colorMainForeground);
+    background: var(--colorMainBackground);
+} */
+
+@media (max-width: 652px) {
+    .hidden-on-mobile {
+        display: none;
+    }
+}
+@media (min-width: 653px) and (max-width: 991px) {
+    .hidden-on-tablet {
+        display: none;
+    }
+}
+@media (min-width: 992px) {
+    .hidden-on-desktop {
+        display: none;
+    }
+}
+
+div, li, p, span, h1, h2, h3, h4, h5, h6, a {
+    font-family: "Gotham SSm A", "Gotham SSm B", sans-serif;
+}
+
+/* .brandingBackground {
+    background-color: var(--brand);
+}
+.brandingBackgroundImportant {
+    background-color: var(--brand) !important;
+}
+
+.brandingBackground p,
+.brandingBackground span,
+.brandingBackground a {
+    color: #ffffff;
+}
+
+.brandedLine{
+    width: 100%;
+    border-bottom: 10px solid var(--brand)!important;
+}
+.brandedLine-small{
+    width: 25%;
+} */
+
+.truncateSingleLine {
+    /* To use this, element must have a width or max-width */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.flexItemsEvenly {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.centerChildren {
+    margin: auto;
+    width: 50%;
+}
+
+
+
+/* ______________________________________________________________________________________ */
+/* ===== Neon ===== */
+
+.neonText {
+    --_colorNeon: var(--colorNeon, --colorNeonWhite);
+    color: var(--_colorNeon);
+}
+
+.neonTextGlow {
+    --_colorGlow: var(--colorGlow, --colorNeonWhiteGlow);
+    text-shadow: var(--_colorGlow) 1px 0 10px;
+}
+
+.neonBackground{
+    --_colorNeon: var(--colorNeon, --colorNeonWhite);
+    background-color: var(--_colorNeon);
+}
+
+.neonBorder{
+    --_colorNeon: var(--colorNeon, --colorNeonWhite);
+    border-color: var(--_colorNeon);
+}
+
+.neonBoxShadowGlow{
+    --_colorGlow: var(--colorGlow, --colorNeonWhiteGlow);
+    box-shadow: 
+        0 0 20px var(--_colorGlow), 
+        inset 0 0 0px var(--_colorGlow);
+}
+
+.neonText.blue,
+.neonTextGlow.blue,
+.neonBackground.blue,
+.neonBorder.blue,
+.neonBoxShadowGlow.blue{
+    --colorNeon: var(--colorNeonBlue);
+    --colorGlow: var(--colorNeonBlueGlow);
+}
+.neonText.yellow,
+.neonTextGlow.yellow,
+.neonBackground.yellow,
+.neonBorder.yellow,
+.neonBoxShadowGlow.yellow{
+    --colorNeon: var(--colorNeonYellow);
+    --colorGlow: var(--colorNeonYellowGlow);
+}
+.neonText.green,
+.neonTextGlow.green,
+.neonBackground.green,
+.neonBorder.green,
+.neonBoxShadowGlow.green{
+    --colorNeon: var(--colorNeonGreen);
+    --colorGlow: var(--colorNeonGreenGlow);
+}
+.neonText.pink,
+.neonTextGlow.pink,
+.neonBackground.pink,
+.neonBorder.pink,
+.neonBoxShadowGlow.pink{
+    --colorNeon: var(--colorNeonPink);
+    --colorGlow: var(--colorNeonPinkGlow);
+}
+.neonText.red,
+.neonTextGlow.red,
+.neonBackground.red,
+.neonBorder.red,
+.neonBoxShadowGlow.red{
+    --colorNeon: var(--colorNeonRed);
+    --colorGlow: var(--colorNeonRedGlow);
+}
+.neonText.white,
+.neonTextGlow.white,
+.neonBackground.white,
+.neonBorder.white,
+.neonBoxShadowGlow.white{
+    --colorNeon: var(--colorNeonWhite);
+    --colorGlow: var(--colorNeonWhiteGlow);
+}
