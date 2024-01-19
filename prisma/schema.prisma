@@ -81,10 +81,10 @@ model SaveFile {
     id String @id @default(cuid())
     userId String
     name String
-    chapter Int
+    chapter Int @default(0)
     type String @default("Story") // Story | Unlimited
     saveData Json?
-    inGameTime Int
+    inGameTime Int @default(0) 
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
 

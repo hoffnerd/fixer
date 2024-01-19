@@ -32,7 +32,8 @@
 }
 
 .saveFile .content.large{
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* grid-template-columns: repeat(4, minmax(0, 1fr)); */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .saveFile .content.medium{
@@ -86,7 +87,7 @@
 /* ______________________________________________________________________________________ */
 /* ===== item large ===== */
 
-.saveFile .content.large .item.firstCol{
+/* .saveFile .content.large .item.firstCol{
     padding-left: 20px;
 }
 
@@ -99,6 +100,13 @@
 }
 
 .saveFile .content.large .item.forthCol{
+    padding-right: 20px;
+} */
+
+.saveFile .content.large .item.firstCol{
+    padding-left: 20px;
+}
+.saveFile .content.large .item.thirdCol{
     padding-right: 20px;
 }
 

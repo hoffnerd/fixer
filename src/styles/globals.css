@@ -110,6 +110,31 @@
     --colorNeonWhiteGlow: #ffffff;
 }
 
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+* {
+    scrollbar-width: auto;
+    scrollbar-color: var(--colorNeonBlue) hsl(var(--background));
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--colorNeonBlue);
+    border-radius: 10px;
+    border: 3px solid var(--colorNeonBlue);
+    box-shadow: 
+        0 0 20px var(--colorNeonBlueGlow), 
+        inset 0 0 0px var(--colorNeonBlueGlow);
+}
+
 /* body {
     color: var(--colorMainForeground);
     background: var(--colorMainBackground);

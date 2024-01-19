@@ -2,11 +2,13 @@
 import Link from "next/link";
 // Context---------------------------------------------------------------------------
 // Components------------------------------------------------------------------------
-import { Badge } from "./shadcn/ui/badge";
+import { Badge } from "../shadcn/ui/badge";
 // Styles ---------------------------------------------------------------------------
 import styles from "@/styles/components/SaveFile.module.css";
 // Other-----------------------------------------------------------------------------
 import { isObj } from "@/util";
+import { chapterNames } from "@/data/chapterNames";
+import { format } from "date-fns";
 
 
 
@@ -44,19 +46,20 @@ export default function SaveFile({ saveFile }) {
     // ===== Component Constants =====
     const { id, userId, name, chapter, type, saveData, inGameTime, createdAt, updatedAt } = isObj(saveFile) ? { ...defaultSaveFile, ...saveFile } : defaultSaveFile;
 
-
-
     //______________________________________________________________________________________
     // ===== Render Functions  =====
 
-    const renderNameAndChapter = () => <>{name} | Chapter {chapter || 0}: Chapter Name</>
-    const renderLastSavedTime = () => <>Last Saved:<br />MMM DD, YYYY hh:mm a</>
-    const renderStartedDate = () => <>Started: MMM DD, YYYY</>
+    const renderNameAndChapter = () => <>
+        {name} | Chapter {chapter || 0}:&nbsp;
+        {chapterNames[(chapter || chapter === 0) && chapter < chapterNames.length ? chapter : chapterNames.length-1]}
+    </>
+    const renderStartedDate = () => <>Started: {format(createdAt, "MMM dd, yyyy")}</>
+    const renderLastSavedTime = () => <>Last Saved:<br />{format(updatedAt, "MMM dd, yyyy hh:mm a")}</>
 
 
 
     //______________________________________________________________________________________
-    // ===== Render Functions for Large Content Mode =====
+    // ===== Render Functions for different Content Mode =====
 
     const renderContentSmall = () => (
         <div className={`${styles.content} ${styles.small}`}>
@@ -126,7 +129,7 @@ export default function SaveFile({ saveFile }) {
         </div>
     )
 
-    const renderContentLarge = () => (
+    const renderContentLarge_old = () => (
         <div className={`${styles.content} ${styles.large}`}>
             <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
             <Item col="secondCol">
@@ -156,6 +159,23 @@ export default function SaveFile({ saveFile }) {
             </Item>
         </div>
     )
+
+    const renderContentLarge = () => (
+        <div className={`${styles.content} ${styles.large}`}>
+            <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
+            <Item><div className="text-center">Weapon Components: 0</div></Item>
+            <Item col="thirdCol"><div className="flex flex-row-reverse">00:00:00</div></Item>
+            
+            <Item col="firstCol">{renderNameAndChapter()}</Item>
+            <Item><div className="text-center">Tech Components: 0</div></Item>
+            <Item col="thirdCol"><div className="flex flex-row-reverse">{renderStartedDate()}</div></Item>
+            
+            <Item col="firstCol">€ 0</Item>
+            <Item><div className="text-center">Quickhack Components: 0</div></Item>
+            <Item col="thirdCol"><div className="flex flex-row-reverse">{renderLastSavedTime()}</div></Item>
+        </div>
+    )
+
 
 
     //______________________________________________________________________________________
