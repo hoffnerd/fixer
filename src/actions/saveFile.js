@@ -4,20 +4,65 @@
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/db';
 import { readServerSession } from '@/lib/protector';
-import { checkRoleAccessLevel } from '@/util';
+import { isObj } from '@/util';
 
 
 
 //______________________________________________________________________________________
 // ===== Read Actions =====
 
-export const readSaveFilesByUserId = async (userId) => await prisma.saveFile.findMany({
-    select: { id:true, name:true, chapter:true, type:true, saveData:true, inGameTime:true, createdAt:true, updatedAt:true },
-    where: { userId },
-    orderBy: [ { updatedAt: 'desc' } ]  
-});
+const requiredRole = "TESTER";
 
-export const readSaveFile = async (id) => await prisma.saveFile.findUnique({ where: { id } });
+
+
+//______________________________________________________________________________________
+// ===== Read Actions =====
+
+/**
+ * Reads save files from the database for a specific user.
+ * @returns array of objects where each object is a save file
+ */
+export const readSaveFilesByUserId = async () => {
+
+    const session = await readServerSession({ trace:"readSaveFilesByUserId", requiredRole });
+    if(isObj(session, ["error"])) return session;
+    
+    let saveFiles = null;
+    try {
+        saveFiles = await prisma.saveFile.findMany({
+            select: { id:true, name:true, chapter:true, type:true, saveData:true, inGameTime:true, createdAt:true, updatedAt:true },
+            where: { userId:session.user.id },
+            orderBy: [ { updatedAt: 'desc' } ]  
+        });
+    } catch (error) {
+        const message = "Unexpected error reading save files!"
+        console.error(message, { trace:"readSaveFilesByUserId", error, session });
+        return { error:true, message }
+    }
+
+    return saveFiles;
+}
+
+/**
+ * Reads save file from the database for a specific user.
+ * @returns object that represents the saveFile
+ */
+export const readSaveFile = async (id) => {
+    
+    const session = await readServerSession({ trace:"readSaveFile", requiredRole });
+    if(isObj(session, ["error"])) return session;
+
+    let saveFile = null;
+    try {
+        saveFile = await prisma.saveFile.findUnique({ where: { id, userId:session.user.id } });
+    } catch (error) {
+        const message = "Unexpected error reading save file!"
+        console.error(message, { trace:"readSaveFile", error, session });
+        return { error:true, message }
+    }
+    
+    return saveFile;
+}
 
 
 
@@ -26,11 +71,8 @@ export const readSaveFile = async (id) => await prisma.saveFile.findUnique({ whe
 
 export const createSaveFile = async (name) => {
 
-    const session = await readServerSession();
-    if(!checkRoleAccessLevel(session, "USER")){
-        console.error("Unauthorized!", { trace:"createSaveFile", session });
-        return { error:true, message:"Unauthorized!" }
-    }
+    const session = await readServerSession({ trace:"createSaveFile", requiredRole });
+    if(isObj(session, ["error"])) return session;
 
     const cleanedName = name.trim().replace( /\s\s+/g, ' ' ).replace(/(<([^>]+)>)/gi, "");
     if(!cleanedName) return { error:true, message:"Hmmmmm, I wonder why you are seeing this message? 🤔 Try not to use < > and limit your spaces." }

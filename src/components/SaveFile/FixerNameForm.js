@@ -137,7 +137,7 @@ export default function FixerNameForm({ }) {
 
     return <>
         <div className="py-4">
-            <Input id="name" className="col-span-4" placeholder="Wakako Okada" value={fixerName} onChange={(e)=>fixerNameOnChange(e)} />
+            <Input id="name" className="col-span-4 neonText white" placeholder="Wakako Okada" value={fixerName} onChange={(e)=>fixerNameOnChange(e)} />
             {errorMessage && <p className="pt-4 text-sm neonText neonTextGlow red">{errorMessage}</p>}
         </div>
         <DialogFooter>

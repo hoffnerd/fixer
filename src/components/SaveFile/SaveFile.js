@@ -9,6 +9,7 @@ import styles from "@/styles/components/SaveFile.module.css";
 import { isObj } from "@/util";
 import { chapterNames } from "@/data/chapterNames";
 import { format } from "date-fns";
+import { renderFontAwesomeIcons } from "@/util/icons";
 
 
 
@@ -77,16 +78,13 @@ export default function SaveFile({ saveFile }) {
 
             <Item col="regularCol"><hr/></Item>
             <Item col="regularCol">
-                <div className="text-center">Components</div>
+                <div className="text-center">⚙Weapon: 0</div>
             </Item>
             <Item col="regularCol">
-                <div className="text-center">Weapon: 0</div>
+                <div className="text-center">⚙Tech: 0</div>
             </Item>
             <Item col="regularCol">
-                <div className="text-center">Tech: 0</div>
-            </Item>
-            <Item col="regularCol">
-                <div className="text-center">Quickhack: 0</div>
+                <div className="text-center">⚙Quickhack: 0</div>
             </Item>
             <Item col="regularCol"><hr/></Item>
 
@@ -111,15 +109,14 @@ export default function SaveFile({ saveFile }) {
                 <div className="flex flex-row-reverse">€ 0</div>
             </Item>
 
-            <Item col="firstColComponents">Components | </Item>
-            <Item>
-                <div className="text-center">Weapon: 0</div>
+            <Item col="firstColComponents">
+                <div className="text-center">⚙Weapon: 0</div>
             </Item>
-            <Item>
-                <div className="text-center">Tech: 0</div>
+            <Item col="secondColComponents">
+                <div className="text-center">⚙Tech: 0</div>
             </Item>
-            <Item col="forthColComponents">
-                <div className="flex flex-row-reverse">Quickhack: 0</div>
+            <Item col="thirdColComponents">
+                <div className="text-center">⚙Quickhack: 0</div>
             </Item>
 
             <Item col="firstCol">{renderStartedDate()}</Item>
@@ -163,15 +160,15 @@ export default function SaveFile({ saveFile }) {
     const renderContentLarge = () => (
         <div className={`${styles.content} ${styles.large}`}>
             <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
-            <Item><div className="text-center">Weapon Components: 0</div></Item>
+            <Item><div className="text-center">⚙Weapon: 0</div></Item>
             <Item col="thirdCol"><div className="flex flex-row-reverse">00:00:00</div></Item>
             
             <Item col="firstCol">{renderNameAndChapter()}</Item>
-            <Item><div className="text-center">Tech Components: 0</div></Item>
+            <Item><p className="text-center">⚙Tech: 0</p></Item>
             <Item col="thirdCol"><div className="flex flex-row-reverse">{renderStartedDate()}</div></Item>
             
             <Item col="firstCol">€ 0</Item>
-            <Item><div className="text-center">Quickhack Components: 0</div></Item>
+            <Item><div className="text-center">⚙Quickhack: 0</div></Item>
             <Item col="thirdCol"><div className="flex flex-row-reverse">{renderLastSavedTime()}</div></Item>
         </div>
     )

@@ -38,7 +38,7 @@
 
 .saveFile .content.medium{
     display: none;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .saveFile .content.small{
@@ -118,21 +118,29 @@
 .saveFile .content.medium .item.firstCol{
     padding-left: 20px;
     grid-column-start: 1;
-    grid-column-end: span 2;
+    grid-column-end: span 3;
 }
 
 .saveFile .content.medium .item.secondCol{
     padding-right: 20px;
-    grid-column-start: 3;
-    grid-column-end: span 2;
+    grid-column-start: 4;
+    grid-column-end: span 3;
 }
 
 
 .saveFile .content.medium .item.firstColComponents{
     padding-left: 20px;
+    grid-column-start: 1;
+    grid-column-end: span 2;
 }
-.saveFile .content.medium .item.forthColComponents{
+.saveFile .content.medium .item.secondColComponents{
+    grid-column-start: 3;
+    grid-column-end: span 2;
+}
+.saveFile .content.medium .item.thirdColComponents{
     padding-right: 20px;
+    grid-column-start: 5;
+    grid-column-end: span 2;
 }
 
 
@@ -167,3 +175,8 @@
     display: table-cell;
     vertical-align: middle;
 }
+
+
+
+/* ______________________________________________________________________________________ */
+/* ===== OTHER ===== */

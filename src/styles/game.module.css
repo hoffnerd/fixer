@@ -1,0 +1,82 @@
+
+/* @media only screen and (max-width: 987px) */
+
+.gameGrid{
+    --corePadding: 1rem;
+    --corePaddingDoubled: 2rem;
+    --columnHeight: 93vh;
+    
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    padding-left: var(--corePadding);
+    padding-right: var(--corePadding);
+}
+
+.gameGrid .sidebarLeft{
+    padding: var(--corePadding);
+    height: var(--columnHeight);
+    max-height: var(--columnHeight);
+
+    grid-column-start: 1;
+    grid-column-end: span 2;
+}
+
+.gameGrid .center{
+    padding: var(--corePadding);
+    height: var(--columnHeight);
+
+    grid-column-start: 3;
+    grid-column-end: span 4;
+}
+
+.gameGrid .sidebarRight{
+    padding: var(--corePadding);
+    height: var(--columnHeight);
+    
+    grid-column-start: 7;
+    grid-column-end: span 2;
+}
+
+.panel{
+    --_panelMinHeight: var(--panelMinHeight, 50px);
+    --_panelHeight: var(--panelHeight, 100%);
+    
+    border-width: 5px;
+    border-style: solid;
+    border-radius: 25px;
+    min-height: var(--_panelMinHeight);
+    height: var(--_panelHeight);
+    overflow: hidden;
+    transition: all 0.5s ease-out;
+}
+
+.panel .content{
+    height: 100%;
+    padding: 10px;
+    overflow: auto;
+}
+
+.panel.notifications{
+    
+}
+
+.panel.resources{
+    --panelHeight: var(--_panelMinHeight);
+}
+
+.panel.contracts{
+    --panelHeight: calc(100% - var(--_panelMinHeight) - var(--corePaddingDoubled));
+}
+
+.panel.mercs{
+    scrollbar-color: var(--colorNeonYellow) hsl(var(--background));
+}
+
+.panel.mercs::-webkit-scrollbar-thumb {
+    background-color: var(--colorNeonYellow);
+    border-radius: 10px;
+    border: 3px solid var(--colorNeonYellow);
+    box-shadow: 
+        0 0 20px var(--colorNeonYellowGlow), 
+        inset 0 0 0px var(--colorNeonYellowGlow);
+}

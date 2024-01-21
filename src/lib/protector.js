@@ -66,6 +66,11 @@ export const apiProtector = async (config) => {
  * Use this function if you need session data in a server component but do not need to put it behind the page or api protector
  * @returns the session for use in server components.
  */
-export const readServerSession = async () => {
-    return await getServerSession( authOptions );
+export const readServerSession = async (config={ requiredRole:"USER" }) => {
+    const session = await getServerSession(authOptions);
+    if(!checkRoleAccessLevel(session, config.requiredRole)){
+        console.error("Unauthorized!", { trace: config.trace || "readServerSession", session });
+        return { error:true, message:"Unauthorized!" }
+    }
+    return session
 }
