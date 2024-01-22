@@ -1,16 +1,79 @@
 
-/* @media only screen and (max-width: 987px) */
+
+
+/* ______________________________________________________________________________________ */
+/* ===== Game Grid ===== */
 
 .gameGrid{
     --corePadding: 1rem;
     --corePaddingDoubled: 2rem;
-    --columnHeight: 93vh;
+    --columnHeight: 85vh;
     
     display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
     padding-left: var(--corePadding);
     padding-right: var(--corePadding);
 }
+
+.gameGrid.desktop{
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.gameGrid.tablet{
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+
+@media only screen and (max-height: 811px){
+    .gameGrid{
+        --columnHeight: 83vh;
+    }
+}
+
+@media only screen and (max-height: 720px){
+    .gameGrid{
+        --columnHeight: 80vh;
+    }
+}
+
+@media only screen and (max-height: 610px){
+    .gameGrid{
+        --columnHeight: 78vh;
+    }
+}
+
+@media only screen and (max-height: 555px){
+    .gameGrid{
+        --columnHeight: 75vh;
+    }
+}
+
+@media only screen and (max-height: 490px){
+    .gameGrid{
+        --columnHeight: 70vh;
+    }
+}
+
+@media only screen and (max-height: 405px){
+    .gameGrid{
+        --columnHeight: 65vh;
+    }
+}
+
+@media only screen and (max-height: 350px){
+    .gameGrid{
+        --columnHeight: 60vh;
+    }
+}
+
+@media only screen and (max-height: 305px){
+    .gameGrid{
+        --columnHeight: 55vh;
+    }
+}
+
+
+/* ______________________________________________________________________________________ */
+/* ===== Sections ===== */
 
 .gameGrid .sidebarLeft{
     padding: var(--corePadding);
@@ -24,12 +87,12 @@
 .gameGrid .center{
     padding: var(--corePadding);
     height: var(--columnHeight);
-
+    
     grid-column-start: 3;
     grid-column-end: span 4;
 }
 
-.gameGrid .sidebarRight{
+.gameGrid.desktop .sidebarRight{
     padding: var(--corePadding);
     height: var(--columnHeight);
     
@@ -37,7 +100,34 @@
     grid-column-end: span 2;
 }
 
-.panel{
+.gameGrid .bottomBar{
+    padding: var(--corePadding);
+    max-height: var(--columnHeight);
+}
+
+.gameGrid.desktop .bottomBar{
+    grid-column-start: 1;
+    grid-column-end: span 8;
+}
+
+.gameGrid.tablet .bottomBar{
+    grid-column-start: 1;
+    grid-column-end: span 6;
+}
+
+
+/* @media only screen and (min-width: 992px){
+    .gameGrid.desktop .center{
+        grid-column-end: span 6;
+    }
+
+    .gameGrid.desktop .sidebarRight{
+        grid-column-start: 3;
+        grid-column-end: span 4;
+    }
+} */
+
+.gameGrid .panel{
     --_panelMinHeight: var(--panelMinHeight, 50px);
     --_panelHeight: var(--panelHeight, 100%);
     
@@ -50,33 +140,84 @@
     transition: all 0.5s ease-out;
 }
 
-.panel .content{
+.gameGrid .panel .content{
     height: 100%;
     padding: 10px;
     overflow: auto;
 }
 
-.panel.notifications{
+.gameGrid .panel.notifications{
     
 }
 
-.panel.resources{
+.gameGrid .panel.resources{
     --panelHeight: var(--_panelMinHeight);
 }
 
-.panel.contracts{
+
+.gameGrid.tablet .panel.mercs{
+    --panelHeight: calc(50% - var(--_panelMinHeight) - var(--corePadding));
+}
+
+.gameGrid.desktop .panel.contracts{
     --panelHeight: calc(100% - var(--_panelMinHeight) - var(--corePaddingDoubled));
 }
 
-.panel.mercs{
-    scrollbar-color: var(--colorNeonYellow) hsl(var(--background));
+.gameGrid.tablet .panel.contracts{
+    --panelHeight: calc(50% - var(--_panelMinHeight));
 }
 
-.panel.mercs::-webkit-scrollbar-thumb {
-    background-color: var(--colorNeonYellow);
-    border-radius: 10px;
-    border: 3px solid var(--colorNeonYellow);
-    box-shadow: 
-        0 0 20px var(--colorNeonYellowGlow), 
-        inset 0 0 0px var(--colorNeonYellowGlow);
+
+
+/* ______________________________________________________________________________________ */
+/* ===== Notifications ===== */
+
+.notification{
+    padding: 10px 0px;
+}
+
+
+
+/* ______________________________________________________________________________________ */
+/* ===== Resources ===== */
+
+.resourcesGrid{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    height: 100%;
+}
+
+.resourcesGrid .resourcesGridColumn{
+    height: 100%;
+}
+
+.resourcesGrid .border{
+    border-right-width: 3px;
+}
+
+.resourcesGrid .resourcesGridColumn .table {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+.resourcesGrid .resourcesGridColumn .table .cell{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+
+
+/* ______________________________________________________________________________________ */
+/* ===== Notifications ===== */
+
+.contractsGrid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+@media only screen and (max-height: 1150px){
+    .contractsGrid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }

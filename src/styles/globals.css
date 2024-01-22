@@ -141,18 +141,18 @@
 } */
 
 @media (max-width: 652px) {
-    .hidden-on-mobile {
-        display: none;
+    .hiddenOnMobile {
+        display: none !important;
     }
 }
 @media (min-width: 653px) and (max-width: 991px) {
-    .hidden-on-tablet {
-        display: none;
+    .hiddenOnTablet {
+        display: none !important;
     }
 }
 @media (min-width: 992px) {
-    .hidden-on-desktop {
-        display: none;
+    .hiddenOnDesktop {
+        display: none !important;
     }
 }
 
@@ -199,6 +199,15 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
     width: 50%;
 }
 
+.tableToCenterContent {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+.tableToCenterContent .cellCentered{
+    display: table-cell;
+    vertical-align: middle;
+}
 
 
 /* ______________________________________________________________________________________ */
@@ -231,11 +240,28 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
         inset 0 0 0px var(--_colorGlow);
 }
 
+.neonScrollBar{
+    --_colorNeon: var(--colorNeon, --colorNeonWhite);
+    scrollbar-color: var(--colorNeon) hsl(var(--background));
+}
+
+.neonScrollBar ::-webkit-scrollbar-thumb{
+    --_colorNeon: var(--colorNeon, --colorNeonWhite);
+    --_colorGlow: var(--colorGlow, --colorNeonWhiteGlow);
+    background-color: var(--colorNeon);
+    border-radius: 10px;
+    border: 3px solid var(--colorNeon);
+    box-shadow: 
+        0 0 20px var(--colorGlow), 
+        inset 0 0 0px var(--colorGlow);
+}
+
 .neonText.blue,
 .neonTextGlow.blue,
 .neonBackground.blue,
 .neonBorder.blue,
-.neonBoxShadowGlow.blue{
+.neonBoxShadowGlow.blue,
+.neonScrollBar.blue{
     --colorNeon: var(--colorNeonBlue);
     --colorGlow: var(--colorNeonBlueGlow);
 }
@@ -243,7 +269,8 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
 .neonTextGlow.yellow,
 .neonBackground.yellow,
 .neonBorder.yellow,
-.neonBoxShadowGlow.yellow{
+.neonBoxShadowGlow.yellow,
+.neonScrollBar.yellow{
     --colorNeon: var(--colorNeonYellow);
     --colorGlow: var(--colorNeonYellowGlow);
 }
@@ -251,7 +278,8 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
 .neonTextGlow.green,
 .neonBackground.green,
 .neonBorder.green,
-.neonBoxShadowGlow.green{
+.neonBoxShadowGlow.green,
+.neonScrollBar.green{
     --colorNeon: var(--colorNeonGreen);
     --colorGlow: var(--colorNeonGreenGlow);
 }
@@ -259,7 +287,8 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
 .neonTextGlow.pink,
 .neonBackground.pink,
 .neonBorder.pink,
-.neonBoxShadowGlow.pink{
+.neonBoxShadowGlow.pink,
+.neonScrollBar.pink{
     --colorNeon: var(--colorNeonPink);
     --colorGlow: var(--colorNeonPinkGlow);
 }
@@ -267,7 +296,8 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
 .neonTextGlow.red,
 .neonBackground.red,
 .neonBorder.red,
-.neonBoxShadowGlow.red{
+.neonBoxShadowGlow.red,
+.neonScrollBar.red{
     --colorNeon: var(--colorNeonRed);
     --colorGlow: var(--colorNeonRedGlow);
 }
@@ -275,7 +305,8 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
 .neonTextGlow.white,
 .neonBackground.white,
 .neonBorder.white,
-.neonBoxShadowGlow.white{
+.neonBoxShadowGlow.white,
+.neonScrollBar.white{
     --colorNeon: var(--colorNeonWhite);
     --colorGlow: var(--colorNeonWhiteGlow);
 }

@@ -162,21 +162,5 @@
 }
 
 
-
-/* ______________________________________________________________________________________ */
-/* ===== table ===== */
-
-.saveFile .content .item .table {
-    display: table;
-    height: 100%;
-    width: 100%;
-}
-.saveFile .content .item .table .cell{
-    display: table-cell;
-    vertical-align: middle;
-}
-
-
-
 /* ______________________________________________________________________________________ */
 /* ===== OTHER ===== */

@@ -10,6 +10,7 @@ import { isObj } from "@/util";
 import { chapterNames } from "@/data/chapterNames";
 import { format } from "date-fns";
 import { renderFontAwesomeIcons } from "@/util/icons";
+import { CenterVertically } from "../MicroComponents";
 
 
 
@@ -24,9 +25,7 @@ const defaultSaveFile = { id:null, userId:null, name:null, chapter:0, type:null,
 
 const Item = ({ children, col=null }) => (
     <div className={`${styles.item} ${col ? styles[col] : ""}`}>
-        <div className={styles.table}>
-            <div className={styles.cell}>{children}</div>
-        </div>
+        <CenterVertically>{children}</CenterVertically>
     </div>
 );
 
