@@ -22,6 +22,10 @@
     grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
+.gameGrid.mobile{
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
 
 @media only screen and (max-height: 811px){
     .gameGrid{
@@ -90,6 +94,14 @@
     
     grid-column-start: 3;
     grid-column-end: span 4;
+}
+
+.gameGrid.mobile .center{
+    padding: var(--corePadding) 0px;
+    height: calc(var(--columnHeight) - (var(--corePadding) * 3));
+    
+    grid-column-start: 1;
+    grid-column-end: span 1;
 }
 
 .gameGrid.desktop .sidebarRight{

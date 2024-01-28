@@ -242,18 +242,18 @@ div, li, p, span, h1, h2, h3, h4, h5, h6, a {
 
 .neonScrollBar{
     --_colorNeon: var(--colorNeon, --colorNeonWhite);
-    scrollbar-color: var(--colorNeon) hsl(var(--background));
+    scrollbar-color: var(--_colorNeon) hsl(var(--background));
 }
 
-.neonScrollBar ::-webkit-scrollbar-thumb{
+.neonScrollBar::-webkit-scrollbar-thumb{
     --_colorNeon: var(--colorNeon, --colorNeonWhite);
     --_colorGlow: var(--colorGlow, --colorNeonWhiteGlow);
-    background-color: var(--colorNeon);
+    background-color: var(--_colorNeon);
     border-radius: 10px;
-    border: 3px solid var(--colorNeon);
+    border: 3px solid var(--_colorNeon);
     box-shadow: 
-        0 0 20px var(--colorGlow), 
-        inset 0 0 0px var(--colorGlow);
+        0 0 20px var(--_colorGlow), 
+        inset 0 0 0px var(--_colorGlow);
 }
 
 .neonText.blue,
