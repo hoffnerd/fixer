@@ -7,7 +7,7 @@ import styles from "@/styles/game.module.css";
 // Components------------------------------------------------------------------------
 import Alert from "@/components/Alert";
 import NavigationUser from "@/components/NavigationUser";
-import Desktop from "@/components/Game/Grid/desktop";
+import Desktop from "@/components/Game/Grid/Desktop";
 import Tablet from "@/components/Game/Grid/Tablet";
 import Mobile from "@/components/Game/Grid/Mobile";
 import BottomNav from "@/components/Game/Panels/Mobile/BottomNav";
