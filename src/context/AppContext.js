@@ -2,8 +2,14 @@
 
 // React/Next -----------------------------------------------------------------------
 import { createContext, useContext, useEffect, useState } from "react";
+// Context---------------------------------------------------------------------------
+import { useSession } from "next-auth/react";
+// Server Actions -------------------------------------------------------------------
+import { updateSaveFile } from "@/actions/saveFile";
 // Data -----------------------------------------------------------------------------
+import { saveInterval } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
+import { checkRoleAccessLevel, isObj } from '@/util';
 
 
 
@@ -16,6 +22,11 @@ export const AppContext = createContext();
 //______________________________________________________________________________________
 // ===== Initial State of Context =====
 const initialState = {
+    gameSaving: false,
+    gameSaveFileId: null,
+
+    gameInGameTime: 0,
+
     gameMobilePanelOpen: "notifications",
 
     gameMobileNavBadge_notifications: 0,
@@ -28,9 +39,19 @@ const initialState = {
 //______________________________________________________________________________________
 // ===== Context Provider (Basically the "Component") =====
 export const AppContextProvider = ({children}) => {
+    //______________________________________________________________________________________
+    // ===== Context =====
+    const { data: session, status} = useSession();
 
     //______________________________________________________________________________________
     // ===== Provider State =====
+    const [debugMode, setDebugMode] = useState(false);
+
+    const [gameSaving, setGameSaving] = useState(initialState.gameSaving);
+    const [gameSaveFileId, setGameSaveFileId] = useState(initialState.gameSaveFileId);
+
+    const [gameInGameTime, setGameInGameTime] = useState(initialState.gameInGameTime);
+    const [gameLastSavedTime, setGameLastSavedTime] = useState(initialState.gameInGameTime);
 
     const [gameMobilePanelOpen, setGameMobilePanelOpen] = useState(initialState.gameMobilePanelOpen);
 
@@ -43,7 +64,15 @@ export const AppContextProvider = ({children}) => {
     //______________________________________________________________________________________
     // ===== State and Sets that other Components can access =====
     
-    const values = { 
+    const values = {
+        debugMode, setDebugMode,
+
+        gameSaving, setGameSaving,
+        gameSaveFileId, setGameSaveFileId,
+
+        gameInGameTime, setGameInGameTime,
+        gameLastSavedTime, setGameLastSavedTime,
+
         gameMobilePanelOpen, setGameMobilePanelOpen,
 
         gameMobileNavBadge_notifications, setGameMobileNavBadge_notifications,
@@ -55,6 +84,66 @@ export const AppContextProvider = ({children}) => {
 
     //______________________________________________________________________________________
     // ===== Use Effects =====
+
+    useEffect(() => {
+        if(checkRoleAccessLevel(session, "ADMIN")) return;
+        if(debugMode) setDebugMode(false);
+    }, [session, debugMode])
+
+    /**
+     * Checks if it's time to save the game and if so, set `gameSaving` to true to activate the next useEffect
+     * @dependencies gameSaveFileId, gameInGameTime, gameLastSavedTime
+     */
+    useEffect(() => {
+
+        // return early if we haven't set the save file id
+        if(!gameSaveFileId) return;
+
+        // return early if the time since the last save is more than our `saveInterval`
+        if((gameInGameTime - gameLastSavedTime) <= saveInterval) return;
+        
+        if(gameSaving) return;
+        
+        setGameSaving(true);
+    }, [gameSaveFileId, gameInGameTime, gameLastSavedTime]);
+
+    /**
+     * Checks if we should save and if so, it calls an async function to update a save file.
+     * @dependencies gameSaving
+     */
+    useEffect(() => {
+        if(!gameSaving) return;
+
+        // declare that we are subscribed and want the async function below to happen
+        let isSubscribed = true;
+
+        // create an async function that fetches the data so that this `useEffect` may call it below
+        const saveGame = async () => {
+
+            // return early if an unexpected render happened so that the code below does not run twice
+            if(!isSubscribed) return;
+
+            const timeInSeconds = gameInGameTime;
+
+            // create our save file and take us there or wait for a response
+            const response = await updateSaveFile(gameSaveFileId, gameInGameTime);
+
+            if(isObj(response, ["error"])){
+                // setErrorMessage(response.message || "Something went wrong creating your save file!");
+                return;
+            }
+
+            // assume there is no error that we need to display to the user
+            setGameLastSavedTime(timeInSeconds);
+            setGameSaving(false);
+        }
+
+        // execute the async function defined above
+        saveGame();
+
+        // cancel any future `fetchData` functions
+        return () => isSubscribed = false;
+    }, [gameSaving]);
 
     /**
      * Use Effect that checks if a badge value exists for a specific game panel and resets it to 0 if it does.

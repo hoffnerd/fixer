@@ -10,6 +10,7 @@ import { isObj } from "@/util";
 import { chapterNames } from "@/data/chapterNames";
 import { format } from "date-fns";
 import { CenterVertically } from "../MicroComponents";
+import ReadableTime from "./ReadableTime";
 
 
 
@@ -48,11 +49,15 @@ export default function SaveFile({ saveFile }) {
     //______________________________________________________________________________________
     // ===== Render Functions  =====
 
+    const renderInGameTime = () => <ReadableTime timeInSeconds={inGameTime}/>
+
     const renderNameAndChapter = () => <>
         {name} | Chapter {chapter || 0}:&nbsp;
         {chapterNames[(chapter || chapter === 0) && chapter < chapterNames.length ? chapter : chapterNames.length-1]}
     </>
+
     const renderStartedDate = () => <>Started: {format(createdAt, "MMM dd, yyyy")}</>
+
     const renderLastSavedTime = () => <>Last Saved:<br />{format(updatedAt, "MMM dd, yyyy hh:mm a")}</>
 
 
@@ -64,7 +69,7 @@ export default function SaveFile({ saveFile }) {
         <div className={`${styles.content} ${styles.small}`}>
             <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
             <Item col="secondCol">
-                <div className="flex flex-row-reverse">00:00:00</div>
+                <div className="flex flex-row-reverse">{renderInGameTime()}</div>
             </Item>
 
             <Item col="regularCol">
@@ -99,7 +104,7 @@ export default function SaveFile({ saveFile }) {
         <div className={`${styles.content} ${styles.medium}`}>
             <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
             <Item col="secondCol">
-                <div className="flex flex-row-reverse">00:00:00</div>
+                <div className="flex flex-row-reverse">{renderInGameTime()}</div>
             </Item>
             
             <Item col="firstCol">{renderNameAndChapter()}</Item>
@@ -124,42 +129,11 @@ export default function SaveFile({ saveFile }) {
         </div>
     )
 
-    const renderContentLarge_old = () => (
-        <div className={`${styles.content} ${styles.large}`}>
-            <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
-            <Item col="secondCol">
-                <div className="flex flex-row-reverse">Weapon Components:</div>
-            </Item>
-            <Item col="thirdCol">0</Item>
-            <Item col="forthCol">
-                <div className="flex flex-row-reverse">00:00:00</div>
-            </Item>
-            
-            <Item col="firstCol">{renderNameAndChapter()}</Item>
-            <Item col="secondCol">
-                <div className="flex flex-row-reverse">Tech Components:</div>
-            </Item>
-            <Item col="thirdCol">0</Item>
-            <Item col="forthCol">
-                <div className="flex flex-row-reverse">{renderStartedDate()}</div>
-            </Item>
-            
-            <Item col="firstCol">€ 0</Item>
-            <Item col="secondCol">
-                <div className="flex flex-row-reverse">Quickhack Components:</div>
-            </Item>
-            <Item col="thirdCol">0</Item>
-            <Item col="forthCol">
-                <div className="flex flex-row-reverse">{renderLastSavedTime()}</div>
-            </Item>
-        </div>
-    )
-
     const renderContentLarge = () => (
         <div className={`${styles.content} ${styles.large}`}>
             <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
             <Item><div className="text-center">⚙Weapon: 0</div></Item>
-            <Item col="thirdCol"><div className="flex flex-row-reverse">00:00:00</div></Item>
+            <Item col="thirdCol"><div className="flex flex-row-reverse">{renderInGameTime()}</div></Item>
             
             <Item col="firstCol">{renderNameAndChapter()}</Item>
             <Item><p className="text-center">⚙Tech: 0</p></Item>

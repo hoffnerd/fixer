@@ -1,5 +1,6 @@
 
 // React/Next------------------------------------------------------------------------
+import { unstable_noStore } from "next/cache";
 // Actions---------------------------------------------------------------------------
 import { readSaveFile } from "@/actions/saveFile"
 // Styles ---------------------------------------------------------------------------
@@ -7,6 +8,7 @@ import styles from "@/styles/game.module.css";
 // Components------------------------------------------------------------------------
 import Alert from "@/components/Alert";
 import NavigationUser from "@/components/NavigationUser";
+import GameClientInitializer from "@/components/Game/GameClientInitializer";
 import Desktop from "@/components/Game/Grid/Desktop";
 import Tablet from "@/components/Game/Grid/Tablet";
 import Mobile from "@/components/Game/Grid/Mobile";
@@ -16,10 +18,10 @@ import { isObj } from "@/util";
 
 
 
-
 //______________________________________________________________________________________
 // ===== Component  =====
 export default async function Page({ params }){
+    unstable_noStore();
 
     //______________________________________________________________________________________
     // ===== Constants  =====
@@ -45,6 +47,7 @@ export default async function Page({ params }){
                     <NavigationUser/>
                 </div>
             </div>
+            <GameClientInitializer saveFile={saveFile}/>
             <div className={styles.game}>
                 <Desktop/>
                 <Tablet/>
