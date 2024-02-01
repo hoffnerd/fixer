@@ -70,6 +70,12 @@ export const checkRoleAccessLevel = (session, requiredRole) => {
     return userAccessLevel >= requiredAccessLevel;
 }
 
+/**
+ * Extracts the screen name from an email address or returns the email address itself if no screen name is found.
+ * @param email - string, represents an email address.
+ * @returns string, the screen name extracted from the email address. If the screen name is successfully
+ * extracted, it is returned. Otherwise, the original email address is returned.
+ */
 export const getScreenNameFromEmail = (email) => {
     const reg = /(.+)@/;
     const extracted = reg.exec(email);

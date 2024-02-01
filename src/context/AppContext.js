@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { updateSaveFile } from "@/actions/saveFile";
 // Data -----------------------------------------------------------------------------
 import { saveInterval } from "@/data/_config";
+import { defaultSaveData } from "@/data/defaultSaveData";
 // Other ----------------------------------------------------------------------------
 import { checkRoleAccessLevel, isObj } from '@/util';
 
@@ -21,63 +22,79 @@ export const AppContext = createContext();
 
 //______________________________________________________________________________________
 // ===== Initial State of Context =====
-const initialState = {
+const initialStateCore = {
     gameSaving: false,
     gameSaveFileId: null,
-
     gameInGameTime: 0,
+}
 
+const initialStateMobile = {
     gameMobilePanelOpen: "notifications",
-
     gameMobileNavBadge_notifications: 0,
     gameMobileNavBadge_mercs: 1,
     gameMobileNavBadge_contracts: 0,
 }
 
 
-
 //______________________________________________________________________________________
 // ===== Context Provider (Basically the "Component") =====
 export const AppContextProvider = ({children}) => {
+
     //______________________________________________________________________________________
     // ===== Context =====
     const { data: session, status} = useSession();
 
+
+
     //______________________________________________________________________________________
-    // ===== Provider State =====
+    // ===== State - Core =====
     const [debugMode, setDebugMode] = useState(false);
+    const [gameSaving, setGameSaving] = useState(initialStateCore.gameSaving);
+    const [gameSaveFileId, setGameSaveFileId] = useState(initialStateCore.gameSaveFileId);
+    const [gameInGameTime, setGameInGameTime] = useState(initialStateCore.gameInGameTime);
+    const [gameLastSavedTime, setGameLastSavedTime] = useState(initialStateCore.gameInGameTime);
 
-    const [gameSaving, setGameSaving] = useState(initialState.gameSaving);
-    const [gameSaveFileId, setGameSaveFileId] = useState(initialState.gameSaveFileId);
 
-    const [gameInGameTime, setGameInGameTime] = useState(initialState.gameInGameTime);
-    const [gameLastSavedTime, setGameLastSavedTime] = useState(initialState.gameInGameTime);
 
-    const [gameMobilePanelOpen, setGameMobilePanelOpen] = useState(initialState.gameMobilePanelOpen);
+    //______________________________________________________________________________________
+    // ===== State - Mobile =====
+    const [gameMobilePanelOpen, setGameMobilePanelOpen] = useState(initialStateMobile.gameMobilePanelOpen);
+    const [gameMobileNavBadge_notifications, setGameMobileNavBadge_notifications] = useState(initialStateMobile.gameMobileNavBadge_notifications);
+    const [gameMobileNavBadge_mercs, setGameMobileNavBadge_mercs] = useState(initialStateMobile.gameMobileNavBadge_mercs);
+    const [gameMobileNavBadge_contracts, setGameMobileNavBadge_contracts] = useState(initialStateMobile.gameMobileNavBadge_contracts);
 
-    const [gameMobileNavBadge_notifications, setGameMobileNavBadge_notifications] = useState(initialState.gameMobileNavBadge_notifications);
-    const [gameMobileNavBadge_mercs, setGameMobileNavBadge_mercs] = useState(initialState.gameMobileNavBadge_mercs);
-    const [gameMobileNavBadge_contracts, setGameMobileNavBadge_contracts] = useState(initialState.gameMobileNavBadge_contracts);
 
+
+    //______________________________________________________________________________________
+    // ===== State - Resources =====
+    const [gameResources_e, setGameResources_e] = useState(defaultSaveData.resources.e);
+    const [gameResources_w, setGameResources_w] = useState(defaultSaveData.resources.w);
+    const [gameResources_t, setGameResources_t] = useState(defaultSaveData.resources.t);
+    const [gameResources_q, setGameResources_q] = useState(defaultSaveData.resources.q);
 
 
     //______________________________________________________________________________________
     // ===== State and Sets that other Components can access =====
     
     const values = {
+        // =============== State - Core ===============
         debugMode, setDebugMode,
-
         gameSaving, setGameSaving,
         gameSaveFileId, setGameSaveFileId,
-
         gameInGameTime, setGameInGameTime,
         gameLastSavedTime, setGameLastSavedTime,
 
+        // =============== State - Mobile ===============
         gameMobilePanelOpen, setGameMobilePanelOpen,
-
         gameMobileNavBadge_notifications, setGameMobileNavBadge_notifications,
         gameMobileNavBadge_mercs, setGameMobileNavBadge_mercs,
         gameMobileNavBadge_contracts, setGameMobileNavBadge_contracts,
+
+        // =============== State - Resources ===============
+        gameResources_e, setGameResources_e,
+        gameResources_w, setGameResources_w,
+        gameResources_t, setGameResources_t,
+        gameResources_q, setGameResources_q,
     };
 
 

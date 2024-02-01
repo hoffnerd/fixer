@@ -14,6 +14,7 @@ import ReadableTime from '@/components/SaveFile/ReadableTime';
 //______________________________________________________________________________________
 // ===== Component =====
 export default function InGameTime({ inGameTime }){
+    console.log({ trace:"InGameTime", inGameTime });
 
     //______________________________________________________________________________________
     // ===== Context =====

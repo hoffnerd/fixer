@@ -1,16 +1,18 @@
 // React/Next------------------------------------------------------------------------
 import Link from "next/link";
+import { format } from "date-fns";
 // Context---------------------------------------------------------------------------
 // Components------------------------------------------------------------------------
+import { CenterVertically } from "../MicroComponents";
 import { Badge } from "../shadcn/ui/badge";
+import ReadableTime from "./ReadableTime";
 // Styles ---------------------------------------------------------------------------
 import styles from "@/styles/components/SaveFile.module.css";
+// Data------------------------------------------------------------------------------
+import { chapterNames } from "@/data/chapterNames";
+import { defaultSaveData } from "@/data/defaultSaveData";
 // Other-----------------------------------------------------------------------------
 import { isObj } from "@/util";
-import { chapterNames } from "@/data/chapterNames";
-import { format } from "date-fns";
-import { CenterVertically } from "../MicroComponents";
-import ReadableTime from "./ReadableTime";
 
 
 
@@ -45,6 +47,8 @@ export default function SaveFile({ saveFile }) {
     //______________________________________________________________________________________
     // ===== Component Constants =====
     const { id, userId, name, chapter, type, saveData, inGameTime, createdAt, updatedAt } = isObj(saveFile) ? { ...defaultSaveFile, ...saveFile } : defaultSaveFile;
+    const { resources } = isObj(saveData) ? saveData : defaultSaveData;
+
 
     //______________________________________________________________________________________
     // ===== Render Functions  =====
@@ -59,6 +63,8 @@ export default function SaveFile({ saveFile }) {
     const renderStartedDate = () => <>Started: {format(createdAt, "MMM dd, yyyy")}</>
 
     const renderLastSavedTime = () => <>Last Saved:<br />{format(updatedAt, "MMM dd, yyyy hh:mm a")}</>
+
+    const renderResource = ( key, display ) => <>⚙{display}: {isObj(resources, [key]) ? resources[key] : 0}</>
 
 
 
@@ -76,18 +82,18 @@ export default function SaveFile({ saveFile }) {
                 <div className="text-center">{renderNameAndChapter()}</div>
             </Item>
             <Item col="regularCol">
-                <div className="text-center">€ 0</div>
+                <div className="text-center">{renderResource("e", "€")}</div>
             </Item>
 
             <Item col="regularCol"><hr/></Item>
             <Item col="regularCol">
-                <div className="text-center">⚙Weapon: 0</div>
+                <div className="text-center">{renderResource("w", "Weapon")}</div>
             </Item>
             <Item col="regularCol">
-                <div className="text-center">⚙Tech: 0</div>
+                <div className="text-center">{renderResource("t", "Tech")}</div>
             </Item>
             <Item col="regularCol">
-                <div className="text-center">⚙Quickhack: 0</div>
+                <div className="text-center">{renderResource("q", "Quickhack")}</div>
             </Item>
             <Item col="regularCol"><hr/></Item>
 
@@ -109,17 +115,17 @@ export default function SaveFile({ saveFile }) {
             
             <Item col="firstCol">{renderNameAndChapter()}</Item>
             <Item col="secondCol">
-                <div className="flex flex-row-reverse">€ 0</div>
+                <div className="flex flex-row-reverse">{renderResource("e", "€")}</div>
             </Item>
 
             <Item col="firstColComponents">
-                <div className="text-center">⚙Weapon: 0</div>
+                <div className="text-center">{renderResource("w", "Weapon")}</div>
             </Item>
             <Item col="secondColComponents">
-                <div className="text-center">⚙Tech: 0</div>
+                <div className="text-center">{renderResource("t", "Tech")}</div>
             </Item>
             <Item col="thirdColComponents">
-                <div className="text-center">⚙Quickhack: 0</div>
+                <div className="text-center">{renderResource("q", "Quickhack")}</div>
             </Item>
 
             <Item col="firstCol">{renderStartedDate()}</Item>
@@ -132,15 +138,15 @@ export default function SaveFile({ saveFile }) {
     const renderContentLarge = () => (
         <div className={`${styles.content} ${styles.large}`}>
             <Item col="firstCol"><TypeBadge type={type}>{type}</TypeBadge></Item>
-            <Item><div className="text-center">⚙Weapon: 0</div></Item>
+            <Item><div className="text-center">{renderResource("w", "Weapon")}</div></Item>
             <Item col="thirdCol"><div className="flex flex-row-reverse">{renderInGameTime()}</div></Item>
             
             <Item col="firstCol">{renderNameAndChapter()}</Item>
-            <Item><p className="text-center">⚙Tech: 0</p></Item>
+            <Item><p className="text-center">{renderResource("t", "Tech")}</p></Item>
             <Item col="thirdCol"><div className="flex flex-row-reverse">{renderStartedDate()}</div></Item>
             
-            <Item col="firstCol">€ 0</Item>
-            <Item><div className="text-center">⚙Quickhack: 0</div></Item>
+            <Item col="firstCol">{renderResource("e", "€")}</Item>
+            <Item><div className="text-center">{renderResource("q", "Quickhack")}</div></Item>
             <Item col="thirdCol"><div className="flex flex-row-reverse">{renderLastSavedTime()}</div></Item>
         </div>
     )

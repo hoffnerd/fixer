@@ -18,7 +18,21 @@ export default function GameClientInitializer({ saveFile }){
     //______________________________________________________________________________________
     // ===== Context =====
     const { data: session, status} = useSession();
-    const { debugMode, setDebugMode, gameSaving, setGameSaveFileId, setGameInGameTime, setGameLastSavedTime } = useAppContext();
+    const { 
+        // ===== State - Core =====
+        debugMode, 
+        setDebugMode, 
+        gameSaving, 
+        setGameSaveFileId, 
+        setGameInGameTime, 
+        setGameLastSavedTime, 
+
+        // ===== State - Resources =====
+        setGameResources_e,
+        setGameResources_w,
+        setGameResources_t,
+        setGameResources_q,
+    } = useAppContext();
     
 
 
@@ -36,9 +50,25 @@ export default function GameClientInitializer({ saveFile }){
 
         if(!isObj(saveFile, [ "id" ])) return;
 
+        // ===== Core =====
         setGameSaveFileId(saveFile.id);
         setGameInGameTime(saveFile.inGameTime);
         setGameLastSavedTime(saveFile.inGameTime);
+
+        if(!isObj(saveFile.saveData)){
+            setInitialized(true);
+            return;
+        }
+
+        // ===== Resources =====
+        if(isObj(saveFile.saveData.resources, [ "e", "w", "t", "q" ], false)){
+            saveFile.saveData.resources.e && setGameResources_e(saveFile.saveData.resources.e);
+            saveFile.saveData.resources.w && setGameResources_w(saveFile.saveData.resources.w);
+            saveFile.saveData.resources.t && setGameResources_t(saveFile.saveData.resources.t);
+            saveFile.saveData.resources.q && setGameResources_q(saveFile.saveData.resources.q);
+        }
+
+
         setInitialized(true);
     }, [initialized, saveFile])
     

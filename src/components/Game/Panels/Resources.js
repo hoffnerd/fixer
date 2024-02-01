@@ -2,7 +2,7 @@
 // Styles ---------------------------------------------------------------------------
 import styles from "@/styles/game.module.css";
 // Components------------------------------------------------------------------------
-import { CenterVertically } from "@/components/MicroComponents";
+import Resource from "./Resource";
 
 
 
@@ -12,16 +12,16 @@ export default function Resources () {
     return (
         <div className={styles.resourcesGrid}>
             <div className={`${styles.resourcesGridColumn} ${styles.border} neonBorder blue text-center`}>
-                <CenterVertically>€ 1000</CenterVertically>
+                <Resource keyResource="e" display="€" component={false} />
             </div>
             <div className={`${styles.resourcesGridColumn} ${styles.border} neonBorder blue text-center`}>
-                <CenterVertically>⚙W 5</CenterVertically>
+                <Resource keyResource="w" display="W" />
             </div>
             <div className={`${styles.resourcesGridColumn} ${styles.border} neonBorder blue text-center`}>
-                <CenterVertically>⚙T 5</CenterVertically>
+                <Resource keyResource="t" display="T" />
             </div>
             <div className={`${styles.resourcesGridColumn} neonBorder blue text-center`}>
-                <CenterVertically>⚙Q 5</CenterVertically>
+                <Resource keyResource="q" display="Q" />
             </div>
         </div>
     )
