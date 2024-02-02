@@ -24,7 +24,8 @@ const requiredRole = "TESTER";
  * Reads save files from the database for a specific user.
  * @returns array of objects where each object is a save file
  */
-export const readSaveFilesByUserId = async () => {
+export const readSaveFilesByUserId = async (trace) => {
+    console.log({ trace })
     unstable_noStore();
 
     const session = await readServerSession({ trace:"readSaveFilesByUserId", requiredRole });

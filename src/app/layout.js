@@ -1,16 +1,14 @@
 // Styles ---------------------------------------------------------------------------
 import "@/styles/globals.css"
-// import "@fortawesome/fontawesome-svg-core/styles.css";
 // Fonts ----------------------------------------------------------------------------
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 // Contexts -------------------------------------------------------------------------
-import { AppContextProvider } from '@/context/AppContext';
 import AuthContext from '@/context/AuthContext';
+import { AppContextProvider } from '@/context/AppContext';
+import ClientProvider from "@/rQuery/ClientProvider";
 // Components -----------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
-// import { config as fwaConfig } from "@fortawesome/fontawesome-svg-core";
-// fwaConfig.autoAddCss = false;
 
 export const metadata = {
     title: 'Fixer',
@@ -23,7 +21,9 @@ export default function RootLayout({ children }) {
             <body className={`${inter.className} dark bg-background text-foreground`}>
                 <AuthContext>
                     <AppContextProvider>
-                        {children}
+                        <ClientProvider>
+                            {children}
+                        </ClientProvider>
                     </AppContextProvider>
                 </AuthContext>
             </body>
