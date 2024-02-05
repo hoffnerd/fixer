@@ -1,54 +1,61 @@
 "use client"
 
 // React/Next------------------------------------------------------------------------
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 // Context---------------------------------------------------------------------------
 import { useSession } from "next-auth/react";
-import { useAppContext } from '@/context/AppContext';
+// Stores----------------------------------------------------------------------------
+import { useDebugModeStore, useResourceStore } from '@/stores/game';
 // Hooks-----------------------------------------------------------------------------
-import useTimer from "@/hooks/useTimer"
 // Other-----------------------------------------------------------------------------
-import { checkRoleAccessLevel } from '@/util';
-import ReadableTime from '@/components/SaveFile/ReadableTime';
-import { useDebugModeStore } from '@/stores/game';
+import { checkRoleAccessLevel, isObj } from '@/util';
 
 //______________________________________________________________________________________
 // ===== Component =====
-export default function InGameTime({ inGameTime }){
-    // console.log({ trace:"InGameTime", inGameTime });
+export default function Resources({ resources }){
 
     //______________________________________________________________________________________
     // ===== Context =====
     const { data: session, status} = useSession();
-    const { gameInGameTime, setGameInGameTime, gameLastSavedTime } = useAppContext();
     
 
 
-
     //______________________________________________________________________________________
-    // ===== Hooks =====
-    const [ seconds ] = useTimer(1000, { initialCycles:inGameTime });
+    // ===== Stores =====
     const debugMode = useDebugModeStore((state) => state.debugMode);
+    const { e, w, t, q, setResource } = useResourceStore((state) => state)
 
 
 
     //______________________________________________________________________________________
-    // ===== Use Effects =====
-    useEffect(() => {
-        setGameInGameTime(seconds)
-    }, [seconds])
-    
+    // ===== State =====
+    const [ initialized, setInitialized ] = useState(false);
 
+
+
+    //______________________________________________________________________________________
+    // ===== Use Effect =====
+    useEffect(() => {
+        if(initialized) return;
+        
+        isObj(resources) && Object.keys(resources)?.forEach((key)=>{
+            setResource(key, resources[key])
+        })
+
+        setInitialized(true);
+    }, [initialized, resources])
+    
 
 
     //______________________________________________________________________________________
     // ===== Component Return =====
 
-    if(checkRoleAccessLevel(session, "ADMIN") && debugMode) return <>
-        <p>secs: {seconds}</p>
-        <p>igt: <ReadableTime timeInSeconds={gameInGameTime}/></p>
-        <p>saved: <ReadableTime timeInSeconds={gameLastSavedTime}/></p>
+    if(!(checkRoleAccessLevel(session, "ADMIN") && debugMode && initialized)) return;
+    
+    return <>
+        <p>e: {e}</p>
+        <p>w: {w}</p>
+        <p>t: {t}</p>
+        <p>q: {q}</p>
     </>
-
-    return;
 }

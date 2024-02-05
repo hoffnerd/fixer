@@ -24,8 +24,7 @@ const requiredRole = "TESTER";
  * Reads save files from the database for a specific user.
  * @returns array of objects where each object is a save file
  */
-export const readSaveFilesByUserId = async (trace) => {
-    console.log({ trace })
+export const readSaveFilesByUserId = async () => {
     unstable_noStore();
 
     const session = await readServerSession({ trace:"readSaveFilesByUserId", requiredRole });
@@ -51,6 +50,8 @@ export const readSaveFilesByUserId = async (trace) => {
 export const readSaveFile = async (id) => {
     unstable_noStore();
     
+    console.log({ trace:"readSaveFile", id })
+
     const session = await readServerSession({ trace:"readSaveFile", requiredRole });
     if(isObj(session, ["error"])) return session;
 
@@ -108,6 +109,28 @@ export const createSaveFile = async (name) => {
  * @returns obj, the full saveFile from the database or an object with an error bool and error message
  */
 export const updateSaveFile = async (id, inGameTime, saveData) => {
+
+    const session = await readServerSession({ trace:"updateSaveFile", requiredRole });
+    if(isObj(session, ["error"])) return session;
+
+    try {
+        return await prisma.saveFile.update({
+            where: { id, userId:session.user.id },
+            data:{ inGameTime, updatedAt: new Date(), }
+        })
+    } catch (error) {
+        console.error("Unexpected error updating save file!", { trace:"updateSaveFile", error });
+        return { error:true, message:"Unexpected error creating save file!" }
+    }
+}
+
+/**
+ * Updates the in-game time of a save file in a database.
+ * @param id - string, unique identifier of the save file that you want to update.
+ * @param inGameTime - int, represents the in-game time that needs to be saved in the database.
+ * @returns obj, the full saveFile from the database or an object with an error bool and error message
+ */
+export const updateInGameTime = async (id, inGameTime) => {
 
     const session = await readServerSession({ trace:"updateSaveFile", requiredRole });
     if(isObj(session, ["error"])) return session;

@@ -17,6 +17,17 @@ const defaultOptions = {
 
 //______________________________________________________________________________________
 // ===== Hook =====
+/**
+ * This hook allows you to create a timer with options such as countdown, initial cycles, cycle limit, and auto start.
+ * @param waitTime - int, time interval in milliseconds between each cycle of the timer.
+ * @param [options=null] - object, optional. Allows you to customize the behavior of the timer. It has the following properties:]
+ * - `countDown`: bool, false by default. Make the timer count down rather than up.
+ * - `initialCycles`: int, 0 by default. Start the timer at this amount of `cycles` completed.
+ * - `cycleLimit`: bool || int, false by default. Once `cycles` hits this limit, the timer will stop.
+ * - `autoStartTimer`: bool, true by default. Automatically start the timer. Set to false and 
+ *                      make sure to use the `startTimer` function in the parent component to control when it starts.
+ * @returns array with three elements: `cycles`, `stopTimer`, and `startTimer`.
+ */
 export default function useTimer( waitTime, options=null ){
 
 

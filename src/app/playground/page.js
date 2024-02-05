@@ -14,21 +14,21 @@ import { readSaveFilesByUserId } from "@/actions/saveFile";
 // ===== Component  =====
 export default async function Page(){
 
-    const saveFiles = await readSaveFilesByUserId("page");
+    // const saveFiles = await readSaveFilesByUserId("page");
 
-    return <>
-        <div className="sticky top-0">
-            <div className="flex flex-row-reverse">
-                <NavigationUser/>
-            </div>
-        </div>
-        <div className="container">
-            <h1 className="text-5xl font-black pb-10">My Saves</h1>
-            <NewSaveFile/>
-            {/* <SaveFiles/> */}
-            <SaveFiles initialSaveFiles={saveFiles}/>
-        </div>
-    </>
+    // return <>
+    //     <div className="sticky top-0">
+    //         <div className="flex flex-row-reverse">
+    //             <NavigationUser/>
+    //         </div>
+    //     </div>
+    //     <div className="container">
+    //         <h1 className="text-5xl font-black pb-10">My Saves</h1>
+    //         <NewSaveFile/>
+    //         <SaveFiles/>
+    //         <SaveFiles initialSaveFiles={saveFiles}/>
+    //     </div>
+    // </>
 
     const queryClient = new QueryClient();
 

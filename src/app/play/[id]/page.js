@@ -1,8 +1,10 @@
 
 // React/Next------------------------------------------------------------------------
-import { unstable_noStore } from "next/cache";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 // Actions---------------------------------------------------------------------------
 import { readSaveFile } from "@/actions/saveFile"
+// Prefetches------------------------------------------------------------------------
+import { prefetchSaveFile } from "@/rQuery/prefetches/saveFile";
 // Styles ---------------------------------------------------------------------------
 import styles from "@/styles/game.module.css";
 // Components------------------------------------------------------------------------
@@ -15,19 +17,25 @@ import Mobile from "@/components/Game/Grid/Mobile";
 import BottomNav from "@/components/Game/Panels/Mobile/BottomNav";
 // Other-----------------------------------------------------------------------------
 import { isObj } from "@/util";
+import Manager from "@/components/Game/GameClient/Manager";
 
 
 
 //______________________________________________________________________________________
 // ===== Component  =====
 export default async function Page({ params }){
-    unstable_noStore();
 
     //______________________________________________________________________________________
     // ===== Constants  =====
     const id = isObj(params, [ 'id' ]) ? params.id : null;
     const saveFile = id ? await readSaveFile(id) : null;
 
+    
+    
+    //______________________________________________________________________________________
+    // ===== Prefetch  =====
+    const queryClient = id ? await prefetchSaveFile(id) : null;
+    
 
     
     //______________________________________________________________________________________
@@ -47,13 +55,15 @@ export default async function Page({ params }){
                     <NavigationUser/>
                 </div>
             </div>
-            <GameClientInitializer saveFile={saveFile}/>
-            <div className={styles.game}>
-                <Desktop/>
-                <Tablet/>
-                <Mobile/>
-            </div>
-            <BottomNav/>
+            <HydrationBoundary state={dehydrate(queryClient)}>
+                <Manager saveFileId={id}/>
+                <div className={styles.game}>
+                    <Desktop/>
+                    <Tablet/>
+                    <Mobile/>
+                </div>
+                <BottomNav/>
+            </HydrationBoundary>
         </div>
     )
 } 

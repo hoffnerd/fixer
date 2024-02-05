@@ -5,23 +5,24 @@ import { useEffect, useState } from 'react';
 // Context---------------------------------------------------------------------------
 import { useSession } from "next-auth/react";
 import { useAppContext } from '@/context/AppContext';
+import { useReadSaveFile } from '@/rQuery/hooks/saveFile';
+import { useDebugModeStore } from '@/stores/game';
 // Components------------------------------------------------------------------------
 import InGameTime from './Timers/InGameTime';
 // Other-----------------------------------------------------------------------------
 import { checkRoleAccessLevel, isObj } from '@/util';
 import { renderFontAwesomeIcons } from '@/util/icons';
+import { Button } from '../shadcn/ui/button';
 
 //______________________________________________________________________________________
 // ===== Component =====
-export default function GameClientInitializer({ saveFile }){
+export default function GameClientInitializer({ saveFileId }){
 
     //______________________________________________________________________________________
     // ===== Context =====
-    const { data: session, status} = useSession();
+    const { data:session, status} = useSession();
     const { 
         // ===== State - Core =====
-        debugMode, 
-        setDebugMode, 
         gameSaving, 
         setGameSaveFileId, 
         setGameInGameTime, 
@@ -34,6 +35,14 @@ export default function GameClientInitializer({ saveFile }){
         setGameResources_q,
     } = useAppContext();
     
+
+
+    //______________________________________________________________________________________
+    // ===== hooks =====
+    const { data:saveFile, error } = useReadSaveFile(saveFileId);
+    const debugMode = useDebugModeStore((state) => state.debugMode)
+    const toggleDebugMode = useDebugModeStore((state) => state.toggleDebugMode)
+
 
 
     //______________________________________________________________________________________
@@ -80,12 +89,9 @@ export default function GameClientInitializer({ saveFile }){
         if(!checkRoleAccessLevel(session, "ADMIN")) return;
 
         return(
-            <a href="#" onClick={(e)=>{
-                e.preventDefault();
-                setDebugMode((prevDebugMode)=>!prevDebugMode);
-            }}>
+            <Button variant="ghost" onClick={toggleDebugMode}>
                 {renderFontAwesomeIcons({ key:"faScrewdriverWrench", className:"h-10" })}
-            </a>
+            </Button>
         )
     }
 
