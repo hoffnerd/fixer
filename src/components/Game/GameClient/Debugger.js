@@ -3,7 +3,7 @@
 // Packages--------------------------------------------------------------------------
 import { useSession } from "next-auth/react";
 // Stores---------------------------------------------------------------------------
-import { useDebugModeStore } from "@/stores/game";
+import { useDebugModeStore, useGameSavingStore } from "@/stores/game";
 // Components------------------------------------------------------------------------
 import { Button } from "@/components/shadcn/ui/button";
 // Other-----------------------------------------------------------------------------
@@ -23,7 +23,8 @@ export default function Debugger({ children }){
 
     //______________________________________________________________________________________
     // ===== Stores =====
-    const { debugMode, toggleDebugMode } = useDebugModeStore((state) => state)
+    const { debugMode, toggleDebugMode } = useDebugModeStore((state) => state);
+    const gameSaving = useGameSavingStore((state) => state.gameSaving);
 
     
 
@@ -36,6 +37,7 @@ export default function Debugger({ children }){
                     {renderFontAwesomeIcons({ key:"faScrewdriverWrench", className:"h-10" })}
                 </Button>
             </>}
+            {gameSaving && renderFontAwesomeIcons({ key:"faFloppyDisk", className:"h-10" })}
             <div className={checkRoleAccessLevel(session, "ADMIN") && debugMode ? "bg-background p-5" : ""}>
                 {children}
             </div>

@@ -9,9 +9,10 @@ import { useReadSaveFile } from "@/rQuery/hooks/saveFile";
 import Debugger from "./Debugger";
 import SaveFileId from "./SaveFileId";
 import InGameTime from "./InGameTime";
+import SaveGame from "./SaveGame";
+import Resources from "./Resources";
 // Other-----------------------------------------------------------------------------
 import { isObj } from "@/util";
-import Resources from "./Resources";
 
 //______________________________________________________________________________________
 // ===== Component =====
@@ -29,6 +30,7 @@ export default function Manager({ saveFileId }){
     return <Debugger>
         <SaveFileId propSaveFileId={saveFileId}/>
         <InGameTime propInGameTime={saveFile.inGameTime}/>
+        <SaveGame propInGameTime={saveFile.inGameTime}/>
         <Resources resources={saveFile?.saveData?.resources}/>
     </Debugger>
         

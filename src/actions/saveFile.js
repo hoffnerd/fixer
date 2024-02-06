@@ -105,18 +105,27 @@ export const createSaveFile = async (name) => {
  * Updates the in-game time and the save date of a save file in a database.
  * @param id - string, unique identifier of the save file that you want to update.
  * @param inGameTime - int, represents the in-game time that needs to be saved in the database.
- * @param saveData - obj, represents the save data to be saved in the database.
+ * @param additionalSaveData - obj, represents the save data to be saved in the database.
  * @returns obj, the full saveFile from the database or an object with an error bool and error message
  */
-export const updateSaveFile = async (id, inGameTime, saveData) => {
+export const updateSaveFile = async (id, inGameTime, additionalSaveData) => {
 
     const session = await readServerSession({ trace:"updateSaveFile", requiredRole });
     if(isObj(session, ["error"])) return session;
 
     try {
+        const saveFile = await prisma.saveFile.findUnique({ 
+            select: { saveData:true },
+            where: { id, userId:session.user.id }
+        });
+
+        let saveData = { ...defaultSaveData };
+        if(isObj(saveFile.saveData) && isObj(additionalSaveData)) saveData = { ...defaultSaveData, ...saveFile.saveData, ...additionalSaveData };
+        else if(isObj(saveFile.saveData)) saveData = { ...defaultSaveData, ...saveFile.saveData };
+
         return await prisma.saveFile.update({
             where: { id, userId:session.user.id },
-            data:{ inGameTime, updatedAt: new Date(), }
+            data:{ saveData, inGameTime, updatedAt: new Date(), }
         })
     } catch (error) {
         console.error("Unexpected error updating save file!", { trace:"updateSaveFile", error });

@@ -8,9 +8,10 @@ import { useSession } from "next-auth/react";
 import { useDebugModeStore, useInGameTimeStore } from '@/stores/game';
 // Hooks-----------------------------------------------------------------------------
 import useTimer from "@/hooks/useTimer"
+// Components------------------------------------------------------------------------
+import ReadableTime from '@/components/SaveFile/ReadableTime';
 // Other-----------------------------------------------------------------------------
 import { checkRoleAccessLevel } from '@/util';
-import ReadableTime from '@/components/SaveFile/ReadableTime';
 
 //______________________________________________________________________________________
 // ===== Component =====
@@ -36,7 +37,12 @@ export default function InGameTime({ propInGameTime }){
 
 
     //______________________________________________________________________________________
-    // ===== Hooks =====
+    // ===== Use Effect =====
+    
+    /**
+     * Update the Zustand state for in game time
+     * @dependencies seconds
+     */
     useEffect(() => {
         setInGameTime(seconds)
     }, [seconds])
@@ -52,6 +58,5 @@ export default function InGameTime({ propInGameTime }){
     return <>
         <p>secs: {seconds}</p>
         <p>igt: <ReadableTime timeInSeconds={inGameTime}/></p>
-        <p>saved: <ReadableTime timeInSeconds={inGameTime}/></p>
     </>   
 }

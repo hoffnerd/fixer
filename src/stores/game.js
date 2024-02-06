@@ -18,9 +18,18 @@ export const useSaveFileIdStore = create((set) => ({
 
 
 
+export const useGameSavingStore = create((set) => ({
+    gameSaving: false,
+    toggleGameSaving: () => set((state) => ({ gameSaving: !state.gameSaving })),
+}))
+
+
+
 export const useInGameTimeStore = create((set) => ({
     inGameTime: 0,
+    lastSavedTime: 0,
     setInGameTime: (inGameTime) => set(() => ({ inGameTime })),
+    setLastSavedTime: (lastSavedTime) => set(() => ({ lastSavedTime })),
 }))
 
 

@@ -1,3 +1,4 @@
+"use client"
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { readSaveFile, readSaveFilesByUserId, updateSaveFile } from "@/actions/saveFile";
@@ -15,7 +16,7 @@ export const useReadSaveFile = (id) => useQuery({
 })
 
 export const useUpdateSaveFile = () => useMutation({
-    mutationFn: async (id, inGameTime, saveData) => updateSaveFile(id, inGameTime, saveData),
+    mutationFn: async (id, inGameTime, additionalSaveData) => updateSaveFile(id, inGameTime, additionalSaveData),
 })
 
 //https://tanstack.com/query/latest/docs/framework/react/guides/invalidations-from-mutations
