@@ -7,14 +7,16 @@ import { updateSaveFile } from '@/actions/saveFile';
 // Context---------------------------------------------------------------------------
 import { useSession } from "next-auth/react";
 // Stores----------------------------------------------------------------------------
-import { useDebugModeStore, useGameSavingStore, useInGameTimeStore, useSaveFileIdStore } from '@/stores/game';
+import { useDebugModeStore, useGameSavingStore, useInGameTimeStore, useResourceStore, useSaveFileIdStore } from '@/stores/game';
 // Hooks-----------------------------------------------------------------------------
+import { useUpdateSaveFile } from '@/rQuery/hooks/saveFile';
 // Components------------------------------------------------------------------------
 import ReadableTime from '@/components/SaveFile/ReadableTime';
 // Data------------------------------------------------------------------------------
 import { saveInterval } from '@/data/_config';
 // Other-----------------------------------------------------------------------------
 import { checkRoleAccessLevel, isObj } from '@/util';
+import { useQueryClient } from '@tanstack/react-query';
 
 //______________________________________________________________________________________
 // ===== Component =====
@@ -24,6 +26,7 @@ export default function SaveGame({ propInGameTime }){
     // ===== Context =====
     const { data: session, status} = useSession();
     
+    const queryClient = useQueryClient()
 
 
     //______________________________________________________________________________________
@@ -32,11 +35,18 @@ export default function SaveGame({ propInGameTime }){
     const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
     const { gameSaving, toggleGameSaving } = useGameSavingStore((state) => state);
     const { inGameTime, lastSavedTime, setLastSavedTime } = useInGameTimeStore((state) => state);
+    const { e, w, t, q, setResource } = useResourceStore((state) => state)
 
 
 
     //______________________________________________________________________________________
-    // ===== State - Core =====
+    // ===== State =====
+    const { mutate } = useUpdateSaveFile();
+
+
+
+    //______________________________________________________________________________________
+    // ===== State =====
     const [initialized, setInitialized] = useState(false);
 
 
@@ -84,17 +94,27 @@ export default function SaveGame({ propInGameTime }){
 
             const timeInSeconds = inGameTime;
 
-            // create our save file and take us there or wait for a response
-            const response = await updateSaveFile(saveFileId, timeInSeconds);
+            mutate({
+                id:saveFileId, 
+                inGameTime:timeInSeconds, 
+                additionalSaveData:{ 
+                    resources:{ e:e+1, w, t, q }
+                },
+                onSuccess: (data, variables) => {
+                    queryClient.setQueryData([`readSaveFile`, { id:variables.id }], data)
 
-            if(isObj(response, ["error"])){
-                // setErrorMessage(response.message || "Something went wrong creating your save file!");
-                return;
-            }
-
-            // assume there is no error that we need to display to the user
-            setLastSavedTime(timeInSeconds);
-            toggleGameSaving();
+                    data?.saveData?.resources?.e && setResource("e", data.saveData.resources.e);
+                    data?.saveData?.resources?.w && setResource("w", data.saveData.resources.w);
+                    data?.saveData?.resources?.t && setResource("t", data.saveData.resources.t);
+                    data?.saveData?.resources?.q && setResource("q", data.saveData.resources.q);
+                    
+                    setLastSavedTime(timeInSeconds);
+                    toggleGameSaving();
+                },
+                onError: () => {
+                    // setErrorMessage(response.message || "Something went wrong creating your save file!");
+                }
+            });
         }
 
         // execute the async function defined above

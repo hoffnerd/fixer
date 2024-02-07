@@ -5,6 +5,7 @@
 import { useResourceStore } from "@/stores/game";
 // Components------------------------------------------------------------------------
 import { CenterVertically } from "@/components/MicroComponents";
+import { useEffect } from "react";
 
 
 
@@ -12,8 +13,6 @@ import { CenterVertically } from "@/components/MicroComponents";
 // ===== Component  =====
 
 export default function Resource ({ keyResource, display, component=true }) {
-    console.log({trace:"Resource", keyResource})
-    
     const resource = useResourceStore((state) => state[keyResource])
     
     return <CenterVertically>{component && "⚙"}{display}: {resource}</CenterVertically>

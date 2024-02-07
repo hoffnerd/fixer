@@ -109,6 +109,7 @@ export const createSaveFile = async (name) => {
  * @returns obj, the full saveFile from the database or an object with an error bool and error message
  */
 export const updateSaveFile = async (id, inGameTime, additionalSaveData) => {
+    console.log({trace:"updateSaveFile", id, inGameTime, additionalSaveData})
 
     const session = await readServerSession({ trace:"updateSaveFile", requiredRole });
     if(isObj(session, ["error"])) return session;

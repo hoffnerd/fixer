@@ -21,6 +21,9 @@ export const useSaveFileIdStore = create((set) => ({
 export const useGameSavingStore = create((set) => ({
     gameSaving: false,
     toggleGameSaving: () => set((state) => ({ gameSaving: !state.gameSaving })),
+    saveGame: async (id, inGameTime, additionalSaveData) => {
+        
+    }
 }))
 
 
