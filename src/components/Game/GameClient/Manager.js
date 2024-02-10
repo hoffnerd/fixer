@@ -11,6 +11,8 @@ import SaveFileId from "./SaveFileId";
 import InGameTime from "./InGameTime";
 import SaveGame from "./SaveGame";
 import Resources from "./Resources";
+import Dialog from "./Dialog";
+import Events from "./Events";
 // Other-----------------------------------------------------------------------------
 import { isObj } from "@/util";
 
@@ -27,11 +29,18 @@ export default function Manager({ saveFileId }){
 
     if(!isObj(saveFile, ["id"])) return;
 
-    return <Debugger>
-        <SaveFileId propSaveFileId={saveFileId}/>
-        <InGameTime propInGameTime={saveFile.inGameTime}/>
-        <SaveGame propInGameTime={saveFile.inGameTime}/>
-        <Resources resources={saveFile?.saveData?.resources}/>
-    </Debugger>
+    return (
+        <Debugger>
+
+            <SaveFileId propSaveFileId={saveFileId}/>
+            <InGameTime propInGameTime={saveFile.inGameTime}/>
+            <SaveGame propInGameTime={saveFile.inGameTime}/>
+            <Resources resources={saveFile?.saveData?.resources}/>
+            <Dialog/>
+
+            <Events/>
+
+        </Debugger>
+    )
         
 }

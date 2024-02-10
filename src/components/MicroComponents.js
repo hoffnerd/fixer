@@ -1,7 +1,7 @@
 
 
-export const CenterVertically = ({ children }) => (
+export const CenterVertically = ({ children, className="" }) => (
     <div className="tableToCenterContent">
-        <div className="cellCentered">{children}</div>
+        <div className={`cellCentered ${className}`}>{children}</div>
     </div>
 );

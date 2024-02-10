@@ -4,8 +4,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { readSaveFile, readSaveFilesByUserId, updateSaveFile } from "@/actions/saveFile";
 
 
-const updateSaveFileDefaults = { id:null , inGameTime:null, additionalSaveData:null }
-
 
 export const useReadSaveFilesByUserId = () => useQuery({
     queryKey: [ "readSaveFilesByUserId" ],
@@ -14,7 +12,7 @@ export const useReadSaveFilesByUserId = () => useQuery({
 
 export const useReadSaveFile = (id) => useQuery({
     queryKey: [ `readSaveFile`, { id } ],
-    queryFn: async () => {console.log("hit useReadSaveFile", id); return readSaveFile(id);},
+    queryFn: async () => readSaveFile(id),
 })
 
 export const useUpdateSaveFile = () => useMutation({

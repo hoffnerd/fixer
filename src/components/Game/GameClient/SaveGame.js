@@ -3,7 +3,6 @@
 // React/Next------------------------------------------------------------------------
 import { useEffect, useState } from 'react';
 // Actions---------------------------------------------------------------------------
-import { updateSaveFile } from '@/actions/saveFile';
 // Context---------------------------------------------------------------------------
 import { useSession } from "next-auth/react";
 // Stores----------------------------------------------------------------------------
@@ -26,7 +25,6 @@ export default function SaveGame({ propInGameTime }){
     // ===== Context =====
     const { data: session, status} = useSession();
     
-    const queryClient = useQueryClient()
 
 
     //______________________________________________________________________________________
@@ -40,7 +38,8 @@ export default function SaveGame({ propInGameTime }){
 
 
     //______________________________________________________________________________________
-    // ===== State =====
+    // ===== React Query =====
+    const queryClient = useQueryClient()
     const { mutate } = useUpdateSaveFile();
 
 
@@ -55,7 +54,6 @@ export default function SaveGame({ propInGameTime }){
     // ===== Use Effect =====
     
     useEffect(() => {
-        console.log({saveFileId})
         if(initialized && !saveFileId) return;
         setLastSavedTime(propInGameTime);
         setInitialized(true);

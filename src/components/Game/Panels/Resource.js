@@ -1,11 +1,9 @@
 "use client"
 
 // Stores------------------------------------------------------------------------
-// import { useAppContext } from "@/context/AppContext";
 import { useResourceStore } from "@/stores/game";
 // Components------------------------------------------------------------------------
 import { CenterVertically } from "@/components/MicroComponents";
-import { useEffect } from "react";
 
 
 
@@ -17,13 +15,3 @@ export default function Resource ({ keyResource, display, component=true }) {
     
     return <CenterVertically>{component && "⚙"}{display}: {resource}</CenterVertically>
 }
-
-
-
-// export default function Resource ({ keyResource, display, component=true }) {
-//     console.log({ trace:"Resource", keyResource});
-    
-//     const appContext = useAppContext();
-    
-//     return <CenterVertically>{component && "⚙"}{display}: {appContext[`gameResources_${keyResource}`]}</CenterVertically>
-// }

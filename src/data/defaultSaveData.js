@@ -5,5 +5,7 @@ export const defaultSaveData = {
         w: 5, // Weapon Components
         t: 5, // Tech Components
         q: 5, // Quickhack Components
-    }
+    },
+    
+    chapter: 0
 }

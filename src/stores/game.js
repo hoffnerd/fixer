@@ -21,9 +21,6 @@ export const useSaveFileIdStore = create((set) => ({
 export const useGameSavingStore = create((set) => ({
     gameSaving: false,
     toggleGameSaving: () => set((state) => ({ gameSaving: !state.gameSaving })),
-    saveGame: async (id, inGameTime, additionalSaveData) => {
-        
-    }
 }))
 
 
@@ -44,4 +41,26 @@ export const useResourceStore = create((set) => ({
     q: 0,
     setResource: (key, amount) => set(() => ({ [key]: amount })),
     alterResource: (key, amount) => set((state) => ({ [key]: state[key] + amount })),
+}))
+
+
+
+const defaultFullScreenDialogStoreState = { 
+    isOpen: false,
+    isFullScreen: true,
+    isBorderNeon: true,
+    isTextNeon: true,
+    neonColor:"blue",
+    className:"",
+    title: null,
+    description: null,
+    content: null,
+    closeButtonText: "Close",
+    extraCloseFunction: () => {  return; }
+}
+export const useFullScreenDialogStore = create((set) => ({
+    ...defaultFullScreenDialogStoreState,
+    toggleIsOpen: () => set((state) => ({ open: !state.open })),
+    setDialog: (state) => set(() => ({ ...state })),
+    resetDialog: () => set(() => ({ ...defaultFullScreenDialogStoreState })),
 }))

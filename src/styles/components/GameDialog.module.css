@@ -1,0 +1,39 @@
+.content {
+    height: 90%;
+}
+
+@media only screen and (max-height: 800px){
+    .content{
+        height: 85%;
+    }
+}
+
+@media only screen and (max-height: 600px){
+    .content{
+        height: 80%;
+    }
+}
+
+@media only screen and (max-height: 450px){
+    .content{
+        height: 75%;
+    }
+}
+
+@media only screen and (max-height: 350px){
+    .content{
+        height: 70%;
+    }
+}
+
+@media only screen and (max-height: 300px){
+    .content{
+        height: 65%;
+    }
+}
+
+@media only screen and (max-height: 280px){
+    .content{
+        height: 60%;
+    }
+}
