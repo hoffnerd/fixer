@@ -5,11 +5,10 @@
 import { useEffect } from "react";
 // Context---------------------------------------------------------------------------
 // Stores----------------------------------------------------------------------------
-import { useFullScreenDialogStore, useSaveFileIdStore } from "@/stores/game";
+import { useSaveFileIdStore } from "@/stores/game";
 // Hooks-----------------------------------------------------------------------------
 import useSaveGame from "@/hooks/useSaveGame";
 // Components------------------------------------------------------------------------
-import Chapter0 from "@/components/story/Chapter0";
 // Data------------------------------------------------------------------------------
 import { defaultSaveData } from "@/data/defaultSaveData";
 // Other-----------------------------------------------------------------------------
@@ -17,17 +16,16 @@ import { isArray, isObj } from "@/util";
 
 //______________________________________________________________________________________
 // ===== Component =====
-export default function Events({ saveData }){
+export default function Notifications({ saveData }){
 
     //______________________________________________________________________________________
     // ===== Constants =====
-    const { chapter, articles } = saveData ? { ...defaultSaveData, ...saveData } : defaultSaveData;
+    const { articles, notifications } = isObj(saveData) ? { ...defaultSaveData, ...saveData } : defaultSaveData;
 
 
 
     //______________________________________________________________________________________
     // ===== Stores =====
-    const setDialog = useFullScreenDialogStore((state) => state.setDialog);
     const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
 
 
@@ -40,29 +38,34 @@ export default function Events({ saveData }){
 
     //______________________________________________________________________________________
     // ===== Use Effects =====
-
+    
     useEffect(() => {
         if(!saveFileId) return;
-        if(chapter !== 0) return;
-        setDialog({ 
-            isOpen: true,
-            description: "Sometime after 2077, a message appears on holos all over Night City...",
-            content: <Chapter0/>,
-            extraCloseFunction: () => saveGame({ chapter: 1 })
-        }); 
-    }, [saveFileId, chapter]) 
+        if(!isArray(articles)) return;
+        
+        let articleNotificationsToAdd = [];
 
-    // useEffect(() => {
-    //     if(!saveFileId) return;
-    //     if(chapter !== 1) return;
-    //     if(!isArray(articles)) return;
-    //     if(articles[0] !== 0) return;
-    //     setTimeout(() => {
-    //         let newArticles = [ ...defaultSaveData.articles, ...articles ];
-    //         newArticles[0] = 1;
-    //         saveGame({ newsArticles: newArticles })
-    //     }, 1000);
-    // }, [saveFileId, chapter, saveData]) 
+        articles.forEach((article, index) => {
+            if(article === 0) return;
+
+            const notificationToCheck = `a_${index}`;
+            console.log({ trace:"Notifications > useEffect", article, index, notificationToCheck });
+
+            let shouldAddArticleToNotifications = true;
+
+            if(isArray(notifications)){
+                for (let i = 0; i < notifications.length; i++) {
+                    const notification = notifications[i];
+                    if(notification === notificationToCheck){
+                        shouldAddArticleToNotifications = false;
+                        break;
+                    }
+                }
+            }
+
+            shouldAddArticleToNotifications && articleNotificationsToAdd.push(notificationToCheck);
+        });
+    }, [saveFileId, articles])
     
 
 

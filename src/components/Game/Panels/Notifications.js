@@ -1,3 +1,4 @@
+"use client"
 
 // Styles ---------------------------------------------------------------------------
 import styles from "@/styles/game.module.css";

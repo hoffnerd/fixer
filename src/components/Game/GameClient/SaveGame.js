@@ -16,10 +16,18 @@ import { saveInterval } from '@/data/_config';
 // Other-----------------------------------------------------------------------------
 import { checkRoleAccessLevel, isObj } from '@/util';
 import { useQueryClient } from '@tanstack/react-query';
+import useSaveGame from '@/hooks/useSaveGame';
 
 //______________________________________________________________________________________
 // ===== Component =====
 export default function SaveGame({ propInGameTime }){
+
+    //______________________________________________________________________________________
+    // ===== React Query =====
+    const queryClient = useQueryClient()
+    const { mutate } = useUpdateSaveFile();
+
+
 
     //______________________________________________________________________________________
     // ===== Context =====
@@ -33,14 +41,13 @@ export default function SaveGame({ propInGameTime }){
     const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
     const { gameSaving, toggleGameSaving } = useGameSavingStore((state) => state);
     const { inGameTime, lastSavedTime, setLastSavedTime } = useInGameTimeStore((state) => state);
-    const { e, w, t, q, setResource } = useResourceStore((state) => state)
+    // const { e, w, t, q, setResource } = useResourceStore((state) => state)
 
 
 
     //______________________________________________________________________________________
-    // ===== React Query =====
-    const queryClient = useQueryClient()
-    const { mutate } = useUpdateSaveFile();
+    // ===== Hooks =====
+    const { saveGame } = useSaveGame();
 
 
 
@@ -81,45 +88,7 @@ export default function SaveGame({ propInGameTime }){
     useEffect(() => {
         if(!(initialized && gameSaving)) return;
 
-        // declare that we are subscribed and want the async function below to happen
-        let isSubscribed = true;
-
-        // create an async function that fetches the data so that this `useEffect` may call it below
-        const saveGame = async () => {
-
-            // return early if an unexpected render happened so that the code below does not run twice
-            if(!isSubscribed) return;
-
-            const timeInSeconds = inGameTime;
-
-            mutate({
-                id:saveFileId, 
-                inGameTime:timeInSeconds, 
-                additionalSaveData:{ 
-                    resources:{ e:e+1, w, t, q }
-                },
-                onSuccess: (data, variables) => {
-                    queryClient.setQueryData([`readSaveFile`, { id:variables.id }], data)
-
-                    data?.saveData?.resources?.e && setResource("e", data.saveData.resources.e);
-                    data?.saveData?.resources?.w && setResource("w", data.saveData.resources.w);
-                    data?.saveData?.resources?.t && setResource("t", data.saveData.resources.t);
-                    data?.saveData?.resources?.q && setResource("q", data.saveData.resources.q);
-                    
-                    setLastSavedTime(timeInSeconds);
-                    toggleGameSaving();
-                },
-                onError: () => {
-                    // setErrorMessage(response.message || "Something went wrong creating your save file!");
-                }
-            });
-        }
-
-        // execute the async function defined above
         saveGame();
-
-        // cancel any future `fetchData` functions
-        return () => isSubscribed = false;
     }, [initialized, gameSaving]);
 
 

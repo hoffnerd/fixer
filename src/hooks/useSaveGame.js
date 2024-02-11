@@ -66,21 +66,22 @@ export default function useSaveGame(){
             newSaveFile.additionalSaveData = { ...newSaveFile.additionalSaveData, ...additionalSaveData }
         }
 
-        // mutate({
-        //     ...newSaveFile,
-        //     onSuccess: (data, variables) => {
-        //         console.log({ trace:"useSaveGame > saveGame > mutate > onSuccess", data, variables });
+        mutate({
+            ...newSaveFile,
+            onSuccess: (data, variables) => {
+                console.log({ trace:"useSaveGame > saveGame > mutate > onSuccess", data, variables });
 
-        //         queryClient.setQueryData([`readSaveFile`, { id:variables.id }], data);
+                queryClient.setQueryData([`readSaveFile`, { id:variables.id }], data);
                 
-        //         setLastSavedTime(newSaveFile.inGameTime);
-        //         setGameSaving(false);
-        //     },
-        //     onError: (error, variables) => {
-        //         console.error({ trace:"useSaveGame > saveGame > mutate > onError", error, variables });
-        //         // setErrorMessage(response.message || "Something went wrong creating your save file!");
-        //     }
-        // });
+                setLastSavedTime(newSaveFile.inGameTime);
+                setGameSaving(false);
+            },
+            onError: (error, variables) => {
+                console.error({ trace:"useSaveGame > saveGame > mutate > onError", error, variables });
+                // setErrorMessage(response.message || "Something went wrong creating your save file!");
+                setGameSaving(false);
+            }
+        });
     }
 
     
