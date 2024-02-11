@@ -6,6 +6,7 @@ export const defaultSaveData = {
         t: 5, // Tech Components
         q: 5, // Quickhack Components
     },
-    
+
     chapter: 0
+    
 }

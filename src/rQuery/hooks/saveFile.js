@@ -16,8 +16,9 @@ export const useReadSaveFile = (id) => useQuery({
 })
 
 export const useUpdateSaveFile = () => useMutation({
-    mutationFn: async ({id, inGameTime, additionalSaveData}) => updateSaveFile(id, inGameTime, additionalSaveData),
+    mutationFn: async ({id, inGameTime, additionalSaveData}) => updateSaveFile({id, inGameTime, additionalSaveData}),
     onSuccess: (data, variables) => variables.onSuccess(data, variables),
+    onError: (error, variables) => variables.onError(error, variables),
 })
 
 //https://tanstack.com/query/latest/docs/framework/react/guides/invalidations-from-mutations

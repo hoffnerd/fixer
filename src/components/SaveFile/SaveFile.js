@@ -18,7 +18,7 @@ import { isObj } from "@/util";
 
 //______________________________________________________________________________________
 // ===== Constants =====
-const defaultSaveFile = { id:null, userId:null, name:null, chapter:0, type:null, saveData:null, inGameTime:null, createdAt:null, updatedAt:null };
+const defaultSaveFile = { id:null, userId:null, name:null, type:null, saveData:null, inGameTime:null, createdAt:null, updatedAt:null };
 
 
 
@@ -46,8 +46,8 @@ export default function SaveFile({ saveFile }) {
 
     //______________________________________________________________________________________
     // ===== Component Constants =====
-    const { id, userId, name, chapter, type, saveData, inGameTime, createdAt, updatedAt } = isObj(saveFile) ? { ...defaultSaveFile, ...saveFile } : defaultSaveFile;
-    const { resources } = isObj(saveData) ? saveData : defaultSaveData;
+    const { id, userId, name, type, saveData, inGameTime, createdAt, updatedAt } = isObj(saveFile) ? { ...defaultSaveFile, ...saveFile } : defaultSaveFile;
+    const { resources, chapter } = isObj(saveData) ? { ...defaultSaveData, ...saveData } : defaultSaveData;
 
 
     //______________________________________________________________________________________

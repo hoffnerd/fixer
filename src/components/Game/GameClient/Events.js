@@ -3,12 +3,11 @@
 
 // React/Next------------------------------------------------------------------------
 import { useEffect } from "react";
-// rQuery----------------------------------------------------------------------------
-import { useQueryClient } from "@tanstack/react-query";
-import { useUpdateSaveFile } from "@/rQuery/hooks/saveFile";
 // Context---------------------------------------------------------------------------
-// Stores---------------------------------------------------------------------------
-import { useFullScreenDialogStore } from "@/stores/game";
+// Stores----------------------------------------------------------------------------
+import { useFullScreenDialogStore, useSaveFileIdStore } from "@/stores/game";
+// Hooks-----------------------------------------------------------------------------
+import useSaveGame from "@/hooks/useSaveGame";
 // Components------------------------------------------------------------------------
 import Chapter0 from "@/components/story/Chapter0";
 // Data------------------------------------------------------------------------------
@@ -27,14 +26,15 @@ export default function Events({ saveData }){
 
 
     //______________________________________________________________________________________
-    // ===== React Query =====
-    const queryClient = useQueryClient()
-    const { mutate } = useUpdateSaveFile();
+    // ===== Stores =====
+    const setDialog = useFullScreenDialogStore((state) => state.setDialog);
+    const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
+
 
 
     //______________________________________________________________________________________
-    // ===== Stores =====
-    const setDialog = useFullScreenDialogStore((state) => state.setDialog);
+    // ===== Hooks =====
+    const { saveGame } = useSaveGame();
 
 
 
@@ -42,16 +42,15 @@ export default function Events({ saveData }){
     // ===== Use Effects =====
 
     useEffect(() => {
+        if(!saveFileId) return;
         if(chapter !== 0) return;
         setDialog({ 
             isOpen: true,
-            description: "Sometime after 2077, a message appears on holos everywhere...",
+            description: "Sometime after 2077, a message appears on holos all over Night City...",
             content: <Chapter0/>,
-            extraCloseFunction: () => {
-
-            }
+            extraCloseFunction: () => saveGame({ chapter: 1 })
         });
-    }, [chapter])
+    }, [saveFileId, chapter])
     
 
 

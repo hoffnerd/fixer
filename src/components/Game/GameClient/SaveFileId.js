@@ -6,13 +6,14 @@ import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
 // Stores----------------------------------------------------------------------------
 import { useDebugModeStore, useSaveFileIdStore } from '@/stores/game';
-// Hooks-----------------------------------------------------------------------------
+// Components------------------------------------------------------------------------
+import { Button } from '@/components/shadcn/ui/button';
 // Other-----------------------------------------------------------------------------
-import { checkRoleAccessLevel } from '@/util';
+import { checkRoleAccessLevel, isObj } from '@/util';
 
 //______________________________________________________________________________________
 // ===== Component =====
-export default function SaveFileId({ propSaveFileId }){
+export default function SaveFileId({ saveFile }){
 
     //______________________________________________________________________________________
     // ===== Context =====
@@ -36,10 +37,11 @@ export default function SaveFileId({ propSaveFileId }){
     //______________________________________________________________________________________
     // ===== Use Effect =====
     useEffect(() => {
-        if(initialized) return;
-        setSaveFileId(propSaveFileId);
+        if(initialized && !isObj(saveFile, ["id"])) return;
+
+        setSaveFileId(saveFile.id);
         setInitialized(true);
-    }, [initialized, propSaveFileId])
+    }, [initialized, saveFile])
     
 
 
@@ -48,5 +50,10 @@ export default function SaveFileId({ propSaveFileId }){
 
     if(!(checkRoleAccessLevel(session, "ADMIN") && debugMode && initialized)) return;
     
-    return <p>id: {saveFileId}</p>
+    return <>
+        <Button onClick={()=>console.log(saveFile)}>
+            Log SaveFile
+        </Button>
+        <p>id: {saveFileId}</p>
+    </>
 }

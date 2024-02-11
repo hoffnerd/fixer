@@ -32,13 +32,14 @@ export default function Manager({ saveFileId }){
     return (
         <Debugger>
 
-            <SaveFileId propSaveFileId={saveFileId}/>
+
+            <SaveFileId saveFile={saveFile}/>
             <InGameTime propInGameTime={saveFile.inGameTime}/>
             <SaveGame propInGameTime={saveFile.inGameTime}/>
             <Resources resources={saveFile?.saveData?.resources}/>
             <Dialog/>
 
-            <Events/>
+            <Events saveData={saveFile?.saveData}/>
 
         </Debugger>
     )

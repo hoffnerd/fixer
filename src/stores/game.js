@@ -20,6 +20,7 @@ export const useSaveFileIdStore = create((set) => ({
 
 export const useGameSavingStore = create((set) => ({
     gameSaving: false,
+    setGameSaving: (gameSaving) => set(() => ({ gameSaving })),
     toggleGameSaving: () => set((state) => ({ gameSaving: !state.gameSaving })),
 }))
 
