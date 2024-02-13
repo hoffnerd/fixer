@@ -11,13 +11,6 @@ export const useDebugModeStore = create((set) => ({
 
 
 
-export const useSaveFileIdStore = create((set) => ({
-    saveFileId: null,
-    setSaveFileId: (saveFileId) => set(() => ({ saveFileId })),
-}))
-
-
-
 export const useGameSavingStore = create((set) => ({
     gameSaving: false,
     setGameSaving: (gameSaving) => set(() => ({ gameSaving })),

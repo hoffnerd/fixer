@@ -12,7 +12,7 @@ export const useReadSaveFilesByUserId = () => useQuery({
 
 export const useReadSaveFile = (id) => useQuery({
     queryKey: [ `readSaveFile`, { id } ],
-    queryFn: async () => readSaveFile(id),
+    queryFn: async () => { console.log({ trace:"useReadSaveFile > queryFn", id }); return readSaveFile(id); },
 })
 
 export const useUpdateSaveFile = () => useMutation({

@@ -2,30 +2,29 @@
 
 // React/Next------------------------------------------------------------------------
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 // Actions---------------------------------------------------------------------------
 // Context---------------------------------------------------------------------------
 import { useSession } from "next-auth/react";
 // Stores----------------------------------------------------------------------------
-import { useDebugModeStore, useGameSavingStore, useInGameTimeStore, useResourceStore, useSaveFileIdStore } from '@/stores/game';
+import { useDebugModeStore, useGameSavingStore, useInGameTimeStore } from '@/stores/game';
 // Hooks-----------------------------------------------------------------------------
-import { useUpdateSaveFile } from '@/rQuery/hooks/saveFile';
+import useSaveGame from '@/hooks/useSaveGame';
 // Components------------------------------------------------------------------------
 import ReadableTime from '@/components/SaveFile/ReadableTime';
 // Data------------------------------------------------------------------------------
 import { saveInterval } from '@/data/_config';
 // Other-----------------------------------------------------------------------------
 import { checkRoleAccessLevel, isObj } from '@/util';
-import { useQueryClient } from '@tanstack/react-query';
-import useSaveGame from '@/hooks/useSaveGame';
 
 //______________________________________________________________________________________
 // ===== Component =====
 export default function SaveGame({ propInGameTime }){
 
     //______________________________________________________________________________________
-    // ===== React Query =====
-    const queryClient = useQueryClient()
-    const { mutate } = useUpdateSaveFile();
+    // ===== URL Params  =====
+    const params = useParams();
+    const saveFileId = isObj(params, [ 'id' ]) ? params.id : null;
 
 
 
@@ -38,10 +37,8 @@ export default function SaveGame({ propInGameTime }){
     //______________________________________________________________________________________
     // ===== Stores =====
     const debugMode = useDebugModeStore((state) => state.debugMode);
-    const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
     const { gameSaving, toggleGameSaving } = useGameSavingStore((state) => state);
     const { inGameTime, lastSavedTime, setLastSavedTime } = useInGameTimeStore((state) => state);
-    // const { e, w, t, q, setResource } = useResourceStore((state) => state)
 
 
 

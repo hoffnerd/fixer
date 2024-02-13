@@ -13,7 +13,7 @@ export const defaultSaveData = {
     // 0 = not yet achieved | 1 = achieved but not yet read | 2 = achieved and read
     // articles: [ 0, 0, 0, 1, ],
     articles: {
-        a_0: 0
+        n_0: 0,
     },
 
     // Bucket to show items in notifications panel in the order you achieved them.

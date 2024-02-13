@@ -3,9 +3,9 @@
 
 // React/Next------------------------------------------------------------------------
 import { useEffect } from "react";
+import { useParams } from "next/navigation";
 // Context---------------------------------------------------------------------------
 // Stores----------------------------------------------------------------------------
-import { useSaveFileIdStore } from "@/stores/game";
 // Hooks-----------------------------------------------------------------------------
 import useSaveGame from "@/hooks/useSaveGame";
 // Components------------------------------------------------------------------------
@@ -19,6 +19,13 @@ import { isArray, isObj } from "@/util";
 export default function Notifications({ saveData }){
 
     //______________________________________________________________________________________
+    // ===== URL Params  =====
+    const params = useParams();
+    const saveFileId = isObj(params, [ 'id' ]) ? params.id : null;
+
+
+
+    //______________________________________________________________________________________
     // ===== Constants =====
     const { articles, notifications } = isObj(saveData) ? { ...defaultSaveData, ...saveData } : defaultSaveData;
 
@@ -26,7 +33,6 @@ export default function Notifications({ saveData }){
 
     //______________________________________________________________________________________
     // ===== Stores =====
-    const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
 
 
 
@@ -41,30 +47,34 @@ export default function Notifications({ saveData }){
     
     useEffect(() => {
         if(!saveFileId) return;
-        if(!isArray(articles)) return;
+        if(!isObj(articles)) return;
         
         let articleNotificationsToAdd = [];
 
-        articles.forEach((article, index) => {
+        Object.keys(articles).forEach((key) => {
+            const article = articles[key];
             if(article === 0) return;
 
-            const notificationToCheck = `a_${index}`;
-            console.log({ trace:"Notifications > useEffect", article, index, notificationToCheck });
+            console.log({ trace:"Notifications > useEffect", key, article });
 
             let shouldAddArticleToNotifications = true;
 
             if(isArray(notifications)){
                 for (let i = 0; i < notifications.length; i++) {
                     const notification = notifications[i];
-                    if(notification === notificationToCheck){
+                    if(notification === key){
                         shouldAddArticleToNotifications = false;
                         break;
                     }
                 }
             }
 
-            shouldAddArticleToNotifications && articleNotificationsToAdd.push(notificationToCheck);
+            shouldAddArticleToNotifications && articleNotificationsToAdd.push(key);
         });
+
+        if(!isArray(articleNotificationsToAdd)) return;
+
+        saveGame({ notifications: [ ...notifications, ...articleNotificationsToAdd ] })
     }, [saveFileId, articles])
     
 

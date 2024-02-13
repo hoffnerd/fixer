@@ -55,7 +55,7 @@ export default async function Page({ params }){
                 </div>
             </div>
             <HydrationBoundary state={dehydrate(queryClient)}>
-                <Manager saveFileId={id}/>
+                <Manager/>
                 <div className={styles.game}>
                     <Desktop/>
                     <Tablet/>

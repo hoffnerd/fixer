@@ -3,9 +3,10 @@
 
 // React/Next------------------------------------------------------------------------
 import { useEffect } from "react";
+import { useParams } from "next/navigation";
 // Context---------------------------------------------------------------------------
 // Stores----------------------------------------------------------------------------
-import { useFullScreenDialogStore, useSaveFileIdStore } from "@/stores/game";
+import { useFullScreenDialogStore } from "@/stores/game";
 // Hooks-----------------------------------------------------------------------------
 import useSaveGame from "@/hooks/useSaveGame";
 // Components------------------------------------------------------------------------
@@ -20,15 +21,21 @@ import { isArray, isObj } from "@/util";
 export default function Events({ saveData }){
 
     //______________________________________________________________________________________
+    // ===== URL Params  =====
+    const params = useParams();
+    const saveFileId = isObj(params, [ 'id' ]) ? params.id : null;
+
+
+
+    //______________________________________________________________________________________
     // ===== Constants =====
-    const { chapter, articles } = saveData ? { ...defaultSaveData, ...saveData } : defaultSaveData;
+    const { chapter, articles, notifications } = isObj(saveData) ? { ...defaultSaveData, ...saveData } : defaultSaveData;
 
 
 
     //______________________________________________________________________________________
     // ===== Stores =====
     const setDialog = useFullScreenDialogStore((state) => state.setDialog);
-    const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
 
 
 
@@ -52,17 +59,16 @@ export default function Events({ saveData }){
         }); 
     }, [saveFileId, chapter]) 
 
-    // useEffect(() => {
-    //     if(!saveFileId) return;
-    //     if(chapter !== 1) return;
-    //     if(!isArray(articles)) return;
-    //     if(articles[0] !== 0) return;
-    //     setTimeout(() => {
-    //         let newArticles = [ ...defaultSaveData.articles, ...articles ];
-    //         newArticles[0] = 1;
-    //         saveGame({ newsArticles: newArticles })
-    //     }, 1000);
-    // }, [saveFileId, chapter, saveData]) 
+    useEffect(() => {
+        if(!saveFileId) return;
+        if(chapter !== 1) return;
+        if(!isObj(articles)) return;
+        if(articles.n_0 !== 0) return;
+        setTimeout(() => saveGame({ 
+            articles: { ...defaultSaveData.articles, ...articles, n_0:1 },
+            notifications: isArray(notifications) ? [ ...notifications, "n_0" ] : [ "n_0" ]
+        }), 1000);
+    }, [saveFileId, chapter, saveData]) 
     
 
 

@@ -1,17 +1,18 @@
 "use client"
 
 // React/Next------------------------------------------------------------------------
+import { useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 // Actions---------------------------------------------------------------------------
 // Context---------------------------------------------------------------------------
 // Stores----------------------------------------------------------------------------
-import { useGameSavingStore, useInGameTimeStore, useResourceStore, useSaveFileIdStore } from '@/stores/game';
+import { useGameSavingStore, useInGameTimeStore, useResourceStore } from '@/stores/game';
 // Hooks-----------------------------------------------------------------------------
 import { useUpdateSaveFile } from '@/rQuery/hooks/saveFile';
 // Data------------------------------------------------------------------------------
 // Other-----------------------------------------------------------------------------
 import { isObj } from '@/util';
-import { useEffect } from 'react';
 
 
 
@@ -20,9 +21,14 @@ import { useEffect } from 'react';
 export default function useSaveGame(){
 
     //______________________________________________________________________________________
-    // ===== Stores =====
+    // ===== URL Params  =====
+    const params = useParams();
+    const saveFileId = isObj(params, [ 'id' ]) ? params.id : null;
 
-    const saveFileId = useSaveFileIdStore((state) => state.saveFileId);
+
+
+    //______________________________________________________________________________________
+    // ===== Stores =====
 
     const { gameSaving, setGameSaving } = useGameSavingStore((state) => state);
 
@@ -37,10 +43,6 @@ export default function useSaveGame(){
     // ===== React Query =====
     const queryClient = useQueryClient();
     const { mutate } = useUpdateSaveFile();
-
-    useEffect(() => {
-        console.log({ trace:"useSaveGame", saveFileId })
-    }, [saveFileId])
     
 
 
@@ -48,9 +50,7 @@ export default function useSaveGame(){
     // ===== Functions =====
 
     const saveGame = (additionalSaveData) => {
-        console.log({ trace:"useSaveGame > saveGame", additionalSaveData, saveFileId, gameSaving });
         if((!saveFileId) && gameSaving) return;
-        console.log({ trace:"useSaveGame > saveGame", passed:true });
 
         setGameSaving(true);
 
