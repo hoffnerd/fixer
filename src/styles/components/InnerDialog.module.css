@@ -1,0 +1,108 @@
+.container{
+    --_height: var(--height, 70svh);
+
+    display: flex;
+    flex-direction: row;
+}
+
+.container aside{
+    width: 20%;
+}
+
+.container .content{
+    flex: 1 1 0%;
+    padding-left: 0.5rem;
+}
+
+.container aside,
+.container .content{
+    --_height: var(--height, 70svh);
+    height: var(--_height);
+    overflow-y: auto;
+}
+
+.container .content .main{
+    padding-left: 2rem;
+}
+
+@media (max-width: 1100px) {
+    .container aside{
+        width: 30%;
+    }
+}
+
+@media (max-width: 800px) {
+    .container aside{
+        width: 35%;
+    }
+}
+
+@media (max-width: 652px) {
+    .container{
+        flex-direction: column;
+    }
+    .container aside{
+        width: unset;
+        --height: 10svh !important;
+    }
+    .container .content .main{
+        --_height: var(--height, 60svh);
+        height: var(--_height);
+        overflow-y: auto;
+        padding-left: unset;
+    }
+}
+
+@media only screen and (max-height: 800px){
+    .container aside,
+    .container .content{
+        --height: 65svh;
+    }
+    .container .content .main{
+        --height: 55svh;
+    }
+}
+
+@media only screen and (max-height: 600px){
+    .container aside,
+    .container .content{
+        --height: 58svh;
+    }
+    .container .content .main{
+        --height: 48svh;
+    }
+}
+
+@media only screen and (max-height: 450px){
+    .container aside,
+    .container .content{
+        --height: 52svh;
+    }
+    .container .content .main{
+        --height: 42svh;
+    }
+}
+
+@media only screen and (max-height: 350px){
+    .container aside,
+    .container .content{
+        --height: 45svh;
+    }
+    .container .content .main{
+        --height: 35svh;
+    }
+}
+
+@media only screen and (max-height: 300px){
+    .container aside,
+    .container .content{
+        --height: 42svh;
+    }
+}
+
+@media only screen and (max-height: 280px){
+    .container aside,
+    .container .content{
+        --height: 39svh;
+    }
+}

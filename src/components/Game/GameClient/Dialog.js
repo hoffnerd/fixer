@@ -60,7 +60,7 @@ export default function GameDialog({ }) {
     // ===== Component Return  =====
     return <>
         {(checkRoleAccessLevel(session, "ADMIN") && debugMode) && <>
-            <Button onClick={()=>setDialog({ isOpen:true, content:"Hello World" })}>
+            <Button variant="link" onClick={()=>setDialog({ isOpen:true, content:"Hello World" })}>
                 Debug Open Dialog
             </Button>
         </>}

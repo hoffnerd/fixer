@@ -55,10 +55,8 @@ export default function Notifications({ saveData }){
             const article = articles[key];
             if(article === 0) return;
 
-            console.log({ trace:"Notifications > useEffect", key, article });
-
             let shouldAddArticleToNotifications = true;
-
+            
             if(isArray(notifications)){
                 for (let i = 0; i < notifications.length; i++) {
                     const notification = notifications[i];
@@ -69,7 +67,10 @@ export default function Notifications({ saveData }){
                 }
             }
 
-            shouldAddArticleToNotifications && articleNotificationsToAdd.push(key);
+            if(shouldAddArticleToNotifications){
+                console.log({ trace:"Notifications adder process", key, article });
+                articleNotificationsToAdd.push(key);
+            }
         });
 
         if(!isArray(articleNotificationsToAdd)) return;

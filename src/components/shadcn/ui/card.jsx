@@ -1,6 +1,18 @@
 import * as React from "react";
 import { cn } from "@/util/shadcn.js";
 
+const CardBtn = React.forwardRef(({ className, ...props }, ref) => (
+    <button
+        ref={ref}
+        className={cn(
+            "rounded-lg border bg-card text-card-foreground shadow-sm",
+            className
+        )}
+        {...props}
+    />
+));
+CardBtn.displayName = "CardBtn";
+
 const Card = React.forwardRef(({ className, ...props }, ref) => (
     <div
         ref={ref}
@@ -58,6 +70,7 @@ const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
 CardFooter.displayName = "CardFooter";
 
 export {
+    CardBtn,
     Card,
     CardHeader,
     CardFooter,

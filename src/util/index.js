@@ -82,3 +82,13 @@ export const getScreenNameFromEmail = (email) => {
     if (isArray(extracted, 1) && extracted[1]) return extracted[1];
     return email;
 }
+
+/**
+ * Converts an object into an array by pushing the values of the object into a new array.
+ * @param obj - object that needs to be converted into an array.
+ * @returns array that contains the values of the properties of the object passed as an argument.
+ */
+export const convertObjToArray = (obj) => {
+    if(!isObj(obj)) return [];
+    return Object.keys(obj).map((key) => obj[key]);
+}
