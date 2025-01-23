@@ -12,8 +12,8 @@ import { renderFontAwesomeIcons } from "@/util/icons";
 //______________________________________________________________________________________
 // ===== Constants =====
 const data = [
-    // { link:"/", icon:"faCircleQuestion", display:"?", position:"first" },
-    // { link:"/", icon:"faCircleQuestion", display:"?", position:"second" },
+    // { link:"/", icon: "faCircleQuestion", display:"?", position:"first" },
+    // { link:"/", icon: "faCircleQuestion", display:"?", position:"second" },
     { link:"/about", icon:"faCircleInfo", display:"Information", position:"first" },
     { link:"/about/how", icon:"faCircleQuestion", display:"How to Play", position:"second" },
     { link:"/play", icon:"faCircleUser", display:"Join Wait List", position:"third" },
