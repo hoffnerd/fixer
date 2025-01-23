@@ -1,31 +1,26 @@
 {
     "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#6b007a",
+        "activityBar.activeBackground": "#5994e0",
         "activityBar.background": "#6b007a",
-        "activityBar.foreground": "#e7e7e7",
+        "activityBar.foreground": "#15202b",
         "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#807000",
-        "activityBarBadge.foreground": "#e7e7e7",
-        "commandCenter.border": "#e7e7e799",
+        "activityBarBadge.background": "#b6a000",
+        "activityBarBadge.foreground": "#000000",
+        "commandCenter.border": "#f18aff",
         "sash.hoverBorder": "#6b007a",
-        "statusBar.background": "#3e0047",
+        "statusBar.background": "#2e78d8",
         "statusBar.foreground": "#e7e7e7",
         "statusBarItem.hoverBackground": "#6b007a",
         "statusBarItem.remoteBackground": "#3e0047",
         "statusBarItem.remoteForeground": "#e7e7e7",
         "titleBar.activeBackground": "#3e0047",
         "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#3e004799",
+        "titleBar.inactiveBackground": "#2e0035",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.color": "#3e0047",
     "cSpell.words": [
-        "holos",
-        "merc",
-        "mercs",
-        "Okada",
-        "quickhack",
-        "Wakako",
-        "Westbrook"
-    ],
+        "Kalibar",
+        "Regen" 
+    ]
 }
