@@ -11,20 +11,22 @@ datasource db {
 }
 
 model Session {
-    id       String    @id @default(cuid())
-    SaveFile SaveFile?
+    id        String    @id @default(cuid())
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    SaveFile  SaveFile?
 }
 
 model SaveFile {
     id         String   @id @default(cuid())
     sessionId  String   @unique
     resources  Json?
-    mercs  Json?
-    businesses  Json?
+    mercs      Json?
+    businesses Json?
     contracts  Json?
     inGameTime Int      @default(0)
     createdAt  DateTime @default(now())
-    updatedAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 
     session Session @relation(fields: [sessionId], references: [id])
 }
