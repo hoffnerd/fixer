@@ -6,7 +6,7 @@ import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 // rQuery ---------------------------------------------------------------------------
 import { getQueryClient } from "@/rQuery/getQueryClient";
 // Components -----------------------------------------------------------------------
-import Loader from '@/components/Loader';
+import Loader from '@/_nextjsCommon/components/Loader';
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 

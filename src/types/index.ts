@@ -102,3 +102,40 @@ export interface SaveFile extends Omit<SaveFilePrisma, 'resources' | 'mercs' | '
     businesses: Businesses;
     contracts: Contracts;
 }
+
+export interface SaveFileOptional {
+    id?: string;
+    resources?: Resources;
+    mercs?: Mercs;
+    businesses?: Businesses;
+    contracts?: Contracts;
+    inGameTime?: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+
+
+//______________________________________________________________________________________
+// ===== Stores =====
+
+export type ActiveMobilePanels = "resources" | "mercs" | "contracts" | "other";
+
+export interface GameStoreStateOptional {
+    isGameSaving?: boolean;
+    inGameTime?: number;
+    lastSavedTime?: Date;
+    activeMobilePanel?: ActiveMobilePanels;
+}
+
+export interface GameStoreState {
+    isGameSaving: boolean;
+    inGameTime: number;
+    lastSavedTime: Date;
+    activeMobilePanel: ActiveMobilePanels;
+}
+
+export interface GameStoreFunctions {
+    setStoreKeyValuePair: (obj: GameStoreStateOptional) => void;
+}
+

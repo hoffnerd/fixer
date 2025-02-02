@@ -11,7 +11,9 @@ import { GeistSans } from "geist/font/sans";
 import { PROJECT_DISPLAY_NAME, PROJECT_DESCRIPTION } from "@/data/_config";
 // Components -----------------------------------------------------------------------
 import ClientProvider from "@/rQuery/components/ClientProvider";
-import SessionClient from "@/components/SessionClient";
+import Debugger from "@/_nextjsCommon/components/Debugger";
+import SavingGameIcon from "@/components/gameClient/SavingGameIcon";
+import GameClient from "@/components/gameClient/GameClient";
 // Other ----------------------------------------------------------------------------
 
 
@@ -34,10 +36,12 @@ export default function RootLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="en" className={`${GeistSans.variable}`}>
+        <html lang="en" className={`${GeistSans.variable} dark neonEffect neScrollBar neColorPurple`}>
             <body>
                 <ClientProvider>
-                    <SessionClient />
+                    <Debugger shouldRender={process.env.NODE_ENV === "development"} />
+                    <SavingGameIcon />
+                    <GameClient />
                     {children}
                 </ClientProvider>
             </body>

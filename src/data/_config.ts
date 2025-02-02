@@ -1,3 +1,4 @@
+import { type SaveFile, type SaveFileOptional } from "@/types";
 
 
 
@@ -19,5 +20,18 @@ export const PROJECT_ERRORS = {
 
 
 
+//______________________________________________________________________________________
+// ===== Project Configuration =====
 
+export const DEFAULT_SAVE_FILE: SaveFileOptional = {
+    resources: {
+        euros: 100,
+        weapons: 5,
+        techs: 5,
+        hacks: 5,
+    },
+    mercs: {},
+    businesses: {},
+    contracts: {},
+}
 
