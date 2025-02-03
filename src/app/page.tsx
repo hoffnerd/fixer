@@ -7,8 +7,9 @@ import { BookIcon, CastleIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
 // Stores ---------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
-import MobileNavButton from "@/components/MobileNavButton";
 import Panel from "@/components/Panel";
+import Resources from "@/components/Resources";
+import MobileNavButton from "@/components/MobileNavButton";
 // Other ----------------------------------------------------------------------------
 
 
@@ -25,7 +26,7 @@ export default function Page() {
                     <div className="h-full grid grid-cols-1 lg:grid-cols-3 lg:gap-6">
                         
                         <Panel panelKey="resources">
-                            Resources
+                            <Resources/>
                         </Panel>
                         <Panel panelKey="mercs">
                             Mercs

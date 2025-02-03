@@ -1,4 +1,5 @@
 import { type SaveFile, type SaveFileOptional } from "@/types";
+import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon } from "lucide-react";
 
 
 
@@ -21,13 +22,13 @@ export const PROJECT_ERRORS = {
 
 
 //______________________________________________________________________________________
-// ===== Project Configuration =====
+// ===== SaveFile =====
 
 export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     resources: {
         euros: 100,
         weapons: 5,
-        techs: 5,
+        medicals: 5,
         hacks: 5,
     },
     mercs: {},
@@ -35,3 +36,30 @@ export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     contracts: {},
 }
 
+
+
+//______________________________________________________________________________________
+// ===== Resources =====
+
+export const RESOURCES_INFO = {
+    euros: {    
+        display: "Eurodollars",
+        description: "The European Currency Unit (symbol: €$ or §; and abbreviated to ecu), more commonly referred to as Eurodollar (ed) or Eurobuck (eb), and colloquially known as eddie and ebuck, is the main currency of Europe and North America.",
+        IconComponent: BadgeEuroIcon,
+    },
+    weapons: {
+        display: "Weapon Components",
+        description: "Broken pieces weapons that can be repurposed into new weapons. Some clients may pay you in weapons components.",
+        IconComponent: DrillIcon,
+    },
+    medicals: {
+        display: "Medical Components",
+        description: "Medical components are used to heal bio. Some clients may pay you in medical components.",
+        IconComponent: HeartPulseIcon,
+    },
+    hacks: {
+        display: "QuickHack Components",
+        description: "Components used to upgrade cyberware. Some clients may pay you in quickhack components.",
+        IconComponent: CircuitBoardIcon,
+    },
+}

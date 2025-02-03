@@ -8,14 +8,14 @@ import { type SaveFile as SaveFilePrisma } from "@prisma/client";
 export interface Resources {
     euros: number;
     weapons: number;
-    techs: number;
+    medicals: number;
     hacks: number;
 }
 
 export interface ResourceRewards {
     euros?: number;
     weapons?: number;
-    techs?: number;
+    medicals?: number;
     hacks?: number;
     xp?: number;
 }
