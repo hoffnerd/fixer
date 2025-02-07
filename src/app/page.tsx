@@ -10,6 +10,7 @@ import { BookIcon, CastleIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
 import Panel from "@/components/Panel";
 import Resources from "@/components/Resources";
 import MobileNavButton from "@/components/MobileNavButton";
+import Mercs from "@/components/Mercs";
 // Other ----------------------------------------------------------------------------
 
 
@@ -29,7 +30,7 @@ export default function Page() {
                             <Resources/>
                         </Panel>
                         <Panel panelKey="mercs">
-                            Mercs
+                            <Mercs/>
                         </Panel>
                         <Panel panelKey="contracts">
                             Contracts

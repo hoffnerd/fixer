@@ -4,8 +4,10 @@
 // Server ---------------------------------------------------------------------------
 import { db } from "./db";
 import { serverAction } from "./actions";
+// Data -----------------------------------------------------------------------------
 import { DEFAULT_SAVE_FILE } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
+import { getRandomMerc } from "@/utils";
 
 
 
@@ -24,7 +26,17 @@ export const readSaveFile = async (id?: string | null) => serverAction(async () 
 //______________________________________________________________________________________
 // ===== Creates =====
 
-const rawCreateSaveFile = async () => await db.saveFile.create({ data: { ...(DEFAULT_SAVE_FILE as any) } });
+const rawCreateSaveFile = async () => {
+    const starterMerc = getRandomMerc();
+    return await db.saveFile.create({ 
+        data: { 
+            ...(DEFAULT_SAVE_FILE as any),
+            mercs: {
+                [starterMerc.key]: starterMerc,
+            }
+        } 
+    })
+};
 
 // export const createSaveFile = () => serverAction(async () => {
 //     return await db.saveFile.create({ data: {} });

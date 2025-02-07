@@ -23,12 +23,6 @@ const DEFAULT_RESOURCES: ResourcesType = {
     hacks: 0,
 }
 
-const RESOURCES_ICONS = {
-    euros: <BadgeEuroIcon/>,
-    weapons: <DrillIcon/>,
-    medicals: <CircuitBoardIcon/>,
-    hacks: <KeyboardIcon/>,
-}
 
 
 //______________________________________________________________________________________

@@ -35,6 +35,8 @@ export interface Merc {
     key: string;
     display: string;
     levels: MercLevels;
+    unusedLevels: number;
+    xp: number;
 }
 
 export interface Mercs {

@@ -43,7 +43,7 @@ export function useSaveFile() {
 
     const clearSaveFile = async () => {
         localStorage.removeItem("saveFileId");
-        queryClient.invalidateQueries({ queryKey: ['saveFileId'], refetchType: "all" });
+        await queryClient.invalidateQueries({ queryKey: ['saveFileId'], refetchType: "all" });
     }
 
 
