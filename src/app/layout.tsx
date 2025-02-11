@@ -14,6 +14,7 @@ import ClientProvider from "@/rQuery/components/ClientProvider";
 import Debugger from "@/_nextjsCommon/components/Debugger";
 import SavingGameIcon from "@/components/gameClient/SavingGameIcon";
 import GameClient from "@/components/gameClient/GameClient";
+import { Toaster } from "@/components/shadcn/ui/sonner";
 // Other ----------------------------------------------------------------------------
 
 
@@ -43,6 +44,7 @@ export default function RootLayout({
                     <SavingGameIcon />
                     <GameClient />
                     {children}
+                    <Toaster />
                 </ClientProvider>
             </body>
         </html>

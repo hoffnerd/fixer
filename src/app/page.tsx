@@ -33,7 +33,7 @@ export default function Page() {
                             <Mercs/>
                         </Panel>
                         <Panel panelKey="contracts">
-                            Contracts
+                            <h3 className="text-3xl pb-2">Contracts</h3>
                         </Panel>
 
                     </div>

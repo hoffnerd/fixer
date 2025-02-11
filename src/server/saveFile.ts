@@ -1,6 +1,7 @@
 "use server"
 
 // Types ----------------------------------------------------------------------------
+import { type SaveFile } from "@/types";
 // Server ---------------------------------------------------------------------------
 import { db } from "./db";
 import { serverAction } from "./actions";
@@ -8,6 +9,7 @@ import { serverAction } from "./actions";
 import { DEFAULT_SAVE_FILE } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { getRandomMerc } from "@/utils";
+import { sleep } from "@/_nextjsCommon/utils";
 
 
 
@@ -47,6 +49,18 @@ const rawCreateSaveFile = async () => {
 //______________________________________________________________________________________
 // ===== Updates =====
 
-// export const updateSaveFile = (id: string) => serverAction(async () => {
-//     return await db.saveFile.update({ where: { id }, data: { updatedAt: new Date() } });
-// }, { trace: "updateSaveFile" });
+export const addRandomMerc = async (id: string) => serverAction(async () => {
+    const saveFile: SaveFile = await db.saveFile.findUnique({ where: { id } }) as any;
+    const existingMercs = saveFile?.mercs || {};
+    const randomMerc = getRandomMerc(existingMercs);
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: ({ 
+            mercs: { 
+                ...existingMercs,
+                [randomMerc.key]: randomMerc 
+            } 
+        } as any)
+    });
+}, { trace: "addRandomMerc" });
+

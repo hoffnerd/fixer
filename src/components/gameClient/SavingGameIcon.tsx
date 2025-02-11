@@ -25,7 +25,7 @@ export default function SavingGameIcon(){
 
     if(!isGameSaving) return;
     return (
-        <div className="absolute top-0 left-0">
+        <div className="absolute top-0 left-0 z-50">
             <div className="p-2">
                 <SaveIcon className="w-10 h-10"/>
             </div>

@@ -33,13 +33,14 @@ export default function Resources() {
     const resources = saveFile?.resources ? { ...DEFAULT_RESOURCES, ...saveFile.resources } : DEFAULT_RESOURCES;
 
     if(!saveFile) return <></>;
-    return (
+    return <>
+        <h3 className="text-3xl pb-2">Resources</h3>
         <ul className="text-xl">
             <ResourceBadge resourceKey="euros" value={resources.euros}/>
             <ResourceBadge resourceKey="weapons" value={resources.weapons}/>
             <ResourceBadge resourceKey="medicals" value={resources.medicals}/>
             <ResourceBadge resourceKey="hacks" value={resources.hacks}/>
         </ul>
-    );
+    </>
 }
 

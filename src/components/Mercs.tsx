@@ -56,6 +56,9 @@ export default function Mercs() {
     const mercs = saveFile?.mercs || {};
 
     if(!saveFile) return <></>;
-    return Object.entries(mercs).map(([key, merc]) => <Merc key={key} merc={merc}/>);
+    return <>
+        <h3 className="text-3xl pb-2">Mercs</h3>
+        {Object.entries(mercs).map(([key, merc]) => <Merc key={key} merc={merc}/>)}
+    </>
 }
 

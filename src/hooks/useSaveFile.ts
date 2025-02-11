@@ -3,11 +3,13 @@
 // Types ----------------------------------------------------------------------------
 import { type SaveFile } from "@/types";
 // Packages -------------------------------------------------------------------------
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
-import { readSaveFile } from "@/server/saveFile";
+import { addRandomMerc, readSaveFile } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
+import { useState } from "react";
+import { toast } from "sonner";
 // Other ----------------------------------------------------------------------------
 
 
@@ -20,6 +22,8 @@ export function useSaveFile() {
     //______________________________________________________________________________________
     // ===== Stores =====
     const setStoreKeyValuePair = useGameStore((state) => state.setStoreKeyValuePair);
+
+
 
     //______________________________________________________________________________________
     // ===== Queries =====
@@ -35,6 +39,25 @@ export function useSaveFile() {
             return { ...response };
         },
     }) 
+
+
+
+    //______________________________________________________________________________________
+    // ===== Mutations =====
+
+    const addRandomMercMutation = useMutation({
+        mutationFn: addRandomMerc,
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: (data) => {
+            if(data?.error) throw new Error(data?.message || "Unknown Error!");
+            queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+            // setStoreKeyValuePair({ isGameSaving: false });
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
 
 
 
@@ -55,6 +78,8 @@ export function useSaveFile() {
         error: isError || data?.error,
         message: error?.message || data?.message || "Unknown `useSaveFile` Error!",
         saveFile: data?.data as SaveFile | null | undefined,
+        saveFileId: data?.data?.id as SaveFile["id"] | null | undefined,
         clearSaveFile,
+        addRandomMercMutation,
     }
 }
