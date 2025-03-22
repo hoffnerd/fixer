@@ -9,6 +9,7 @@ import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
 import { CardContent, CardFooter } from "./shadcn/ui/card";
 import CardButton from "./shadcn/CardButton";
+import { ObjectDisplay } from "@/_nextjsCommon/components/microComponents";
 // Other ----------------------------------------------------------------------------
 
 
@@ -51,11 +52,12 @@ function Merc({ merc }: Readonly<{ merc: MercType }>) {
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function Mercs() {
+export default function Mercs({ isNoUI }: Readonly<{ isNoUI?: boolean }>) {
     const { saveFile } = useSaveFile();
     const mercs = saveFile?.mercs || {};
 
     if(!saveFile) return <></>;
+    if(isNoUI) return <ObjectDisplay className="ml-5 list-disc" obj={mercs} />
     return <>
         <h3 className="text-3xl pb-2">Mercs</h3>
         {Object.entries(mercs).map(([key, merc]) => <Merc key={key} merc={merc}/>)}

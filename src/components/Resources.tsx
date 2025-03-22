@@ -8,6 +8,7 @@ import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, KeyboardIcon } from "lucide
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 import ResourceBadge from "./ResourceBadge";
+import { ObjectDisplay } from "@/_nextjsCommon/components/microComponents";
 // Components -----------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 
@@ -28,11 +29,12 @@ const DEFAULT_RESOURCES: ResourcesType = {
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function Resources() {
+export default function Resources({ isNoUI }: Readonly<{ isNoUI?: boolean }>) {
     const { saveFile } = useSaveFile();
     const resources = saveFile?.resources ? { ...DEFAULT_RESOURCES, ...saveFile.resources } : DEFAULT_RESOURCES;
 
     if(!saveFile) return <></>;
+    if(isNoUI) return <ObjectDisplay className="ml-5 list-disc" obj={resources} />
     return <>
         <h3 className="text-3xl pb-2">Resources</h3>
         <ul className="text-xl">
