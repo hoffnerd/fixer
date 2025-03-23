@@ -9,13 +9,7 @@
 // Other ----------------------------------------------------------------------------
 import { format, isValid } from "date-fns";
 import { normalizeTwoDigitNumber } from "../utils";
-
-
-
-//______________________________________________________________________________________
-// ===== Types & Interfaces =====
-
-type GenericObject = Record<string, unknown>;
+import type { GenericObject } from "@/types";
 
 
 

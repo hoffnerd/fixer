@@ -56,7 +56,14 @@ const findIncomeRates = (saveFile?: SaveFile) => {
             incomeRates[time] = { ...income };
         }
     });
-    return incomeRates;
+
+
+    const incomeRatesSeconds = Object.keys(incomeRates)
+        .map(x => parseInt(x))
+        .sort((a, b) => a - b)
+        .reverse();
+
+    return { incomeRates, incomeRatesSeconds };
 }
 
 
@@ -72,13 +79,9 @@ export default function ResourcesWatcher(){
 
     //______________________________________________________________________________________
     // ===== Hooks =====
-    const { saveFile, updateResourcesMutation } = useSaveFile();
-    // const incomeRates = findIncomeRates(saveFile);
-    const incomeRates = findIncomeRates({ ...saveFile, businesses: FAKE_BUSINESSES } as SaveFile);
-    const incomeRatesSeconds = Object.keys(incomeRates)
-        .map(x => parseInt(x))
-        .sort((a, b) => a - b)
-        .reverse();
+    const { saveFile: realSaveFile, updateResourcesMutation } = useSaveFile();
+    const saveFile = realSaveFile;
+    // const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
     const [ seconds ] = useTimer(1000);
 
     //______________________________________________________________________________________
@@ -86,7 +89,10 @@ export default function ResourcesWatcher(){
 
     useEffect(() => {
         if(!saveFile?.id) return;
-        if(!incomeRatesSeconds.length) return;
+
+        const { incomeRates, incomeRatesSeconds } = findIncomeRates(saveFile);
+        if(!incomeRates) return;
+        if(!(incomeRatesSeconds && incomeRatesSeconds.length)) return;
         
         let income: ResourceRewards = {}
         for(let i = 0; i < incomeRatesSeconds.length; i++){
@@ -111,9 +117,9 @@ export default function ResourcesWatcher(){
         }
         
         if(!Object.keys(income).length) return;
-        // updateResourcesMutation.mutate({ id: saveFile.id, income });
+        updateResourcesMutation.mutate({ id: saveFile.id, income });
         console.log({ trace: "ResourcesWatcher", seconds, income });
-    }, [saveFile, incomeRates, incomeRatesSeconds, seconds])
+    }, [seconds])
 
     //______________________________________________________________________________________
     // ===== Component Return =====

@@ -3,6 +3,13 @@ import { type SaveFile as SaveFilePrisma } from "@prisma/client";
 
 
 //______________________________________________________________________________________
+// ===== GenericObject =====
+
+export type GenericObject = Record<string, unknown>;
+
+
+
+//______________________________________________________________________________________
 // ===== Resources =====
 
 export interface Resources {
