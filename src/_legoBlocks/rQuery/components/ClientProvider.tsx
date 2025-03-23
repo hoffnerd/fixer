@@ -11,14 +11,14 @@ import { getQueryClient } from "../getQueryClient";
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function ClientProvider({ children }: Readonly<{ children?: React.ReactNode }>) {
+export default function ClientProvider({ children, shouldRenderDevTools }: Readonly<{ children?: React.ReactNode, shouldRenderDevTools?: boolean }>) {
 
     const queryClient = getQueryClient();
 
     return (
         <QueryClientProvider client={queryClient}>
             {children}
-            <ReactQueryDevtools/>
+            {shouldRenderDevTools && <ReactQueryDevtools/>}
         </QueryClientProvider>
     )
 }

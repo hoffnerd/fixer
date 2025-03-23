@@ -3,8 +3,8 @@
 // Types ----------------------------------------------------------------------------
 // Packages -------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
-import Loader from "@/_nextjsCommon/components/Loader";
-import { Alert } from "@/components/microComponents";
+import Loader from "@/_legoBlocks/nextjsCommon/components/Loader";
+import { Alert } from "@/_legoBlocks/nextjsCommon/components/shadcn/Alert";
 // Other ----------------------------------------------------------------------------
 
 

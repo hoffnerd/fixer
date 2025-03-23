@@ -5,10 +5,9 @@ import { type SaveFile } from "@/types";
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
-import { readSaveFile, updateResources } from "@/server/saveFile";
+import { readSaveFile } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
-import { toast } from "sonner";
 // Other ----------------------------------------------------------------------------
 
 
@@ -44,20 +43,6 @@ export function useSaveFile() {
     //______________________________________________________________________________________
     // ===== Mutations =====
 
-    const updateResourcesMutation = useMutation({
-        mutationFn: updateResources,
-        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
-        onSuccess: (data) => {
-            if(data?.error) throw new Error(data?.message || "Unknown Error!");
-            queryClient.invalidateQueries({ queryKey: ['saveFile'] })
-            // setStoreKeyValuePair({ isGameSaving: false });
-        },
-        onError: (error) => {
-            setStoreKeyValuePair({ isGameSaving: false });
-            toast.error(error?.message || "Unknown Error!");
-        },
-    })
-
     // const addRandomMercMutation = useMutation({
     //     mutationFn: addRandomMerc,
     //     onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
@@ -90,10 +75,9 @@ export function useSaveFile() {
         isLoading,
         error: isError || data?.error,
         message: error?.message || data?.message || "Unknown `useSaveFile` Error!",
-        saveFile: data?.data,
-        saveFileId: data?.data?.id,
+        saveFile: data?.data as SaveFile | null | undefined,
+        saveFileId: data?.data?.id as SaveFile["id"] | null | undefined,
         clearSaveFile,
-        updateResourcesMutation,
         // addRandomMercMutation,
     }
 }

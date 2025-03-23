@@ -1,9 +1,9 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
-import { type MutableRefObject } from "react";
+import { type RefObject } from "react";
 // Packages -------------------------------------------------------------------------
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // Styles ---------------------------------------------------------------------------
 // Stores ---------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ export default function useDrag({
     ref, 
     calculateFor="topLeft" 
 }: Readonly<{ 
-    ref:MutableRefObject<any>;
+    ref: RefObject<HTMLDivElement | null>;
     calculateFor?: "topLeft" | "bottomRight"
 }>){
     
@@ -79,7 +79,7 @@ export default function useDrag({
         });
     }, [calculateFor]);
 
-    const handleMouseMove = useCallback((e: any) => {
+    const handleMouseMove = useCallback((e: MouseEvent) => {
             const { clientX, clientY } = e;
             const { startX, startY, top, left, width, height } = { ...DEFAULT_DRAG_INFO, ...dragInfo };
             const { current: draggableElement } = ref;
@@ -103,7 +103,7 @@ export default function useDrag({
         setIsDragging(false);
     }
 
-    const handleMouseDown = (e: any) => {
+    const handleMouseDown = (e: MouseEvent) => {
         e.preventDefault();
         const { clientX, clientY } = e;
         const { current: draggableElement } = ref;
@@ -116,6 +116,7 @@ export default function useDrag({
     }
 
     const recalculate = (width:number, height:number) => {
+        if(!ref.current) return;
         const { current: draggableElement } = ref;
         const { top, left, width:boundingWidth, height:boundingHeight } = draggableElement.getBoundingClientRect();
         updateFinalPosition( width ?? boundingWidth, height ?? boundingHeight, left, top );

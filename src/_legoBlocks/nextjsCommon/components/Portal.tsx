@@ -27,8 +27,8 @@ export default function Portal({
 
     //______________________________________________________________________________________
     // ===== Use Ref =====
-    const targetElement = useRef<Element | any>(null);
-    const childElement = useRef<Element | any>(null);
+    const targetElement = useRef<Element>(null);
+    const childElement = useRef<Element>(null);
 
 
 
@@ -53,7 +53,7 @@ export default function Portal({
             return;
         }
         targetElement.current = window.document.getElementById(targetElementId);
-    }, [targetTries, targetElement.current])
+    }, [targetTries, debug, targetElementId, stopTargetTimer])
 
     useEffect(() => {
         if(debug) console.log({ trace:`Portal > child:${childElementId}`, "childElement.current": childElement.current })
@@ -62,7 +62,7 @@ export default function Portal({
             return;
         }
         childElement.current = window.document.getElementById(childElementId);
-    }, [childTries, childElement.current])
+    }, [childTries, debug, childElementId, stopChildTimer])
 
  
 

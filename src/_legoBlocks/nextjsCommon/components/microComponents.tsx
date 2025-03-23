@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 // Types ----------------------------------------------------------------------------
 // Packages -------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
@@ -11,9 +15,7 @@ import { normalizeTwoDigitNumber } from "../utils";
 //______________________________________________________________________________________
 // ===== Types & Interfaces =====
 
-interface GenericObject {
-    [key: string]: any;
-}
+type GenericObject = Record<string, unknown>;
 
 
 
@@ -48,18 +50,31 @@ export function ObjectDisplay({
     keyMap?: GenericObject;
     valueMap?: GenericObject;
 }>){
-    const objectToGetKeys = keyMap || obj;
+    const objectToGetKeys = keyMap ?? obj;
     const renderValue = (key: string) => {
-        if(valueMap?.[key]) return valueMap[key]({ className, classNames, obj, keyMap, valueMap });
-        if(isValid(new Date(obj[key])) && parseInt(format(new Date(obj[key]), "T")) > parseInt(format(new Date("1971-01-01"), "T"))){
-            return format(new Date(obj[key]), "Pp");
+        if(typeof valueMap?.[key] === 'function') return valueMap[key]({ className, classNames, obj, keyMap, valueMap });
+        if(isValid(new Date(obj[key] as string)) && parseInt(format(new Date(obj[key] as string), "T")) > parseInt(format(new Date("1971-01-01"), "T"))){
+            return format(new Date(obj[key] as string), "Pp");
         }
         if(typeof obj[key] === 'object') return (
-            <ObjectDisplay className={className} classNames={classNames} obj={obj[key]} keyMap={keyMap?.[key]} valueMap={valueMap?.[key]}/>
+            <ObjectDisplay 
+                className={className} 
+                classNames={classNames} 
+                obj={obj[key] as GenericObject} 
+                keyMap={keyMap?.[key] as GenericObject}
+                valueMap={valueMap?.[key] as GenericObject}
+            />
         )
-        if(Array.isArray(obj[key])) return obj[key].map(item => {
+        if(Array.isArray(obj[key])) return obj[key].map((item, index) => {
             if(typeof item === 'object') return (
-                <ObjectDisplay className={className} classNames={classNames} obj={obj[key]} keyMap={keyMap?.[key]} valueMap={valueMap?.[key]}/>
+                <ObjectDisplay 
+                    key={index} 
+                    className={className} 
+                    classNames={classNames} 
+                    obj={obj[key] as GenericObject} 
+                    keyMap={keyMap?.[key] as GenericObject}
+                    valueMap={valueMap?.[key] as GenericObject} 
+                />
             )
             return item;
         })
@@ -70,7 +85,7 @@ export function ObjectDisplay({
     return <ul className={className}>
         {Object.keys(objectToGetKeys).map(key => (obj[key] === null || obj[key] === undefined) ? null : (
             <li key={key} className={classNames?.li}>
-                <span className="tw-font-bold">{keyMap?.[key] || key}:&nbsp;</span>
+                <span className="tw-font-bold">{(keyMap?.[key] ?? key) as string}:&nbsp;</span>
                 {renderValue(key)}
             </li> 
         ))}

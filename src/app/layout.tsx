@@ -1,20 +1,19 @@
 
-
 // Types ----------------------------------------------------------------------------
 import { type Metadata } from "next";
 // Packages -------------------------------------------------------------------------
 // Styles ---------------------------------------------------------------------------
 import "@/styles/globals.css";
 // Fonts ----------------------------------------------------------------------------
-import { GeistSans } from "geist/font/sans";
+import { Geist } from "next/font/google";
 // Data -----------------------------------------------------------------------------
-import { PROJECT_DISPLAY_NAME, PROJECT_DESCRIPTION } from "@/data/_config";
+import { PROJECT_DESCRIPTION, PROJECT_DISPLAY_NAME } from "@/data/_config";
 // Components -----------------------------------------------------------------------
-import ClientProvider from "@/rQuery/components/ClientProvider";
-import Debugger from "@/_nextjsCommon/components/Debugger";
+import ClientProvider from "@/_legoBlocks/rQuery/components/ClientProvider";
+import Debugger from "@/_legoBlocks/nextjsCommon/components/Debugger";
+import { Toaster } from "@/components/shadcn/ui/sonner";
 import SavingGameIcon from "@/components/gameClient/SavingGameIcon";
 import GameClient from "@/components/gameClient/GameClient";
-import { Toaster } from "@/components/shadcn/ui/sonner";
 // Other ----------------------------------------------------------------------------
 
 
@@ -31,16 +30,27 @@ export const metadata: Metadata = {
 
 
 //______________________________________________________________________________________
+// ===== Fonts =====
+
+const geist = Geist({
+    subsets: ["latin"],
+    variable: "--font-geist-sans",
+});
+
+
+
+//______________________________________________________________________________________
 // ===== Component =====
 
 export default function RootLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
+    const isDevMode = process.env.NODE_ENV === "development";
     return (
-        <html lang="en" className={`${GeistSans.variable} dark neonEffect neScrollBar neColorPurple`}>
+        <html lang="en" className={`${geist.variable} dark`}>
             <body>
-                <ClientProvider>
-                    <Debugger shouldRender={process.env.NODE_ENV === "development"} />
+                <ClientProvider shouldRenderDevTools={isDevMode}>
+                    <Debugger shouldRender={isDevMode} />
                     <SavingGameIcon />
                     <GameClient />
                     {children}

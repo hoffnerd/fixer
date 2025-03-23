@@ -4,9 +4,9 @@ import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 // Server ---------------------------------------------------------------------------
 // rQuery ---------------------------------------------------------------------------
-import { getQueryClient } from "@/rQuery/getQueryClient";
+import { getQueryClient } from "../getQueryClient";
 // Components -----------------------------------------------------------------------
-import Loader from '@/_nextjsCommon/components/Loader';
+import Loader from '@/_legoBlocks/nextjsCommon/components/Loader';
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 

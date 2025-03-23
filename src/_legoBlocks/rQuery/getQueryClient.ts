@@ -1,10 +1,8 @@
 
 // Packages -------------------------------------------------------------------------
-import { QueryClient, defaultShouldDehydrateQuery, isServer } from "@tanstack/react-query";
+import { isServer,  QueryClient } from "@tanstack/react-query";
 // Other -------------------------------------------------------------------------
 
-
-// https://tanstack.com/query/latest/docs/framework/react/examples/nextjs-app-prefetching
 
 
 const makeQueryClient = () => {
@@ -17,13 +15,9 @@ const makeQueryClient = () => {
                 // refetchInterval: 5000, //5 seconds
                 // refetchIntervalInBackground: false,
             },
-            dehydrate: {
-                // include pending queries in dehydration
-                shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) || query.state.status === "pending",
-            },
         },
     });
-}
+};
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
@@ -39,4 +33,4 @@ export const getQueryClient = () => {
         if (!browserQueryClient) browserQueryClient = makeQueryClient();
         return browserQueryClient;
     }
-}
+};

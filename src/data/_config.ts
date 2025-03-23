@@ -1,4 +1,4 @@
-import { type SaveFile, type SaveFileOptional } from "@/types";
+import { type Business, type SaveFile, type SaveFileOptional } from "@/types";
 import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon } from "lucide-react";
 
 
@@ -12,17 +12,18 @@ export const PROJECT_DISPLAY_NAME = "Fixer";
 /** the description of the project. */
 export const PROJECT_DESCRIPTION = "A Cyberpunk experience where you manage your resources, mercenaries, businesses, and contracts. Developed by the NextGenScripts team."; 
 
-/** Object that lists errors that can occur across the project */
-export const PROJECT_ERRORS = {
-    // e: { key:"e", display:"" },
-    e_unauthorized: { key:"e_unauthorized", display:"Unauthorized!" },
-    e_forbidden: { key:"e_forbidden", display:"Forbidden!" },
-}
-
 
 
 //______________________________________________________________________________________
 // ===== SaveFile =====
+
+export const DEFAULT_BUSINESS: Business = {
+    key: "defaultBusiness",
+    display: "Default Business",
+    description: "This is a default business",
+    time: 0,
+    income: {},
+}
 
 export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     resources: {

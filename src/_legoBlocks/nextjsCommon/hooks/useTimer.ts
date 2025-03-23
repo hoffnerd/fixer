@@ -1,5 +1,6 @@
 "use client"
 
+// Types ----------------------------------------------------------------------------
 // Packages -------------------------------------------------------------------------
 import { useEffect, useRef, useState } from "react";
 // Other ----------------------------------------------------------------------------
@@ -24,14 +25,13 @@ const DEFAULT_OPTIONS = {
 
 /**
  * This hook allows you to create a timer with options such as countdown, initial cycles, cycle limit, and auto start.
- * @param {number} waitTime - int, time interval in milliseconds between each cycle of the timer.
- * @param {object} [options] - object, optional. Allows you to customize the behavior of the timer. It has the following properties:
- * @param {boolean} [options.countDown] - optional bool, `false` by default. Make the timer count down rather than up.
- * @param {number} [options.initialCycles] - optional int, `0` by default. Start the timer at this amount of `cycles` completed.
- * @param {boolean | number} [options.cycleLimit] - optional bool or int, `false` by default. Once `cycles` hits this limit, the timer will stop.
- * @param {number} [options.autoStartTimer] - optional bool, `true` by default. Automatically start the timer. Set 
+ * @param waitTime - int, time interval in milliseconds between each cycle of the timer.
+ * @param options - object, optional. Allows you to customize the behavior of the timer. It has the following properties:
+ * @param options.countDown - optional bool, `false` by default. Make the timer count down rather than up.
+ * @param options.initialCycles - optional int, `0` by default. Start the timer at this amount of `cycles` completed.
+ * @param options.cycleLimit - optional bool or int, `false` by default. Once `cycles` hits this limit, the timer will stop.
+ * @param options.autoStartTimer - optional bool, `true` by default. Automatically start the timer. Set 
  * to `false` and make sure to use the `startTimer` function in the parent component to control when it starts.
- * @returns {[ number, ()=>void, ()=>void ]}
  */
 export default function useTimer( 
     waitTime: number,
@@ -45,12 +45,12 @@ export default function useTimer(
 ): [number, () => void, () => void] {
 
     //______________________________________________________________________________________
-    // ===== Hook Constants =====
+    // ===== Constants =====
     const { countDown, initialCycles, cycleLimit, autoStartTimer, debug } = { ...DEFAULT_OPTIONS, ...options };
 
     //______________________________________________________________________________________
-    // ===== Hook Variables =====
-    let timer = useRef<number | any>(0);
+    // ===== References =====
+    const timer = useRef<string | number | ReturnType<typeof setTimeout> | undefined>(0);
 
     //______________________________________________________________________________________
     // ===== State =====
@@ -113,7 +113,7 @@ export default function useTimer(
     const stopTimer = () => {
         // release our intervalID from the variable
         clearInterval(timer.current);
-        timer.current = null;
+        timer.current = undefined;
     }
     
     

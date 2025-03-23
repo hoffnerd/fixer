@@ -1,12 +1,10 @@
 import "server-only";
 
 // Types ----------------------------------------------------------------------------
-import { type Session } from "@prisma/client";
 // Server ----------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
-import { handleError } from "@/utils/js-utils";
-
+import { handleError } from "@/utils";
 
 
 //______________________________________________________________________________________
@@ -14,12 +12,6 @@ import { handleError } from "@/utils/js-utils";
 
 interface Options {
     trace?: string;
-}
-
-export interface ServerActionReturn {
-    error: boolean;
-    message?: string;
-    data: any;
 }
 
 
@@ -38,7 +30,6 @@ const DEFAULT_OPTIONS: Options = {
 
 /**
  * Handles server-side actions with optional role-based protection and error handling.
- * Examples of how to best use this function are provided in this file below this function's declaration.
  * - NOTE: Do not not use this if your server action needs to do a redirect. Redirects count as a 301 error
  * code, which will be caught within the try/catch block and will return an error to you.
  * @param callback - async function, will be executed within the try/catch block of this function.
@@ -48,12 +39,10 @@ const DEFAULT_OPTIONS: Options = {
  * the dev know where the server action was called. Recommend to just be the function name of the server 
  * action the dev is creating.
  */
-export const serverAction = async (
-    callback: ( props: { 
-        options: Options; 
-    }) => Promise<any>, 
-    options: Options={}
-): Promise<ServerActionReturn> => {
+export const serverAction = async <T> (
+    callback: ( props: { options: Options; } ) => Promise<any>, 
+    options: Options = {}
+): Promise<{ error: boolean; message?: string; data: T;}> => {
 
     // get any options, defaulted or passed in
     const optionsToUse = { ...DEFAULT_OPTIONS, ...options }

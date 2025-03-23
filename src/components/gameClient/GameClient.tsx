@@ -1,15 +1,15 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
+import { type SaveFile } from "@/types";
 // Packages -------------------------------------------------------------------------
-import { useEffect } from "react";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import Portal from "@/_nextjsCommon/components/Portal";
+import Portal from "@/_legoBlocks/nextjsCommon/components/Portal";
 import { Button } from "../shadcn/ui/button";
-import { SaveFile } from "@/types";
 import InGameTime from "./InGameTime";
+import ResourcesWatcher from "./ResourcesWatcher";
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 
@@ -51,5 +51,6 @@ export default function GameClient() {
     return <>
         <SaveFileClientPortals saveFile={saveFile} />
         <InGameTime saveFile={saveFile} />
+        <ResourcesWatcher />
     </>
 }
