@@ -33,7 +33,9 @@ export default tseslint.config(
                 "error",
                 { checksVoidReturn: { attributes: false } },
             ],
-            "@tanstack/eslint-plugin-query": "warn",
+            "@typescript-eslint/no-explicit-any": "off",
+            // "@tanstack/eslint-plugin-query": "warn",
+            "prefer-const": "off",
         },
     },
     {

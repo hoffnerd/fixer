@@ -11,9 +11,9 @@ import { PROJECT_DESCRIPTION, PROJECT_DISPLAY_NAME } from "@/data/_config";
 // Components -----------------------------------------------------------------------
 import ClientProvider from "@/_legoBlocks/rQuery/components/ClientProvider";
 import Debugger from "@/_legoBlocks/nextjsCommon/components/Debugger";
-import { Toaster } from "@/components/shadcn/ui/sonner";
 import SavingGameIcon from "@/components/gameClient/SavingGameIcon";
 import GameClient from "@/components/gameClient/GameClient";
+import { Toaster } from "@/components/shadcn/ui/sonner";
 // Other ----------------------------------------------------------------------------
 
 

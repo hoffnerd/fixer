@@ -1,7 +1,6 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
-import { type SaveFile } from "@/types";
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
@@ -47,9 +46,9 @@ export function useSaveFile() {
     const updateResourcesMutation = useMutation({
         mutationFn: updateResources,
         onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
-        onSuccess: (data) => {
-            if(data?.error) throw new Error(data?.message || "Unknown Error!");
-            queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
             // setStoreKeyValuePair({ isGameSaving: false });
         },
         onError: (error) => {
@@ -89,7 +88,7 @@ export function useSaveFile() {
     return { 
         isLoading,
         error: isError || data?.error,
-        message: error?.message || data?.message || "Unknown `useSaveFile` Error!",
+        message: error?.message ?? data?.message ?? "Unknown `useSaveFile` Error!",
         saveFile: data?.data,
         saveFileId: data?.data?.id,
         clearSaveFile,

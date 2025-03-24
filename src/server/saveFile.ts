@@ -7,6 +7,7 @@ import { db } from "./db";
 import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 // Data -----------------------------------------------------------------------------
 import { DEFAULT_SAVE_FILE } from "@/data/_config";
+import { addResourceRewards } from "@/utils";
 // Other ----------------------------------------------------------------------------
 // import { getRandomMerc } from "@/utils";
 
@@ -16,6 +17,7 @@ import { DEFAULT_SAVE_FILE } from "@/data/_config";
 // ===== Reads =====
 
 const rawReadSaveFile = async (id: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const saveFile: SaveFile = await db.saveFile.findUnique({ where: { id } }) as any;
     if(!saveFile?.id) throw new Error("Error reading save file");
     return saveFile;
@@ -36,6 +38,7 @@ export const readSaveFile = async (id?: string | null) => serverAction<SaveFile>
 const rawCreateSaveFile = async () => {
     // const starterMerc = getRandomMerc();
     return await db.saveFile.create({ 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: { 
             ...(DEFAULT_SAVE_FILE as any),
             // mercs: {
@@ -54,25 +57,24 @@ const rawCreateSaveFile = async () => {
 //______________________________________________________________________________________
 // ===== Updates =====
 
-export const updateResources = async ({id, income}: Readonly<{ id: string, income: ResourceRewards }>) => serverAction<SaveFile>(async () => {
-// export const updateResources = async (id: string) => serverAction<SaveFile>(async () => {
-//     const income: ResourceRewards = {}
+export const updateResources = async ({
+    id, 
+    income,
+    inGameTime
+}: Readonly<{
+    id: string;
+    income: ResourceRewards;
+    inGameTime?: number;
+}>) => serverAction<SaveFile>(async () => {
     const saveFile = await rawReadSaveFile(id);
     const existingResources = saveFile?.resources || {};
-
-    let updatedResources: ResourceRewards = { ...existingResources };
-    Object.keys(income).forEach((value) => {
-        const key = value as keyof ResourceRewards;
-        if(!income[key]) return;
-        updatedResources[key] = (updatedResources[key] || 0) + income[key];
-    });
-
-    console.log({ trace: "updateResources", income, updatedResources });
-    
+    const updatedResources = addResourceRewards(existingResources, income);
     return await db.saveFile.update({ 
         where: { id }, 
         data: { 
             resources: { ...updatedResources },
+            inGameTime: inGameTime ?? saveFile?.inGameTime ?? undefined,
+            updatedAt: new Date(),
         }
     });
 }, { trace: "updateResources" });
