@@ -5,7 +5,7 @@ import { type Businesses, type ResourceRewards, type SaveFile } from "@/types";
 // Packages -------------------------------------------------------------------------
 import { useEffect } from "react";
 // Stores ---------------------------------------------------------------------------
-// import { useGameStore } from "@/stores/useGameStore";
+import { useGameStore } from "@/stores/useGameStore";
 // Data -----------------------------------------------------------------------------
 // Hooks ----------------------------------------------------------------------------
 import useTimer from "@/_legoBlocks/nextjsCommon/hooks/useTimer";
@@ -68,13 +68,14 @@ export default function ResourcesWatcher(){
     //______________________________________________________________________________________
     // ===== Stores =====
     // const setStoreKeyValuePair = useGameStore((state) => state.setStoreKeyValuePair);
+    const inGameTime = useGameStore((state) => state.inGameTime);
 
     //______________________________________________________________________________________
     // ===== Hooks =====
     const { saveFile: realSaveFile, updateResourcesMutation } = useSaveFile();
     const saveFile = realSaveFile;
     // const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
-    const [ seconds ] = useTimer(1000);
+    // const [ seconds ] = useTimer(1000);
 
     //______________________________________________________________________________________
     // ===== Use Effect =====
@@ -93,7 +94,7 @@ export default function ResourcesWatcher(){
             const xIncome = incomeRates[x];
             if(!xIncome) continue;
 
-            if(seconds % x !== 0) continue;
+            if(inGameTime % x !== 0) continue;
             if(Object.keys(income).length === 0){
                 income = { ...xIncome };
             } else {
@@ -102,9 +103,9 @@ export default function ResourcesWatcher(){
         }
         
         if(!Object.keys(income).length) return;
-        updateResourcesMutation.mutate({ id: saveFile.id, income });
-        console.log({ trace: "ResourcesWatcher", seconds, income });
-    }, [seconds])
+        updateResourcesMutation.mutate({ id: saveFile.id, income, inGameTime });
+        console.log({ trace: "ResourcesWatcher", inGameTime, income });
+    }, [inGameTime])
 
     //______________________________________________________________________________________
     // ===== Component Return =====
