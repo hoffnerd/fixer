@@ -35,8 +35,8 @@ const findIncomeRates = (saveFile?: SaveFile) => {
 
     let incomeRates: IncomeRates = {}
 
-    Object.keys(businesses).forEach(x => {
-        const businessKey = x as keyof Businesses;
+    Object.keys(businesses).forEach((x: keyof Businesses) => {
+        const businessKey = x;
         const business = businesses?.[businessKey] ?? {};
         const { time, income } = { ...DEFAULT_BUSINESS, ...business };
         if(!time) return;
@@ -104,7 +104,7 @@ export default function ResourcesWatcher(){
         
         if(!Object.keys(income).length) return;
         updateResourcesMutation.mutate({ id: saveFile.id, income, inGameTime });
-        console.log({ trace: "ResourcesWatcher", inGameTime, income });
+        // console.log({ trace: "ResourcesWatcher", inGameTime, income });
     }, [inGameTime])
 
     //______________________________________________________________________________________

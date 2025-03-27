@@ -46,9 +46,7 @@ export interface Merc {
     xp: number;
 }
 
-export interface Mercs {
-    [key: Merc["key"]]: Merc;
-}
+export type Mercs = Record<Merc["key"], Merc>;
 
 
 
@@ -72,10 +70,7 @@ export interface Business {
 
 }
 
-export interface Businesses {
-    [key: Business["key"]]: Business;
-}
-
+export type Businesses = Record<Business["key"], Business>;
 
 
 //______________________________________________________________________________________
@@ -96,9 +91,7 @@ export interface Contract {
     mercsAssigned?: ContractMercsAssigned;
 }
 
-export interface Contracts {
-    [key: Contract["key"]]: Contract;
-}
+export type Contracts = Record<Contract["key"], Contract>;
 
 
 

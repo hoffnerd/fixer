@@ -42,12 +42,10 @@ const geist = Geist({
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function RootLayout({
-    children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const isDevMode = process.env.NODE_ENV === "development";
     return (
-        <html lang="en" className={`${geist.variable} dark`}>
+        <html lang="en" className={`${geist.variable} dark neonEffect neScrollBar neColorPurple`}>
             <body>
                 <ClientProvider shouldRenderDevTools={isDevMode}>
                     <Debugger shouldRender={isDevMode} />

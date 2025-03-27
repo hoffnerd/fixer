@@ -188,6 +188,7 @@
     .neonEffect.neScrollBar {
         --_colorNeon: var(--colorNeon, --colorNeonWhite);
         scrollbar-color: var(--_colorNeon) hsl(var(--background));
+        scrollbar-width: thin;
     }
 
     .neonEffect.neScrollBar::-webkit-scrollbar-thumb {
