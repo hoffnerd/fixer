@@ -5,7 +5,7 @@ import { BookIcon, CastleIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
 // Stores ---------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
-import Panel from "@/components/Panels";
+import Panel from "@/components/Panel";
 import Resources from "@/components/Resources";
 import Mercs from "@/components/Mercs";
 import MobileNavButton from "@/components/MobileNavButton";

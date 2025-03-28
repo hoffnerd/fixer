@@ -15,6 +15,15 @@ export const PROJECT_DESCRIPTION = "A Cyberpunk experience where you manage your
 
 
 //______________________________________________________________________________________
+// ===== Scaling =====
+
+export const SCALING_MAGIC_NUMBER = 5;
+
+export const SCALING_MAGIC_NUMBER_PLAYER = SCALING_MAGIC_NUMBER * 5;
+
+
+
+//______________________________________________________________________________________
 // ===== SaveFile =====
 
 export const DEFAULT_BUSINESS: Business = {
@@ -22,6 +31,7 @@ export const DEFAULT_BUSINESS: Business = {
     display: "Default Business",
     description: "This is a default business",
     time: 0,
+    xp: 0,
     income: {},
 }
 

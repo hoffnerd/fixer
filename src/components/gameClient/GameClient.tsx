@@ -8,8 +8,10 @@ import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
 import Portal from "@/_legoBlocks/nextjsCommon/components/Portal";
 import { Button } from "../shadcn/ui/button";
+import GameStorePortals from "./GameStorePortals";
 import InGameTime from "./InGameTime";
 import ResourcesWatcher from "./ResourcesWatcher";
+import SessionTime from "./SessionTime";
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 
@@ -49,7 +51,9 @@ export default function GameClient() {
     
     if (!saveFile?.id) return <></>;
     return <>
+        <GameStorePortals />
         <SaveFileClientPortals saveFile={saveFile} />
+        <SessionTime />
         <InGameTime saveFile={saveFile} />
         <ResourcesWatcher />
     </>

@@ -16,6 +16,8 @@ import { create } from 'zustand'
 // ===== True Constants =====
 
 const DEFAULT_STORE: GameStoreState = {
+    sessionTime: 0,
+    isSessionTimerRunning: true,
     isGameSaving: false,
     inGameTime: 0,
     lastSavedTime: new Date(),

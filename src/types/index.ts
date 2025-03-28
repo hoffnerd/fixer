@@ -63,6 +63,7 @@ export interface Business {
     description?: string;
     income: ResourceRewards;
     time: number;
+    xp: number;
     mercSlots?: {
         manager?: BusinessMercSlot,
         security?: BusinessMercSlot,
@@ -124,6 +125,8 @@ export interface SaveFileOptional {
 export type ActiveMobilePanels = "resources" | "mercs" | "contracts" | "other";
 
 export interface GameStoreStateOptional {
+    sessionTime?: number;
+    isSessionTimerRunning?: boolean;
     isGameSaving?: boolean;
     inGameTime?: number;
     lastSavedTime?: Date;
@@ -131,6 +134,8 @@ export interface GameStoreStateOptional {
 }
 
 export interface GameStoreState {
+    sessionTime: number;
+    isSessionTimerRunning: boolean;
     isGameSaving: boolean;
     inGameTime: number;
     lastSavedTime: Date;

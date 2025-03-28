@@ -8,12 +8,11 @@ import { useEffect } from "react";
 import { useGameStore } from "@/stores/useGameStore";
 // Data -----------------------------------------------------------------------------
 // Hooks ----------------------------------------------------------------------------
-import useTimer from "@/_legoBlocks/nextjsCommon/hooks/useTimer";
 // Components -----------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 import { DEFAULT_BUSINESS } from "@/data/_config";
-import { FAKE_BUSINESSES } from "@/data/fake";
 import { addResourceRewards } from "@/utils";
+import { FAKE_BUSINESSES } from "@/data/fake";
 // Other ----------------------------------------------------------------------------
 
 
@@ -69,13 +68,13 @@ export default function ResourcesWatcher(){
     // ===== Stores =====
     // const setStoreKeyValuePair = useGameStore((state) => state.setStoreKeyValuePair);
     const inGameTime = useGameStore((state) => state.inGameTime);
+    const sessionTime = useGameStore((state) => state.sessionTime);
 
     //______________________________________________________________________________________
     // ===== Hooks =====
     const { saveFile: realSaveFile, updateResourcesMutation } = useSaveFile();
-    const saveFile = realSaveFile;
-    // const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
-    // const [ seconds ] = useTimer(1000);
+    // const saveFile = realSaveFile;
+    const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
 
     //______________________________________________________________________________________
     // ===== Use Effect =====
@@ -94,7 +93,7 @@ export default function ResourcesWatcher(){
             const xIncome = incomeRates[x];
             if(!xIncome) continue;
 
-            if(inGameTime % x !== 0) continue;
+            if(sessionTime % x !== 0) continue;
             if(Object.keys(income).length === 0){
                 income = { ...xIncome };
             } else {
@@ -105,7 +104,7 @@ export default function ResourcesWatcher(){
         if(!Object.keys(income).length) return;
         updateResourcesMutation.mutate({ id: saveFile.id, income, inGameTime });
         // console.log({ trace: "ResourcesWatcher", inGameTime, income });
-    }, [inGameTime])
+    }, [sessionTime])
 
     //______________________________________________________________________________________
     // ===== Component Return =====
