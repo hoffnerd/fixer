@@ -17,10 +17,13 @@ export const PROJECT_DESCRIPTION = "A Cyberpunk experience where you manage your
 //______________________________________________________________________________________
 // ===== Scaling =====
 
-export const SCALING_MAGIC_NUMBER = 5;
+export const SCALING_CORE_MAGIC_NUMBER = 5;
 
-export const SCALING_MAGIC_NUMBER_PLAYER = SCALING_MAGIC_NUMBER * 5;
+export const SCALING_CORE_MAGIC_NUMBER_PLAYER = SCALING_CORE_MAGIC_NUMBER * 5;
 
+export const SCALING_EURO_MAGIC_NUMBER = 5;
+
+export const SCALING_COMP_MAGIC_NUMBER = 1;
 
 
 //______________________________________________________________________________________
