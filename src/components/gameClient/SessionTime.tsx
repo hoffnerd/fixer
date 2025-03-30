@@ -64,8 +64,14 @@ export default function SessionTime(){
             </ul>
         </Portal>
         <Portal targetElementId="debuggerCommands" childElementId="SessionTime.commands">
-            <div id="SessionTime.commands">
-                <Button onClick={()=>setStoreKeyValuePair({ isSessionTimerRunning:!isSessionTimerRunning })}>Toggle Session Timer</Button>
+            <div id="SessionTime.commands" className="flex flex-col">
+                <Button
+                    variant="neonEffect"
+                    className="neColorYellow"
+                    onClick={()=>setStoreKeyValuePair({ isSessionTimerRunning:!isSessionTimerRunning })}
+                >
+                    Toggle Session Timer
+                </Button>
             </div>
         </Portal>
     </>

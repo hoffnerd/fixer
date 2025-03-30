@@ -42,7 +42,7 @@ export default function Debugger({
     return (
         <div
             ref={ref}
-            className={`fixed right-3 top-3 z-50 max-w-72 overflow-hidden border-2 border-slate-100 ${(!openDebugger) && "w-14"}`}
+            className={`fixed right-3 top-3 z-50 max-w-80 overflow-hidden border-2 border-slate-100 ${(!openDebugger) && "w-14"}`}
             style={{ top: position.y, left: position.x }}
         >
             <div
@@ -57,21 +57,24 @@ export default function Debugger({
                     >
                         <BugOffIcon />
                     </Button>
+                    <span className="pt-[0.35rem]">{openDebugger && "Debugger"}</span>
+                    
                 </div>
             </div>
-            <div
-                id="debuggerContent"
-                className={`relative overflow-auto ${openDebugger ? "bg-slate-950 p-4" : "hidden"}`}
-            >  
-                <Button variant="outline" className="full-w" onClick={()=>setOpenCommands(previousOpen => !previousOpen)}>
-                    {openCommands ? "Close" : "Open"} Commands
-                </Button>
-                <div className={`absolute top-14 left-0 p-3 bg-slate-800 border-2 border-slate-100 w-[284px] ${(!openCommands) && "hidden"}`}>
+            <div className={`relative overflow-auto ${openDebugger ? "bg-slate-950 p-4" : "hidden"}`}>  
+                <div className="flex flex-col">
+                    <Button variant="outline" className="full-w" onClick={()=>setOpenCommands(previousOpen => !previousOpen)}>
+                        {openCommands ? "Close" : "Open"} Commands
+                    </Button>
+                </div>
+                <div className={`absolute top-14 left-0 p-3 bg-slate-800 border-2 border-slate-100 w-[269px] ${(!openCommands) && "hidden"}`}>
                     <div id="debuggerCommands"/>
                 </div>
                 <br />
-                <br />
                 {children}
+                <div id="debuggerContent">
+                    
+                </div>
             </div>
         </div>
     );

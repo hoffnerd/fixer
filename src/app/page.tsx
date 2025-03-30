@@ -5,11 +5,11 @@ import { BookIcon, CastleIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
 // Stores ---------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
-import Panel from "@/components/Panel";
-import Resources from "@/components/Resources";
-import Mercs from "@/components/Mercs";
+import Panel from "@/components/panels/Panel";
+import Resources from "@/components/panels/Resources";
+import Mercs from "@/components/panels/Mercs";
 import MobileNavButton from "@/components/MobileNavButton";
-import Businesses from "@/components/Businesses";
+import Businesses from "@/components/panels/Businesses";
 // Other ----------------------------------------------------------------------------
 
 

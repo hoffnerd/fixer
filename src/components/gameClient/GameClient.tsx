@@ -12,6 +12,7 @@ import GameStorePortals from "./GameStorePortals";
 import InGameTime from "./InGameTime";
 import ResourcesWatcher from "./ResourcesWatcher";
 import SessionTime from "./SessionTime";
+import { getRandomMercs } from "@/utils/mercs";
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 
@@ -29,9 +30,29 @@ function SaveFileClientPortals({ saveFile }: Readonly<{ saveFile: SaveFile }>) {
             </ul>
         </Portal>
         <Portal targetElementId="debuggerCommands" childElementId="SaveFileClient.commands">
-            <div id="SaveFileClient.commands">
-                <Button onClick={()=>console.log({ trace:"SaveFileClient", saveFile })}>Log SaveFile</Button>
-            </div>
+            <div id="SaveFileClient.commands" className="flex flex-col">
+                <Button 
+                    variant="neonEffect"
+                    className="neColorBlue"
+                    onClick={()=>console.log({ trace:"SaveFileClient", saveFile })}
+                >
+                    Log SaveFile
+                </Button>
+                <Button 
+                    variant="neonEffect"
+                    className="neColorRed"
+                    onClick={()=>localStorage.setItem("saveFileId", "")}
+                >
+                    Clear localStorage saveFileId
+                </Button>
+                <Button 
+                    variant="neonEffect"
+                    className="neColorBlue"
+                    onClick={()=>console.log( getRandomMercs({}, 0, 10) )}
+                >
+                    Log & Generate Random Mercs
+                </Button>
+            </div> 
         </Portal>
     </>
 }

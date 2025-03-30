@@ -7,7 +7,7 @@ import { type Resources as ResourcesType } from "@/types";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import ResourceBadge from "./ResourceBadge";
+import ResourceBadge from "../ResourceBadge";
 // Other ----------------------------------------------------------------------------
 
 

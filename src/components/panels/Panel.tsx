@@ -5,11 +5,26 @@ import { type ActiveMobilePanels } from "@/types";
 // Packages -------------------------------------------------------------------------
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
-import { Button } from "./shadcn/ui/button";
+import { Button } from "../shadcn/ui/button";
 import { useSaveFile } from "@/hooks/useSaveFile";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../shadcn/ui/sheet";
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
+
+
+
+//______________________________________________________________________________________
+// ===== Types =====
+
+interface PanelButtonConfig{
+    buttonText: string;
+    sheetSide: "top" | "right" | "bottom" | "left";
+    sheetTitle: string;
+    sheetDescription: string;
+}
+
+type PanelButtonConfigs = Record<ActiveMobilePanels, PanelButtonConfig>;
 
 
 
@@ -18,11 +33,31 @@ import { useSaveFile } from "@/hooks/useSaveFile";
 
 const BORDER = "border-4 rounded-3xl neonEffect neBorder neBorderGlow neColorPurple"
 
-const PANEL_BUTTON_CONFIGS = {
-    resources: { buttonText: "Buy More Businesses" },
-    mercs: { buttonText: "Find More Mercs" },
-    contracts: { buttonText: "Find More Contracts" }, 
-    other: { buttonText:"" },
+const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
+    resources: { 
+        buttonText: "Buy More Businesses",
+        sheetSide: "left",
+        sheetTitle: "Businesses Available to Buy",
+        sheetDescription: "These businesses are available to purchase.",
+    },
+    mercs: { 
+        buttonText: "Find More Mercs",
+        sheetSide: "bottom",
+        sheetTitle: "Mercs Available to Hire",
+        sheetDescription: "These mercs are available to hire.",
+    },
+    contracts: { 
+        buttonText: "Find More Contracts",
+        sheetSide: "right",
+        sheetTitle: "Contracts Available to Sign",
+        sheetDescription: "These contracts are available to sign.",
+    }, 
+    other: { 
+        buttonText: "",
+        sheetSide: "top",
+        sheetTitle: "",
+        sheetDescription: "",
+    },
 }
 
 
@@ -31,7 +66,7 @@ const PANEL_BUTTON_CONFIGS = {
 // ===== Micro-Components =====
 
 function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) {
-    const { buttonText } = PANEL_BUTTON_CONFIGS[panelKey];
+    const { buttonText, sheetSide, sheetTitle, sheetDescription } = PANEL_BUTTON_CONFIGS[panelKey];
     const { saveFileId } = useSaveFile();
     const isGameSaving = useGameStore((state) => state.isGameSaving); 
     const onClick = () => {
@@ -39,17 +74,27 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
         // if(panelKey === "mercs") addRandomMercMutation.mutate(saveFileId);
     };
     return (
-        <div className="absolute bottom-0 left-0 w-full">
-            <Button 
-                size="lg" 
-                variant="neonEffectWithGlow" 
-                className="neColorPurple w-full rounded-none"
-                onClick={onClick}
-                disabled={isGameSaving}
-            >
-                {buttonText}
-            </Button>
-        </div>
+        <Sheet>
+            <div className="absolute bottom-0 left-0 w-full">
+                <SheetTrigger asChild>
+                    <Button 
+                        size="lg" 
+                        variant="neonEffectWithGlow" 
+                        className="neColorPurple w-full rounded-none"
+                        onClick={onClick}
+                        disabled={isGameSaving}
+                    >
+                        {buttonText}
+                    </Button>
+                </SheetTrigger>
+            </div>
+            <SheetContent side={sheetSide}>
+                <SheetHeader>
+                    <SheetTitle>{sheetTitle}</SheetTitle>
+                    <SheetDescription>{sheetDescription}</SheetDescription>
+                </SheetHeader>
+            </SheetContent>
+        </Sheet>
     )
 }
 

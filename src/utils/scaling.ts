@@ -1,26 +1,25 @@
 
+// Types ----------------------------------------------------------------------------
+// Data -----------------------------------------------------------------------------
 import { 
     SCALING_CORE_MAGIC_NUMBER, 
     SCALING_CORE_MAGIC_NUMBER_PLAYER, 
     SCALING_EURO_MAGIC_NUMBER,
     SCALING_COMP_MAGIC_NUMBER,
+    SCALING_JOB_SHARE_SPEED,
+    SCALING_JOB_SHARE_BUFFER,
 } from "@/data/_config";
+// Other ----------------------------------------------------------------------------
+import { xpToLevel } from ".";
 
 
-
-
-
-
-
-
-
-const xpToLevel = (xp=0, magicNumber=1) => Math.floor( Math.sqrt(xp / magicNumber) );
 
 const calculateJobShare = (levelPlayer:number, levelEntity:number, options:Readonly<{ speed?:number; buffer?:number; }> = {}) => {
-    const { speed, buffer } = { speed:0.2, buffer:10, ...options };
+    const { speed, buffer } = { speed:SCALING_JOB_SHARE_SPEED, buffer:SCALING_JOB_SHARE_BUFFER, ...options };
+    const upperLimit = 50 + buffer;
     const levelDif = levelEntity - levelPlayer;
-    const rawJobShare = 100 / (1 + Math.exp(-speed * levelDif));
-    const adjustedJobShare = Math.max(0, rawJobShare - buffer);
+    const rawJobShare = upperLimit / (1 + Math.exp(-speed * levelDif));
+    const adjustedJobShare = Math.max(1, rawJobShare - buffer);
     return adjustedJobShare;
 }
 
@@ -33,7 +32,8 @@ export const handleScaling = ({ xpPlayer=0, xpEntity=0 }: Readonly<{ xpPlayer?: 
     const levelEntityLowest = (levelEntity - 1) || 1;
     
     return {
-        level: levelPlayer,
+        levelPlayer: levelPlayer,
+        levelEntity: levelEntity,
         euroCostRange: {
             min: ((levelPlayerLowest * SCALING_EURO_MAGIC_NUMBER)^2) || 1,
             max: (levelPlayer * SCALING_EURO_MAGIC_NUMBER)^2,
@@ -60,9 +60,9 @@ export const handleScaling = ({ xpPlayer=0, xpEntity=0 }: Readonly<{ xpPlayer?: 
             max: (60 * 10),
         },
         businessTimeRange: {
-            step: 5,
+            step: 30,
             min: 60,
-            max: 90,
+            max: (60 * 5),
         },
     }
 }

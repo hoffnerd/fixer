@@ -32,7 +32,7 @@ export interface ResourceRewards {
 //______________________________________________________________________________________
 // ===== Mercs =====
 
-export interface MercLevels {
+export interface MercRoleLevels {
     corpo: number;
     solo: number;
     tech: number;
@@ -41,8 +41,9 @@ export interface MercLevels {
 export interface Merc {
     key: string;
     display: string;
-    levels: MercLevels;
-    unusedLevels: number;
+    innateRole: keyof MercRoleLevels;
+    innateSubRole?: keyof MercRoleLevels;
+    roleLevels: MercRoleLevels;
     xp: number;
 }
 

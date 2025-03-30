@@ -1,4 +1,4 @@
-import { type Business, type SaveFile, type SaveFileOptional } from "@/types";
+import { type Business, type MercRoleLevels, type SaveFile, type SaveFileOptional } from "@/types";
 import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon } from "lucide-react";
 
 
@@ -25,6 +25,24 @@ export const SCALING_EURO_MAGIC_NUMBER = 5;
 
 export const SCALING_COMP_MAGIC_NUMBER = 1;
 
+export const SCALING_JOB_SHARE_SPEED = 0.2;
+
+export const SCALING_JOB_SHARE_BUFFER = 6.5;
+
+export const SCALING_MERC_INNATE_SKILL_POINTS = 3;
+
+export const SCALING_MERC_INNATE_SUB_SKILL_POINTS = 2;
+
+export const SCALING_MERC_LEVEL_DIFFERENCE_CORE = {
+    start: -5,
+    end: 5,
+};
+
+export const SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL = {
+    start: -10,
+    end: 10,
+};
+
 
 //______________________________________________________________________________________
 // ===== SaveFile =====
@@ -37,6 +55,15 @@ export const DEFAULT_BUSINESS: Business = {
     xp: 0,
     income: {},
 }
+
+export const DEFAULT_MERC_ROLE_LEVELS: MercRoleLevels = {
+    corpo: 0,
+    solo: 0,
+    tech: 0,
+}
+
+export const MERC_ROLE_KEYS = Object.keys(DEFAULT_MERC_ROLE_LEVELS) as Array<keyof MercRoleLevels>;
+
 
 export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     resources: {

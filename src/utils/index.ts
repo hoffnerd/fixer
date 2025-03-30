@@ -1,7 +1,39 @@
+
+// Types ----------------------------------------------------------------------------
 import type { ResourceRewards } from "@/types";
+// Data -----------------------------------------------------------------------------
+// Other ----------------------------------------------------------------------------
 
 
 
+
+//______________________________________________________________________________________
+// ===== General =====
+
+export const xpToLevel = (xp=0, magicNumber=1) => Math.floor( Math.sqrt(xp / magicNumber) );
+
+export const levelToXp = (level=0, magicNumber=1) => Math.floor( (level**2) * magicNumber );
+
+export const capitalizeFirstLetter = (str: string) =>  String(str).charAt(0).toUpperCase() + String(str).slice(1);
+
+export const getRandomNumber = (min:number, max:number) => Math.floor(Math.random() * (max - min + 1) + min);
+
+export const getRandomItemFromArray = <T>(array: Array<T>) => array[Math.floor(Math.random() * array.length)];
+
+export const getRange = ({ start, end, step=1 }: Readonly<{ start: number; end: number; step?: number; }>) => {
+    if (step === 0) return [];
+    if ((start > end && step > 0) || (start < end && step < 0)) return [];
+    let result = [];
+    for (let i = start; step > 0 ? i <= end : i >= end; i += step) {
+        result.push(i);
+    }
+    return result;
+}
+
+
+
+//______________________________________________________________________________________
+// ===== Error Handling =====
 
 /**
  * Logs an error message and returns an object indicating an error along with optional message, and data.
@@ -14,6 +46,11 @@ export const handleError = ({ trace, message }: Readonly<{ trace?: string; messa
     console.error({ trace, message });
     return { error: true, message };
 }
+
+
+
+//______________________________________________________________________________________    
+// ===== Resources =====
 
 /**
  * Takes two objects representing resource rewards and adds their values together, updating the existing resources.

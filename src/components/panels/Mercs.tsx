@@ -7,7 +7,7 @@ import { type Merc as MercType } from "@/types";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import { CardContent } from "./shadcn/ui/card";
+import { CardContent } from "../shadcn/ui/card";
 import CardButton from "@/_legoBlocks/nextjsCommon/components/shadcn/CardButton";
 // Other ----------------------------------------------------------------------------
 

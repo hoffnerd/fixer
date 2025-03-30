@@ -9,9 +9,9 @@ import { FAKE_BUSINESSES } from "@/data/fake";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import { CardContent } from "./shadcn/ui/card";
+import { CardContent } from "../shadcn/ui/card";
 import CardButton from "@/_legoBlocks/nextjsCommon/components/shadcn/CardButton";
-import ResourceBadge from "./ResourceBadge";
+import ResourceBadge from "../ResourceBadge";
 // Other ----------------------------------------------------------------------------
 
 
@@ -59,8 +59,8 @@ function Business({ saveFile, business }: Readonly<{ saveFile: SaveFile; busines
 
 export default function Businesses() {
     const { saveFile: realSaveFile } = useSaveFile();
-    // const saveFile = realSaveFile;
-    const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
+    const saveFile = realSaveFile;
+    // const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
     const businesses = saveFile?.businesses ?? {};
 
     if(!saveFile) return <></>;

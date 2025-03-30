@@ -73,8 +73,8 @@ export default function ResourcesWatcher(){
     //______________________________________________________________________________________
     // ===== Hooks =====
     const { saveFile: realSaveFile, updateResourcesMutation } = useSaveFile();
-    // const saveFile = realSaveFile;
-    const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
+    const saveFile = realSaveFile;
+    // const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
 
     //______________________________________________________________________________________
     // ===== Use Effect =====

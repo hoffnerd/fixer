@@ -31,8 +31,14 @@ export default function GameStorePortals(){
             </ul>
         </Portal>
         <Portal targetElementId="debuggerCommands" childElementId="GameStorePortals.commands">
-            <div id="GameStorePortals.commands">
-                <Button onClick={()=>console.log({ trace:"GameStorePortals", gameStore })}>Log Game Store</Button>
+            <div id="GameStorePortals.commands" className="flex flex-col">
+                <Button
+                    variant="neonEffect"
+                    className="neColorBlue"
+                    onClick={()=>console.log({ trace:"GameStorePortals", gameStore })}
+                >
+                    Log Game Store
+                </Button>
             </div>
         </Portal>
     </>;
