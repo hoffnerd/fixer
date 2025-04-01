@@ -8,6 +8,7 @@ import { useGameStore } from "@/stores/useGameStore";
 import { Button } from "../shadcn/ui/button";
 import { useSaveFile } from "@/hooks/useSaveFile";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../shadcn/ui/sheet";
+import { MercCarousel } from "../MercCarousel";
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
@@ -22,6 +23,7 @@ interface PanelButtonConfig{
     sheetSide: "top" | "right" | "bottom" | "left";
     sheetTitle: string;
     sheetDescription: string;
+    InnerSheetContent: React.ComponentType;
 }
 
 type PanelButtonConfigs = Record<ActiveMobilePanels, PanelButtonConfig>;
@@ -39,24 +41,28 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
         sheetSide: "left",
         sheetTitle: "Businesses Available to Buy",
         sheetDescription: "These businesses are available to purchase.",
+        InnerSheetContent: MercCarousel
     },
     mercs: { 
         buttonText: "Find More Mercs",
         sheetSide: "bottom",
         sheetTitle: "Mercs Available to Hire",
         sheetDescription: "These mercs are available to hire.",
+        InnerSheetContent: MercCarousel
     },
     contracts: { 
         buttonText: "Find More Contracts",
         sheetSide: "right",
         sheetTitle: "Contracts Available to Sign",
         sheetDescription: "These contracts are available to sign.",
+        InnerSheetContent: MercCarousel
     }, 
     other: { 
         buttonText: "",
         sheetSide: "top",
         sheetTitle: "",
         sheetDescription: "",
+        InnerSheetContent: MercCarousel
     },
 }
 
@@ -66,7 +72,7 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
 // ===== Micro-Components =====
 
 function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) {
-    const { buttonText, sheetSide, sheetTitle, sheetDescription } = PANEL_BUTTON_CONFIGS[panelKey];
+    const { buttonText, sheetSide, sheetTitle, sheetDescription, InnerSheetContent } = PANEL_BUTTON_CONFIGS[panelKey];
     const { saveFileId } = useSaveFile();
     const isGameSaving = useGameStore((state) => state.isGameSaving); 
     const onClick = () => {
@@ -90,9 +96,18 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
             </div>
             <SheetContent side={sheetSide}>
                 <SheetHeader>
-                    <SheetTitle>{sheetTitle}</SheetTitle>
-                    <SheetDescription>{sheetDescription}</SheetDescription>
+                    <SheetTitle className="flex justify-center">{sheetTitle}</SheetTitle>
+                    <SheetDescription className="flex justify-center">{sheetDescription}</SheetDescription>
                 </SheetHeader>
+                <div className="flex justify-center">
+                    <div className="w-full max-w-[1100px]">
+                        <div className="flex justify-center">
+                            <div className="w-full max-w-[900px]">
+                                <InnerSheetContent />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </SheetContent>
         </Sheet>
     )

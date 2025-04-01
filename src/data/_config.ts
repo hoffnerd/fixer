@@ -34,13 +34,13 @@ export const SCALING_MERC_INNATE_SKILL_POINTS = 3;
 export const SCALING_MERC_INNATE_SUB_SKILL_POINTS = 2;
 
 export const SCALING_MERC_LEVEL_DIFFERENCE_CORE = {
-    start: -5,
-    end: 5,
+    start: -2,
+    end: 2,
 };
 
 export const SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL = {
-    start: -10,
-    end: 10,
+    start: -5,
+    end: 5,
 };
 
 
