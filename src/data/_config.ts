@@ -33,15 +33,10 @@ export const SCALING_MERC_INNATE_SKILL_POINTS = 3;
 
 export const SCALING_MERC_INNATE_SUB_SKILL_POINTS = 2;
 
-export const SCALING_MERC_LEVEL_DIFFERENCE_CORE = {
-    start: -2,
-    end: 2,
-};
+export const SCALING_MERC_LEVEL_DIFFERENCE_CORE = { min: -2, max: 2 };
 
-export const SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL = {
-    start: -5,
-    end: 5,
-};
+export const SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL = { min: -5, max: 5 };
+
 
 
 //______________________________________________________________________________________
@@ -75,6 +70,7 @@ export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     mercs: {},
     businesses: {},
     contracts: {},
+    xp: 0,
 }
 
 

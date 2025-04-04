@@ -41,7 +41,7 @@ function Business({ saveFile, business }: Readonly<{ saveFile: SaveFile; busines
                             <ResourceBadge 
                                 key={key} 
                                 resourceKey={key as keyof typeof RESOURCES_INFO} 
-                                value={(value ?? 0) as number} 
+                                value={(value ?? 0) as number}
                             />
                         ))}
                     </ul>

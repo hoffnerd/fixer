@@ -109,6 +109,7 @@ export interface SaveFile extends Omit<SaveFilePrisma, 'resources' | 'mercs' | '
 
 export interface SaveFileOptional {
     id?: string;
+    xp?: number;
     resources?: Resources;
     mercs?: Mercs;
     businesses?: Businesses;

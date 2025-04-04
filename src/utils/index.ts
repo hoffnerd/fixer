@@ -20,11 +20,11 @@ export const getRandomNumber = (min:number, max:number) => Math.floor(Math.rando
 
 export const getRandomItemFromArray = <T>(array: Array<T>) => array[Math.floor(Math.random() * array.length)];
 
-export const getRange = ({ start, end, step=1 }: Readonly<{ start: number; end: number; step?: number; }>) => {
+export const getRange = ({ min, max, step=1 }: Readonly<{ min: number; max: number; step?: number; }>) => {
     if (step === 0) return [];
-    if ((start > end && step > 0) || (start < end && step < 0)) return [];
+    if ((min > max && step > 0) || (min < max && step < 0)) return [];
     let result = [];
-    for (let i = start; step > 0 ? i <= end : i >= end; i += step) {
+    for (let i = min; step > 0 ? i <= max : i >= max; i += step) {
         result.push(i);
     }
     return result;

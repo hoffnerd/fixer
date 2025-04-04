@@ -100,11 +100,9 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
                     <SheetDescription className="flex justify-center">{sheetDescription}</SheetDescription>
                 </SheetHeader>
                 <div className="flex justify-center">
-                    <div className="w-full max-w-[1100px]">
+                    <div className="max-w-[1100px]">
                         <div className="flex justify-center">
-                            <div className="w-full max-w-[900px]">
-                                <InnerSheetContent />
-                            </div>
+                            <InnerSheetContent />
                         </div>
                     </div>
                 </div>
