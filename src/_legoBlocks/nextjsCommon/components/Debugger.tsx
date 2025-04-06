@@ -8,6 +8,8 @@ import { BugOffIcon } from "lucide-react";
 import useDrag from "../hooks/useDrag";
 // Components ------------------------------------------------------------------------
 import { Button } from "@/components/shadcn/ui/button";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/shadcn";
 // Other -----------------------------------------------------------------------------
 
 
@@ -17,9 +19,11 @@ import { Button } from "@/components/shadcn/ui/button";
 
 export default function Debugger({
     children,
+    pathsToHideOn=[],
     shouldRender=false,
 }: Readonly<{ 
     children?: React.ReactNode;
+    pathsToHideOn?: Array<string>;
     shouldRender?: boolean;
 }>) {
 
@@ -29,6 +33,7 @@ export default function Debugger({
 
     //______________________________________________________________________________________
     // ===== Hooks =====
+    const pathname = usePathname()
     const { position, handleMouseDown } = useDrag({ ref });
 
     //______________________________________________________________________________________
@@ -38,11 +43,16 @@ export default function Debugger({
 
     //______________________________________________________________________________________
     // ===== Component Return =====
+    if(pathsToHideOn.length > 0 && pathsToHideOn.includes(pathname)) return;
     if (!shouldRender) return;
     return (
         <div
             ref={ref}
-            className={`fixed right-3 top-3 z-50 max-w-80 overflow-hidden border-2 border-slate-100 ${(!openDebugger) && "w-14"}`}
+            className={cn(
+                "fixed right-3 top-3 z-50 max-w-80 overflow-hidden border-2 border-slate-100",
+                (pathsToHideOn.length > 0 && pathsToHideOn.includes(pathname)) && "!h-0 !w-0",
+                (!openDebugger) && "w-14",
+            )}
             style={{ top: position.y, left: position.x }}
         >
             <div
@@ -68,10 +78,10 @@ export default function Debugger({
                     </Button>
                 </div>
                 <div className={`absolute top-14 left-0 p-3 bg-slate-800 border-2 border-slate-100 w-[269px] ${(!openCommands) && "hidden"}`}>
+                    {children}
                     <div id="debuggerCommands"/>
                 </div>
                 <br />
-                {children}
                 <div id="debuggerContent">
                     
                 </div>

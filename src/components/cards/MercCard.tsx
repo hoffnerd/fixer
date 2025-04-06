@@ -1,10 +1,11 @@
 
 
 // Types ----------------------------------------------------------------------------
-import { type Merc } from "@/types";
+import type { Merc } from "@/types";
+import type { RESOURCES_INFO } from "@/data/_config";
 // Packages -------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
-import { RESOURCES_INFO, SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
+import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Hooks ----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
 import { CardContent } from "@/components/shadcn/ui/card";
@@ -24,19 +25,11 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
 
     //______________________________________________________________________________________
     // ===== Hooks =====
-    const { saveFile } = useSaveFile();
+    // const { saveFile } = useSaveFile();
 
     //______________________________________________________________________________________
     // ===== Constants =====
     const level = xpToLevel((merc.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
-    const scaling = handleScaling({ xpPlayer: (saveFile?.xp ?? 0), xpEntity: (merc.xp ?? 0) });
-    console.log({ trace: "MercCard", scaling });
-    const costs = {
-        euros: getRandomItemFromArray(getRange(scaling.euroCostRange)),
-        weapons: getRandomItemFromArray(getRange(scaling.compCostRange)),
-        medicals: getRandomItemFromArray(getRange(scaling.compCostRange)),
-        hacks: getRandomItemFromArray(getRange(scaling.compCostRange)),
-    }
 
 
     //______________________________________________________________________________________
@@ -53,25 +46,27 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
         >
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                {isHired 
-                    ? <>
-                        <p>Active Contract/Job:</p>
-                        <p>None</p>
-                    </>
-                    : <>
-                        <p>Costs:</p>
-                        <ul className="whitespace-nowrap">
-                            {Object.entries(costs).map(([key, value]) => (
-                                <ResourceBadge 
-                                    key={key} 
-                                    resourceKey={key as keyof typeof RESOURCES_INFO} 
-                                    value={(value ?? 0)}
-                                    options={{ hideTooltip: true }}
-                                />
-                            ))}
-                        </ul>   
-                    </>
-                }
+                    <p>Active Contract/Job:</p>
+                    <p>None</p>
+                    {/* {isHired 
+                        ? <>
+                            <p>Active Contract/Job:</p>
+                            <p>None</p>
+                        </>
+                        : <>
+                            <p>Costs:</p>
+                            <ul className="whitespace-nowrap">
+                                {Object.entries(costs).map(([key, value]) => (
+                                    <ResourceBadge 
+                                        key={key} 
+                                        resourceKey={key as keyof typeof RESOURCES_INFO} 
+                                        value={(value ?? 0)}
+                                        options={{ hideTooltip: true }}
+                                    />
+                                ))}
+                            </ul>   
+                        </>
+                    } */}
                 </div>
                 <div className="flex justify-end">
                     <ul className="whitespace-nowrap">

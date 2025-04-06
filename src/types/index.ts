@@ -49,6 +49,11 @@ export interface Merc {
 
 export type Mercs = Record<Merc["key"], Merc>;
 
+export interface PotentialMercs {
+    regeneratedTime: number;
+    mercs: Mercs;
+}
+
 
 
 //______________________________________________________________________________________
@@ -74,6 +79,11 @@ export interface Business {
 
 export type Businesses = Record<Business["key"], Business>;
 
+export interface PotentialBusinesses {
+    regeneratedTime: number;
+    businesses: Businesses;
+}
+
 
 //______________________________________________________________________________________
 // ===== Contracts =====
@@ -95,16 +105,27 @@ export interface Contract {
 
 export type Contracts = Record<Contract["key"], Contract>;
 
+export interface PotentialContracts {
+    regeneratedTime: number;
+    contracts: Contracts;
+}
+
 
 
 //______________________________________________________________________________________
 // ===== SaveFile =====
 
-export interface SaveFile extends Omit<SaveFilePrisma, 'resources' | 'mercs' | 'businesses' | 'contracts'> {
+export interface SaveFile extends Omit<
+    SaveFilePrisma, 
+    'resources' | 'mercs' | 'businesses' | 'contracts' | 'potentialMercs' | 'potentialBusinesses' | 'potentialContracts'
+> {
     resources: Resources;
     mercs: Mercs;
     businesses: Businesses;
     contracts: Contracts;
+    potentialMercs: PotentialMercs;
+    potentialBusinesses: PotentialBusinesses;
+    potentialContracts: PotentialContracts;
 }
 
 export interface SaveFileOptional {
@@ -114,6 +135,9 @@ export interface SaveFileOptional {
     mercs?: Mercs;
     businesses?: Businesses;
     contracts?: Contracts;
+    potentialMercs?: PotentialMercs;
+    potentialBusinesses?: PotentialBusinesses;
+    potentialContracts?: PotentialContracts;
     inGameTime?: number;
     createdAt?: Date;
     updatedAt?: Date;

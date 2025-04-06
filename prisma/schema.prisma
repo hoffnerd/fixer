@@ -11,13 +11,16 @@ datasource db {
 }
 
 model SaveFile {
-    id         String   @id @default(cuid())
-    resources  Json?
-    mercs      Json?
-    businesses Json?
-    contracts  Json?
-    xp         Int      @default(0)
-    inGameTime Int      @default(0)
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+    id                  String   @id @default(cuid())
+    resources           Json?
+    mercs               Json?
+    businesses          Json?
+    contracts           Json?
+    potentialMercs      Json?
+    potentialBusinesses Json?
+    potentialContracts  Json?
+    xp                  Int      @default(0)
+    inGameTime          Int      @default(0)
+    createdAt           DateTime @default(now())
+    updatedAt           DateTime @updatedAt
 }

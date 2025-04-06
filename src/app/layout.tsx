@@ -14,6 +14,8 @@ import Debugger from "@/_legoBlocks/nextjsCommon/components/Debugger";
 import SavingGameIcon from "@/components/gameClient/SavingGameIcon";
 import GameClient from "@/components/gameClient/GameClient";
 import { Toaster } from "@/components/shadcn/ui/sonner";
+import { Button } from "@/components/shadcn/ui/button";
+import Link from "next/link";
 // Other ----------------------------------------------------------------------------
 
 
@@ -48,7 +50,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="en" className={`${geist.variable} dark neonEffect neScrollBar neColorPurple`}>
             <body>
                 <ClientProvider shouldRenderDevTools={isDevMode}>
-                    <Debugger shouldRender={isDevMode} />
+                    <Debugger pathsToHideOn={["/scaling"]} shouldRender={isDevMode}>
+                        <Button variant="neonEffect" className="neColorGreen w-full" asChild>
+                            <Link href="/scaling">Scaling Tool</Link>
+                        </Button>
+                    </Debugger>
                     <SavingGameIcon />
                     <GameClient />
                     {children}

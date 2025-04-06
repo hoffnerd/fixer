@@ -100,3 +100,35 @@ export const RESOURCES_INFO = {
         IconComponent: CircuitBoardIcon,
     },
 }
+
+
+
+//______________________________________________________________________________________
+// ===== Random =====
+
+export const COLOR_TO_CLASS_MAP = {
+    purple: "neColorPurple",
+    blue: "neColorBlue",
+    yellow: "neColorYellow",
+    green: "neColorGreen",
+    pink: "neColorPink",
+    red: "neColorRed",
+    orange: "neColorOrange",
+    white: "neColorWhite",
+}
+
+export const CLASS_TO_COLOR_MAP = {
+    neColorPurple: "purple",
+    neColorBlue: "blue",
+    neColorYellow: "yellow",
+    neColorGreen: "green",
+    neColorPink: "pink",
+    neColorRed: "red",
+    neColorOrange: "orange",
+    neColorWhite: "white",
+}
+
+export const COLOR_MAP = {
+    ...COLOR_TO_CLASS_MAP,
+    ...CLASS_TO_COLOR_MAP,
+}

@@ -18,7 +18,7 @@ import Businesses from "@/components/panels/Businesses";
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function HomePage() {
+export default function Page() {
     return (
         <main className="h-dvh lg:p-6">
             <div className="h-full grid grid-rows-5 sm-h:grid-rows-8 gap-3">
