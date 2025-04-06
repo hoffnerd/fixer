@@ -87,6 +87,13 @@ const calculateValueBasedOnPlayer = (props:GetScaleProps): GetScaleReturn => {
 
 const calculateValueBasedOnPlayerAndEntity = (props:GetScaleProps): GetScaleReturn => {
     const { levelPlayer, levelPlayerLowest, levelEntity, levelEntityLowest, exponent, magicNumber } = props;
+    const min = multiplier([(levelPlayerLowest + levelEntityLowest), (magicNumber ?? 1)], exponent) || 1;
+    const max = multiplier([(levelPlayer + levelEntity), (magicNumber ?? 1)], exponent) || 1;
+    return { min, max, value: getRandomNumber(min, max) };
+}
+
+const calculateValueBasedOnPlayerAndEntityMultiplier = (props:GetScaleProps): GetScaleReturn => {
+    const { levelPlayer, levelPlayerLowest, levelEntity, levelEntityLowest, exponent, magicNumber } = props;
     const min = multiplier([levelPlayerLowest, levelEntityLowest, (magicNumber ?? 1)], exponent) || 1;
     const max = multiplier([levelPlayer, levelEntity, (magicNumber ?? 1)], exponent) || 1;
     return { min, max, value: getRandomNumber(min, max) };
@@ -96,7 +103,7 @@ const calculateValueBasedOnScale = (props:GetScaleProps) => {
     const { scale, exponent } = props;
     if(scale === "small") return calculateValueBasedOnPlayer(props);
     if(scale === "medium") return calculateValueBasedOnPlayerAndEntity(props);
-    return calculateValueBasedOnPlayerAndEntity({ ...props, exponent: exponent ?? 2 });
+    return calculateValueBasedOnPlayerAndEntityMultiplier(props);
 }
 
 
