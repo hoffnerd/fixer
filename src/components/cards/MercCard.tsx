@@ -15,6 +15,7 @@ import { getRandomItemFromArray, getRange, xpToLevel } from "@/utils";
 import { handleScaling } from "@/utils/scaling";
 import { useSaveFile } from "@/hooks/useSaveFile";
 import ResourceBadge from "../ResourceBadge";
+import { canHireMerc } from "@/utils/mercs";
 
 
 
@@ -25,11 +26,24 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
 
     //______________________________________________________________________________________
     // ===== Hooks =====
-    // const { saveFile } = useSaveFile();
+    const { saveFile, hireMercMutation } = useSaveFile();
+
+
 
     //______________________________________________________________________________________
     // ===== Constants =====
     const level = xpToLevel((merc.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
+
+
+
+    //______________________________________________________________________________________
+    // ===== Functions =====
+
+    const onClick = () => {
+        console.log({ trace: "onClick", "merc.key":merc.key, isHired });
+        if(isHired) return;
+        hireMercMutation.mutate({ mercKey: merc.key });
+    }
 
 
     //______________________________________________________________________________________
@@ -38,17 +52,16 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
         <CardButton
             className="border-2 mt-2 mb-5 neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue"
             classNames={{ cardHeader:"pb-3", cardTitle:"flex justify-between" }}
-            onClick={()=>console.log("test")}
+            onClick={onClick}
             title={<>
                 <span>{merc.display}</span>
                 <span>Lvl: {level}</span>
             </>}
+            // disabled={(!isHired) && saveFile && !canHireMerc({ resources: saveFile.resources, merc })}
         >
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                    <p>Active Contract/Job:</p>
-                    <p>None</p>
-                    {/* {isHired 
+                    {isHired 
                         ? <>
                             <p>Active Contract/Job:</p>
                             <p>None</p>
@@ -56,17 +69,17 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
                         : <>
                             <p>Costs:</p>
                             <ul className="whitespace-nowrap">
-                                {Object.entries(costs).map(([key, value]) => (
+                                {Object.entries(merc.initialCost).map(([key, value]) => (
                                     <ResourceBadge 
                                         key={key} 
                                         resourceKey={key as keyof typeof RESOURCES_INFO} 
-                                        value={(value ?? 0)}
+                                        value={(value ?? 0) as number}
                                         options={{ hideTooltip: true }}
                                     />
                                 ))}
                             </ul>   
                         </>
-                    } */}
+                    }
                 </div>
                 <div className="flex justify-end">
                     <ul className="whitespace-nowrap">

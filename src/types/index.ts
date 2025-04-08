@@ -12,11 +12,18 @@ export type GenericObject = Record<string, unknown>;
 //______________________________________________________________________________________
 // ===== Resources =====
 
-export interface Resources {
+export interface ResourcesExist {
     euros: number;
     weapons: number;
     medicals: number;
     hacks: number;
+}
+
+export interface Resources {
+    euros?: number;
+    weapons?: number;
+    medicals?: number;
+    hacks?: number;
 }
 
 export interface ResourceRewards {
@@ -45,13 +52,14 @@ export interface Merc {
     innateSubRole?: keyof MercRoleLevels;
     roleLevels: MercRoleLevels;
     xp: number;
+    initialCost: Resources;
 }
 
 export type Mercs = Record<Merc["key"], Merc>;
 
 export interface PotentialMercs {
     regeneratedTime: number;
-    mercs: Mercs;
+    mercs?: Mercs;
 }
 
 
@@ -81,7 +89,7 @@ export type Businesses = Record<Business["key"], Business>;
 
 export interface PotentialBusinesses {
     regeneratedTime: number;
-    businesses: Businesses;
+    businesses?: Businesses;
 }
 
 
@@ -107,7 +115,7 @@ export type Contracts = Record<Contract["key"], Contract>;
 
 export interface PotentialContracts {
     regeneratedTime: number;
-    contracts: Contracts;
+    contracts?: Contracts;
 }
 
 

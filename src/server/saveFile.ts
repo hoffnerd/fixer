@@ -1,13 +1,14 @@
 "use server"
 
 // Types ----------------------------------------------------------------------------
-import { type ResourceRewards, type SaveFile } from "@/types";
+import { type PotentialMercs, type ResourceRewards, type SaveFile } from "@/types";
 // Server ---------------------------------------------------------------------------
 import { db } from "./db";
 import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 // Data -----------------------------------------------------------------------------
-import { DEFAULT_SAVE_FILE } from "@/data/_config";
+import { DEFAULT_SAVE_FILE, SCALING_REGENERATED_TIME } from "@/data/_config";
 import { addResourceRewards } from "@/utils";
+import { getRandomMercs } from "@/utils/mercs";
 // Other ----------------------------------------------------------------------------
 // import { getRandomMerc } from "@/utils";
 
@@ -36,14 +37,15 @@ export const readSaveFile = async (id?: string | null) => serverAction<SaveFile>
 // ===== Creates =====
 
 const rawCreateSaveFile = async () => {
-    // const starterMerc = getRandomMerc();
+    const mercs = getRandomMercs({}, 0, 3);
     return await db.saveFile.create({ 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: { 
             ...(DEFAULT_SAVE_FILE as any),
-            // mercs: {
-            //     [starterMerc.key]: starterMerc,
-            // }
+            potentialMercs: {
+                ...DEFAULT_SAVE_FILE.potentialMercs,
+                mercs,
+            },
         } 
     })
 };
@@ -73,11 +75,51 @@ export const updateResources = async ({
         where: { id }, 
         data: { 
             resources: { ...updatedResources },
-            inGameTime: inGameTime ?? saveFile?.inGameTime ?? undefined,
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
             updatedAt: new Date(),
         }
     });
 }, { trace: "updateResources" });
+
+export const hireMerc = async ({
+    id, 
+    mercKey,
+    inGameTime,
+    timeLeft,
+}: Readonly<{ 
+    id: string;
+    mercKey: string;
+    inGameTime?: number; 
+    timeLeft?: number;
+}>) => serverAction<SaveFile>(async () => {
+    console.log({ trace: "server hireMerc", mercKey, inGameTime, timeLeft });
+    const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
+    const saveFile = await rawReadSaveFile(id);
+    if(saveFile?.potentialMercs) return;
+
+    const selectedMerc = saveFile.potentialMercs.mercs?.[mercKey];
+    if(!selectedMerc) return;
+
+    let potentialMercs: PotentialMercs = { ...saveFile.potentialMercs };
+    if(potentialMercs.mercs?.[mercKey]) delete potentialMercs.mercs[mercKey];
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            mercs: {
+                ...saveFile.mercs,
+                [mercKey]: selectedMerc
+            },
+            potentialMercs: {
+                ...potentialMercs,
+                regeneratedTime: timeLeftToUse,
+            },
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "hireMerc" });
 
 // export const addRandomMerc = async (id: string) => serverAction<SaveFile>(async () => {
 //     const saveFile: SaveFile = await db.saveFile.findUnique({ where: { id } }) as any;

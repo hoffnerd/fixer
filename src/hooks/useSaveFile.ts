@@ -4,7 +4,7 @@
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
-import { readSaveFile, updateResources } from "@/server/saveFile";
+import { hireMerc, readSaveFile, updateResources } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 import { toast } from "sonner";
@@ -57,6 +57,23 @@ export function useSaveFile() {
         },
     })
 
+    const hireMercMutation = useMutation({
+        mutationFn: async (props: Readonly<{ id?: string; mercKey: string; inGameTime?: number; timeLeft?: number; }>) => {
+            if(!data?.data?.id) return;
+            return await hireMerc({ id: data.data.id, inGameTime: data.data.inGameTime, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+            // setStoreKeyValuePair({ isGameSaving: false });
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
     // const addRandomMercMutation = useMutation({
     //     mutationFn: addRandomMerc,
     //     onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
@@ -93,6 +110,7 @@ export function useSaveFile() {
         saveFileId: data?.data?.id,
         clearSaveFile,
         updateResourcesMutation,
+        hireMercMutation,
         // addRandomMercMutation,
     }
 }

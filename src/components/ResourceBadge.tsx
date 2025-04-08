@@ -48,13 +48,14 @@ export default function ResourceBadge({
     //______________________________________________________________________________________
     // ===== Constants =====
     const resourceInfo = RESOURCES_INFO[resourceKey];
+    const { IconComponent } = resourceInfo;
 
     //______________________________________________________________________________________
     // ===== Component Return =====
     return (
         <li className="flex">
             {hideTooltip 
-                ? <resourceInfo.IconComponent />
+                ? <IconComponent />
                 : <ResourceToolTip resourceInfo={resourceInfo} />
             }
             <span>&nbsp;: {value}</span>

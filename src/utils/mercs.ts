@@ -1,6 +1,6 @@
 
 // Types ----------------------------------------------------------------------------
-import type { Merc, MercRoleLevels, Mercs } from "@/types";
+import type { Merc, MercRoleLevels, Mercs, Resources } from "@/types";
 // Data -----------------------------------------------------------------------------
 import { 
     SCALING_CORE_MAGIC_NUMBER, 
@@ -9,11 +9,30 @@ import {
     SCALING_MERC_LEVEL_DIFFERENCE_CORE,
     SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL,
     DEFAULT_MERC_ROLE_LEVELS, 
-    MERC_ROLE_KEYS, 
+    MERC_ROLE_KEYS,
+    SCALING_CORE_MAGIC_NUMBER_PLAYER,
+    ROLE_TO_RESOURCE_MAP,
+    DEFAULT_RESOURCES, 
 } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { generateMercName } from "./nameGeneration";
 import { getRandomItemFromArray, getRandomNumber, getRange, levelToXp } from ".";
+import { getComps, getEuros, handleMassScaling } from "./scaling";
+
+
+
+//______________________________________________________________________________________    
+// ===== True Constants =====
+
+
+//______________________________________________________________________________________    
+// ===== Merc Assists =====
+
+export const canHireMerc = ({ resources, merc, }: Readonly<{ resources: Resources; merc: Merc; }>) => {
+    const playerResources = { ...DEFAULT_RESOURCES,  ...resources };
+    const initialCost = { ...DEFAULT_RESOURCES,  ...merc.initialCost };
+    return Object.entries(playerResources).every(([key, value]) => value >= initialCost[key as keyof Resources]);
+}
 
 
 
@@ -69,13 +88,40 @@ const generateMercLevel = (level:number) => {
  * @param options.shouldUseLevelAsLevelEntity - boolean, default is `false`. If set to `true`, the 
  * level parameter will be used as the level of the merc entity instead of the player level.
  */
-const generateRandomMerc = (level=0, options:Readonly<{ shouldUseLevelAsLevelEntity?: boolean; }>={}) => {
+const generateRandomMerc = (level=0, options:Readonly<{ shouldUseLevelAsLevelEntity?: boolean; }>={}): Merc => {
     const { shouldUseLevelAsLevelEntity } = { shouldUseLevelAsLevelEntity: false, ...options };
     const levelEntity = shouldUseLevelAsLevelEntity ? level : generateMercLevel(level);
+    const xpEntity = levelEntity ? levelToXp(levelEntity, SCALING_CORE_MAGIC_NUMBER) : 0;
+
+    const mercRoles = generateMercRoles(levelEntity)
+
+    const scaling = handleMassScaling<"euros" | "compsA" | "compsB" | "compsC">({
+        euros: { callback: getEuros, options: {} },
+        compsA: { callback: getComps, options: {} },
+        compsB: { callback: getComps, options: {} },
+        compsC: { callback: getComps, options: {} },
+    }, { xpPlayer: levelToXp(level, SCALING_CORE_MAGIC_NUMBER_PLAYER), xpEntity });
+    const values = [ scaling.compsA.value, scaling.compsB.value, scaling.compsC.value ].sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+
+    let innateRoleScaleValue = values[0];
+    let innateSubRoleScaleValue = values[1];
+    let innateSubRole = mercRoles.innateSubRole;
+
+    if(mercRoles.innateRole === mercRoles.innateSubRole){
+        innateRoleScaleValue = (values[0] ?? 0) + (values[1] ?? 0);
+        innateSubRoleScaleValue = values[2];
+        innateSubRole = getRandomItemFromArray([...MERC_ROLE_KEYS].filter(x => x !== mercRoles.innateRole))!;
+    }
+
     return {
         ...generateMercName(),
-        ...generateMercRoles(levelEntity),
-        xp: levelEntity ? levelToXp(levelEntity, SCALING_CORE_MAGIC_NUMBER) : 0,
+        ...mercRoles,
+        xp: xpEntity,
+        initialCost: {
+            euros: scaling.euros.value,
+            [ROLE_TO_RESOURCE_MAP[mercRoles.innateRole]]: innateRoleScaleValue,
+            [ROLE_TO_RESOURCE_MAP[innateSubRole]]: innateSubRoleScaleValue,
+        }
     };
 }
 

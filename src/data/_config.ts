@@ -1,4 +1,4 @@
-import { type Business, type MercRoleLevels, type SaveFile, type SaveFileOptional } from "@/types";
+import { type Business, type MercRoleLevels, type Resources, type ResourcesExist, type SaveFile, type SaveFileOptional } from "@/types";
 import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon } from "lucide-react";
 
 
@@ -37,10 +37,18 @@ export const SCALING_MERC_LEVEL_DIFFERENCE_CORE = { min: -2, max: 2 };
 
 export const SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL = { min: -5, max: 5 };
 
+export const SCALING_REGENERATED_TIME = 60 * 5;
 
 
 //______________________________________________________________________________________
 // ===== SaveFile =====
+
+export const DEFAULT_RESOURCES: ResourcesExist = {
+    euros: 0,
+    weapons: 0,
+    medicals: 0,
+    hacks: 0,
+}
 
 export const DEFAULT_BUSINESS: Business = {
     key: "defaultBusiness",
@@ -70,6 +78,18 @@ export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     mercs: {},
     businesses: {},
     contracts: {},
+    potentialMercs: {
+        regeneratedTime: SCALING_REGENERATED_TIME,
+        mercs: {},
+    },
+    potentialBusinesses: {
+        regeneratedTime: SCALING_REGENERATED_TIME,
+        businesses: {},
+    },
+    potentialContracts: {
+        regeneratedTime: SCALING_REGENERATED_TIME,
+        contracts: {},
+    },
     xp: 0,
 }
 
@@ -77,6 +97,18 @@ export const DEFAULT_SAVE_FILE: SaveFileOptional = {
 
 //______________________________________________________________________________________
 // ===== Resources =====
+
+export const ROLE_TO_RESOURCE_MAP = {
+    corpo: "medicals",
+    solo: "weapons",
+    tech: "hacks",
+}
+
+export const RESOURCE_TO_ROLE_MAP = {
+    medicals: "corpo",
+    weapons: "solo",
+    hacks: "tech",
+}
 
 export const RESOURCES_INFO = {
     euros: {    

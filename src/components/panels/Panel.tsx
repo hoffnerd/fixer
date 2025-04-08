@@ -44,7 +44,7 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
         InnerSheetContent: MercCarousel
     },
     mercs: { 
-        buttonText: "Find More Mercs",
+        buttonText: "Hire More Mercs",
         sheetSide: "bottom",
         sheetTitle: "Mercs Available to Hire",
         sheetDescription: "These mercs are available to hire.",
@@ -100,7 +100,7 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
                     <SheetDescription className="flex justify-center">{sheetDescription}</SheetDescription>
                 </SheetHeader>
                 <div className="flex justify-center">
-                    <div className="max-w-[1100px]">
+                    <div className="w-[1400px]">
                         <div className="flex justify-center">
                             <InnerSheetContent />
                         </div>

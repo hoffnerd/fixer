@@ -1,6 +1,8 @@
 
 // Packages -------------------------------------------------------------------------
 // Stores ---------------------------------------------------------------------------
+// Hooks ----------------------------------------------------------------------------
+import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
 import {
     Carousel,
@@ -11,7 +13,6 @@ import {
 } from "@/components/shadcn/ui/carousel";
 import MercCard from "./cards/MercCard";
 // Other ---------------------------------------------------------------------------
-import { getRandomMercs } from "@/utils/mercs";
 
 
 
@@ -19,11 +20,18 @@ import { getRandomMercs } from "@/utils/mercs";
 // ===== Component =====
 
 export function MercCarousel() {
-    const mercs = getRandomMercs({}, 0, 3);
+
+    //______________________________________________________________________________________
+    // ===== Component Return =====
+    const { saveFile } = useSaveFile();
+
+
+    //______________________________________________________________________________________
+    // ===== Component Return =====
     return (
         <Carousel opts={{ align: "center" }} className="w-full mx-8">
             <CarouselContent>
-                {Object.entries(mercs).map(([key, merc]) => (
+                {Object.entries(saveFile?.potentialMercs?.mercs ?? {}).map(([key, merc]) => (
                     <CarouselItem key={key} className="md:basis-1/2 lg:basis-1/3">
                         <div className="p-1">
                             <MercCard merc={merc}/>
