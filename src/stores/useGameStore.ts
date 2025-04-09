@@ -22,6 +22,9 @@ const DEFAULT_STORE: GameStoreState = {
     inGameTime: 0,
     lastSavedTime: new Date(),
     activeMobilePanel: "resources",
+
+    saveQueue: [],
+    activeSaveQueueObj: null,
 }
 
 
@@ -38,4 +41,15 @@ export const useGameStore = create<GameStoreState & GameStoreFunctions>()((set) 
     ...DEFAULT_STORE,
 
     setStoreKeyValuePair: (obj) => set(() => ({ ...obj })),
+
+    pushToSaveQueue: (saveQueueObj) => set((state) => ({ saveQueue: [ ...state.saveQueue, saveQueueObj ] })),
+    activateSaveQueueObj: () => set((state) => {
+        let clonedSaveQueue = structuredClone(state.saveQueue);
+        let saveQueueObj = clonedSaveQueue.shift();
+        return { 
+            saveQueue: clonedSaveQueue,
+            activeSaveQueueObj: saveQueueObj ?? null,
+        }
+    }),
+    finishSaveQueueObj: () => set(() => ({ activeSaveQueueObj: null })),
 }))

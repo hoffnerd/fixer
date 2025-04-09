@@ -10,9 +10,8 @@ import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
-import { DEFAULT_BUSINESS } from "@/data/_config";
+import { DEFAULT_BUSINESS, SCALING_REGENERATED_TIME } from "@/data/_config";
 import { addResourceRewards } from "@/utils";
-import { FAKE_BUSINESSES } from "@/data/fake";
 // Other ----------------------------------------------------------------------------
 
 
@@ -66,15 +65,15 @@ export default function ResourcesWatcher(){
 
     //______________________________________________________________________________________
     // ===== Stores =====
-    // const setStoreKeyValuePair = useGameStore((state) => state.setStoreKeyValuePair);
+    const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const inGameTime = useGameStore((state) => state.inGameTime);
     const sessionTime = useGameStore((state) => state.sessionTime);
 
     //______________________________________________________________________________________
     // ===== Hooks =====
-    const { saveFile: realSaveFile, updateResourcesMutation } = useSaveFile();
-    const saveFile = realSaveFile;
-    // const saveFile = { ...realSaveFile, businesses: FAKE_BUSINESSES } as SaveFile;
+    const { saveFile, updateResourcesMutation } = useSaveFile();
+
+
 
     //______________________________________________________________________________________
     // ===== Use Effect =====
@@ -105,6 +104,17 @@ export default function ResourcesWatcher(){
         updateResourcesMutation.mutate({ id: saveFile.id, income, inGameTime });
         // console.log({ trace: "ResourcesWatcher", inGameTime, income });
     }, [sessionTime])
+
+    useEffect(() => {
+        if(!saveFile?.id) return;
+
+        const regeneratedTime = saveFile?.potentialMercs?.regeneratedTime || SCALING_REGENERATED_TIME;
+        if(sessionTime % regeneratedTime !== 0) return;
+
+        pushToSaveQueue({ mutationKey: "regenerateMercsMutation" });
+    }, [sessionTime])
+
+
 
     //______________________________________________________________________________________
     // ===== Component Return =====

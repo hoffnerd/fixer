@@ -16,6 +16,8 @@ import { handleScaling } from "@/utils/scaling";
 import { useSaveFile } from "@/hooks/useSaveFile";
 import ResourceBadge from "../ResourceBadge";
 import { canHireMerc } from "@/utils/mercs";
+import { useGameStore } from "@/stores/useGameStore";
+import { toast } from "sonner";
 
 
 
@@ -26,7 +28,14 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
 
     //______________________________________________________________________________________
     // ===== Hooks =====
-    const { saveFile, hireMercMutation } = useSaveFile();
+    const { saveFile } = useSaveFile();
+
+
+
+    //______________________________________________________________________________________
+    // ===== Stores =====
+    const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
+    const isGameSaving = useGameStore((state) => state.isGameSaving);
 
 
 
@@ -42,7 +51,11 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
     const onClick = () => {
         console.log({ trace: "onClick", "merc.key":merc.key, isHired });
         if(isHired) return;
-        hireMercMutation.mutate({ mercKey: merc.key });
+        if(!canHireMerc({ resources: saveFile?.resources, merc })) {
+            toast.error("You do not have enough resources to hire this merc!");
+            return;
+        }
+        pushToSaveQueue({ mutationKey: "hireMercMutation", props: { mercKey: merc.key } });
     }
 
 
@@ -57,7 +70,7 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
                 <span>{merc.display}</span>
                 <span>Lvl: {level}</span>
             </>}
-            // disabled={(!isHired) && saveFile && !canHireMerc({ resources: saveFile.resources, merc })}
+            disabled={isGameSaving && (!isHired) && !canHireMerc({ resources: saveFile?.resources, merc })}
         >
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">

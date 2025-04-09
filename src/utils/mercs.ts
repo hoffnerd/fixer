@@ -28,7 +28,7 @@ import { getComps, getEuros, handleMassScaling } from "./scaling";
 //______________________________________________________________________________________    
 // ===== Merc Assists =====
 
-export const canHireMerc = ({ resources, merc, }: Readonly<{ resources: Resources; merc: Merc; }>) => {
+export const canHireMerc = ({ resources, merc, }: Readonly<{ resources?: Resources; merc: Merc; }>) => {
     const playerResources = { ...DEFAULT_RESOURCES,  ...resources };
     const initialCost = { ...DEFAULT_RESOURCES,  ...merc.initialCost };
     return Object.entries(playerResources).every(([key, value]) => value >= initialCost[key as keyof Resources]);
@@ -103,13 +103,13 @@ const generateRandomMerc = (level=0, options:Readonly<{ shouldUseLevelAsLevelEnt
     }, { xpPlayer: levelToXp(level, SCALING_CORE_MAGIC_NUMBER_PLAYER), xpEntity });
     const values = [ scaling.compsA.value, scaling.compsB.value, scaling.compsC.value ].sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
 
-    let innateRoleScaleValue = values[0];
+    let innateRoleScaleValue = values[2];
     let innateSubRoleScaleValue = values[1];
     let innateSubRole = mercRoles.innateSubRole;
 
     if(mercRoles.innateRole === mercRoles.innateSubRole){
-        innateRoleScaleValue = (values[0] ?? 0) + (values[1] ?? 0);
-        innateSubRoleScaleValue = values[2];
+        innateRoleScaleValue = (values[2] ?? 0) + (values[1] ?? 0);
+        innateSubRoleScaleValue = values[0] ?? 0;
         innateSubRole = getRandomItemFromArray([...MERC_ROLE_KEYS].filter(x => x !== mercRoles.innateRole))!;
     }
 

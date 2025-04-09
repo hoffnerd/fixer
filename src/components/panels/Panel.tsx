@@ -9,6 +9,7 @@ import { Button } from "../shadcn/ui/button";
 import { useSaveFile } from "@/hooks/useSaveFile";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../shadcn/ui/sheet";
 import { MercCarousel } from "../MercCarousel";
+import { ReadableTime } from "@/_legoBlocks/nextjsCommon/components/microComponents";
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
@@ -40,21 +41,21 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
         buttonText: "Buy More Businesses",
         sheetSide: "left",
         sheetTitle: "Businesses Available to Buy",
-        sheetDescription: "These businesses are available to purchase.",
+        sheetDescription: "until the next Businesses are available to buy.",
         InnerSheetContent: MercCarousel
     },
     mercs: { 
         buttonText: "Hire More Mercs",
         sheetSide: "bottom",
         sheetTitle: "Mercs Available to Hire",
-        sheetDescription: "These mercs are available to hire.",
+        sheetDescription: "until the next Mercs are available to hire.",
         InnerSheetContent: MercCarousel
     },
     contracts: { 
         buttonText: "Find More Contracts",
         sheetSide: "right",
         sheetTitle: "Contracts Available to Sign",
-        sheetDescription: "These contracts are available to sign.",
+        sheetDescription: "until the next Contracts are available to sign.",
         InnerSheetContent: MercCarousel
     }, 
     other: { 
@@ -71,14 +72,16 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
 //______________________________________________________________________________________
 // ===== Micro-Components =====
 
+function TimeDisplay(){
+    const { saveFile } = useSaveFile();
+    const sessionTime = useGameStore((state) => state.sessionTime);
+    if(saveFile?.potentialMercs?.regeneratedTime === undefined) return <></>;
+    return <ReadableTime timeInSeconds={saveFile.potentialMercs.regeneratedTime - (sessionTime % saveFile.potentialMercs.regeneratedTime)} />
+}
+
 function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) {
     const { buttonText, sheetSide, sheetTitle, sheetDescription, InnerSheetContent } = PANEL_BUTTON_CONFIGS[panelKey];
-    const { saveFileId } = useSaveFile();
     const isGameSaving = useGameStore((state) => state.isGameSaving); 
-    const onClick = () => {
-        if(!saveFileId) return;
-        // if(panelKey === "mercs") addRandomMercMutation.mutate(saveFileId);
-    };
     return (
         <Sheet>
             <div className="absolute bottom-0 left-0 w-full">
@@ -87,7 +90,6 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
                         size="lg" 
                         variant="neonEffectWithGlow" 
                         className="neColorPurple w-full rounded-none"
-                        onClick={onClick}
                         disabled={isGameSaving}
                     >
                         {buttonText}
@@ -97,7 +99,10 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
             <SheetContent side={sheetSide}>
                 <SheetHeader>
                     <SheetTitle className="flex justify-center">{sheetTitle}</SheetTitle>
-                    <SheetDescription className="flex justify-center">{sheetDescription}</SheetDescription>
+                    <SheetDescription className="flex justify-center">
+                        <TimeDisplay />
+                        {` `}{sheetDescription}
+                    </SheetDescription>
                 </SheetHeader>
                 <div className="flex justify-center">
                     <div className="w-[1400px]">

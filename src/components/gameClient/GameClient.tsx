@@ -13,6 +13,7 @@ import InGameTime from "./InGameTime";
 import ResourcesWatcher from "./ResourcesWatcher";
 import SessionTime from "./SessionTime";
 import { getRandomMercs } from "@/utils/mercs";
+import SaveQueueClient from "./SaveQueueClient";
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
 
@@ -74,6 +75,7 @@ export default function GameClient() {
     return <>
         <GameStorePortals />
         <SaveFileClientPortals saveFile={saveFile} />
+        <SaveQueueClient />
         <SessionTime />
         <InGameTime saveFile={saveFile} />
         <ResourcesWatcher />

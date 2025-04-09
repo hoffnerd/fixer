@@ -40,7 +40,7 @@ export default function SessionTime(){
 
     useEffect(() => {
         setStoreKeyValuePair({ sessionTime: seconds })
-    }, [seconds])
+    }, [seconds, setStoreKeyValuePair])
 
     useEffect(() => {
         if(isSessionTimerRunning){ 
@@ -48,7 +48,7 @@ export default function SessionTime(){
         } else {
             stopTimer();
         }
-    }, [isSessionTimerRunning])
+    }, [isSessionTimerRunning, startTimer, stopTimer])
 
 
 

@@ -4,7 +4,7 @@
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
-import { hireMerc, readSaveFile, updateResources } from "@/server/saveFile";
+import { hireMerc, readSaveFile, regenerateMercs, updateResources } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 import { toast } from "sonner";
@@ -49,7 +49,6 @@ export function useSaveFile() {
         onSuccess: async (data) => {
             if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
             await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
-            // setStoreKeyValuePair({ isGameSaving: false });
         },
         onError: (error) => {
             setStoreKeyValuePair({ isGameSaving: false });
@@ -58,15 +57,14 @@ export function useSaveFile() {
     })
 
     const hireMercMutation = useMutation({
-        mutationFn: async (props: Readonly<{ id?: string; mercKey: string; inGameTime?: number; timeLeft?: number; }>) => {
+        mutationFn: async (props: Readonly<{ mercKey: string; inGameTime: number; timeLeft?: number; }>) => {
             if(!data?.data?.id) return;
-            return await hireMerc({ id: data.data.id, inGameTime: data.data.inGameTime, ...props });
+            return await hireMerc({ id: data.data.id, ...props });
         },
         onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
         onSuccess: async (data) => {
             if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
             await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
-            // setStoreKeyValuePair({ isGameSaving: false });
         },
         onError: (error) => {
             setStoreKeyValuePair({ isGameSaving: false });
@@ -74,19 +72,21 @@ export function useSaveFile() {
         },
     })
 
-    // const addRandomMercMutation = useMutation({
-    //     mutationFn: addRandomMerc,
-    //     onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
-    //     onSuccess: (data) => {
-    //         if(data?.error) throw new Error(data?.message || "Unknown Error!");
-    //         queryClient.invalidateQueries({ queryKey: ['saveFile'] })
-    //         // setStoreKeyValuePair({ isGameSaving: false });
-    //     },
-    //     onError: (error) => {
-    //         setStoreKeyValuePair({ isGameSaving: false });
-    //         toast.error(error?.message || "Unknown Error!");
-    //     },
-    // })
+    const regenerateMercsMutation = useMutation({
+        mutationFn: async (props: Readonly<{ inGameTime: number; timeLeft?: number; }>) => {
+            if(!data?.data?.id) return;
+            return await regenerateMercs({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
 
 
 
@@ -111,6 +111,11 @@ export function useSaveFile() {
         clearSaveFile,
         updateResourcesMutation,
         hireMercMutation,
-        // addRandomMercMutation,
+
+        mutations: {
+            updateResourcesMutation,
+            hireMercMutation,
+            regenerateMercsMutation,
+        }
     }
 }

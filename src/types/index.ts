@@ -154,7 +154,20 @@ export interface SaveFileOptional {
 
 
 //______________________________________________________________________________________
+// ===== Actions =====
+
+
+
+//______________________________________________________________________________________
 // ===== Stores =====
+
+export interface SaveQueueObj {
+    mutationKey: "hireMercMutation" | "updateResourcesMutation" | "regenerateMercsMutation";
+    props?: {
+        income?: ResourceRewards;
+        mercKey?: string;
+    }
+}
 
 export type ActiveMobilePanels = "resources" | "mercs" | "contracts" | "other";
 
@@ -174,9 +187,14 @@ export interface GameStoreState {
     inGameTime: number;
     lastSavedTime: Date;
     activeMobilePanel: ActiveMobilePanels;
+    saveQueue: Array<SaveQueueObj>;
+    activeSaveQueueObj: SaveQueueObj | null;
 }
 
 export interface GameStoreFunctions {
     setStoreKeyValuePair: (obj: GameStoreStateOptional) => void;
+    pushToSaveQueue: (saveQueueObj: SaveQueueObj) => void;
+    activateSaveQueueObj: () => void;
+    finishSaveQueueObj: () => void;
 }
 
