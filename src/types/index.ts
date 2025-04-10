@@ -96,6 +96,21 @@ export interface PotentialBusinesses {
 //______________________________________________________________________________________
 // ===== Contracts =====
 
+
+export interface ContractSubType {
+    display: string;
+}
+
+export interface ContractType {
+    display: string;
+    dangerLevel: number;
+    subTypes: Record<keyof MercRoleLevels, ContractSubType>;
+}
+
+export type ContractTypeKey = "specialDelivery" | "agentSaboteur" | "gunForHire" | "thievery" | "sos" | "cyberpsycho";
+
+export type ContractTypes = Record<ContractTypeKey, ContractType>;
+
 export interface ContractMercAssigned {
     key: Merc["key"];
 }

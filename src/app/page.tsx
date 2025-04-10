@@ -5,11 +5,8 @@ import { BookIcon, CastleIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
 // Stores ---------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
-import Panel from "@/components/panels/Panel";
-import Resources from "@/components/panels/Resources";
-import Mercs from "@/components/panels/Mercs";
+import GameBoard from "@/components/GameBoard";
 import MobileNavButton from "@/components/MobileNavButton";
-import Businesses from "@/components/panels/Businesses";
 // Other ----------------------------------------------------------------------------
 
 
@@ -23,23 +20,7 @@ export default function Page() {
         <main className="h-dvh lg:p-6">
             <div className="h-full grid grid-rows-5 sm-h:grid-rows-8 gap-3">
                 <div className="px-3 pt-3 row-span-4 sm-h:row-span-7 lg:p-0 lg:!row-span-8">
-
-                    <div className="h-full grid grid-cols-1 lg:grid-cols-3 lg:gap-6">
-                        
-                        <Panel panelKey="resources">
-                            <Resources/>
-                            <div className="p-4" />
-                            <Businesses/>
-                        </Panel>
-                        <Panel panelKey="mercs">
-                            <Mercs/>
-                        </Panel>
-                        <Panel panelKey="contracts">
-                            <h3 className="text-3xl pb-2">Contracts</h3>
-                        </Panel>
-
-                    </div>
-
+                    <GameBoard/>
                 </div>
                 <div className="lg:hidden w-full h-full">
                     <MobileNavButton panelKey="resources"><ScrollTextIcon/></MobileNavButton>

@@ -24,7 +24,7 @@ import { canHireMerc } from "@/utils/mercs";
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc; isHired?: boolean; }>) {
+export default function ContractCard({ merc, isSigned=false }: Readonly<{ merc: Merc; isSigned?: boolean; }>) {
 
     //______________________________________________________________________________________
     // ===== Hooks =====
@@ -49,8 +49,8 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
     // ===== Functions =====
 
     const onClick = () => {
-        console.log({ trace: "onClick", "merc.key":merc.key, isHired });
-        if(isHired) return;
+        console.log({ trace: "onClick", "merc.key":merc.key, isHired: isSigned });
+        if(isSigned) return;
         if(!canHireMerc({ resources: saveFile?.resources, merc })) {
             toast.error("You do not have enough resources to hire this merc!");
             return;
@@ -70,11 +70,11 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
                 <span>{merc.display}</span>
                 <span>Lvl: {level}</span>
             </>}
-            disabled={isGameSaving && (!isHired) && !canHireMerc({ resources: saveFile?.resources, merc })}
+            disabled={isGameSaving && (!isSigned) && !canHireMerc({ resources: saveFile?.resources, merc })}
         >
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                    {isHired 
+                    {isSigned 
                         ? <>
                             <p>Active Contract/Job:</p>
                             <p>None</p>

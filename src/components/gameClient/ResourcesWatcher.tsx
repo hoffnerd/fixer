@@ -3,7 +3,7 @@
 // Types ----------------------------------------------------------------------------
 import { type Businesses, type ResourceRewards, type SaveFile } from "@/types";
 // Packages -------------------------------------------------------------------------
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Data -----------------------------------------------------------------------------
@@ -69,6 +69,8 @@ export default function ResourcesWatcher(){
     const inGameTime = useGameStore((state) => state.inGameTime);
     const sessionTime = useGameStore((state) => state.sessionTime);
 
+
+
     //______________________________________________________________________________________
     // ===== Hooks =====
     const { saveFile, updateResourcesMutation } = useSaveFile();
@@ -102,11 +104,11 @@ export default function ResourcesWatcher(){
         
         if(!Object.keys(income).length) return;
         updateResourcesMutation.mutate({ id: saveFile.id, income, inGameTime });
-        // console.log({ trace: "ResourcesWatcher", inGameTime, income });
     }, [sessionTime])
 
     useEffect(() => {
         if(!saveFile?.id) return;
+        if(sessionTime === 0) return;
 
         const regeneratedTime = saveFile?.potentialMercs?.regeneratedTime || SCALING_REGENERATED_TIME;
         if(sessionTime % regeneratedTime !== 0) return;

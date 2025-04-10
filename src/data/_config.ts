@@ -1,5 +1,5 @@
-import { type Business, type MercRoleLevels, type Resources, type ResourcesExist, type SaveFile, type SaveFileOptional } from "@/types";
-import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon } from "lucide-react";
+import { type Business, type ContractTypes, type MercRoleLevels, type Resources, type ResourcesExist, type SaveFile, type SaveFileOptional } from "@/types";
+import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon, Search } from "lucide-react";
 
 
 
@@ -131,6 +131,68 @@ export const RESOURCES_INFO = {
         description: "Components used to upgrade cyberware. Some clients may pay you in quickhack components.",
         IconComponent: CircuitBoardIcon,
     },
+}
+
+
+
+//______________________________________________________________________________________
+// ===== Contract =====
+
+export const CONTRACT_TYPES: ContractTypes = {
+    specialDelivery: {
+        display: "Special Delivery",
+        dangerLevel: 1,
+        subTypes: {
+            solo: { display: "Weaponry" },
+            tech: { display: "Cyberware" },
+            corpo: { display: "Intel" },
+        },
+    },
+    agentSaboteur: {
+        display: "Agent Saboteur",
+        dangerLevel: 2,
+        subTypes: {
+            tech: { display: "Hacking" },
+            solo: { display: "Destruction" },
+            corpo: { display: "Espionage" },
+        },
+    },
+    gunForHire: {
+        display: "Gun For Hire",
+        dangerLevel: 3,
+        subTypes: {
+            tech: { display: "Assassination" },
+            solo: { display: "Elimination" },
+            corpo: { display: "Reconnaissance" },
+        },
+    },
+    thievery: {
+        display: "Thievery",
+        dangerLevel: 4,
+        subTypes: {
+            solo: { display: "Weaponry" },
+            tech: { display: "Cyberware" },
+            corpo: { display: "Intel" },
+        },
+    },
+    sos: {
+        display: "SOS",
+        dangerLevel: 5,
+        subTypes: {
+            corpo : { display: "Search and Rescue" },
+            tech: { display: "Security" },
+            solo: { display: "Cover Fire Needed" },
+        },
+    },
+    cyberpsycho: {
+        display: "Cyberpsycho",
+        dangerLevel: 6,
+        subTypes: {
+            tech: { display: "Unknown" },
+            corpo: { display: "Unknown" },
+            solo: { display: "Unknown" },
+        }
+    } 
 }
 
 
