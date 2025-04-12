@@ -12,8 +12,8 @@ import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import { CardContent } from "@/components/shadcn/ui/card";
-import CardButton from "@/_legoBlocks/nextjsCommon/components/shadcn/CardButton";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
+import { Button } from "@/components/shadcn/ui/button";
 import ResourceBadge from "../ResourceBadge";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
@@ -62,16 +62,13 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
     //______________________________________________________________________________________
     // ===== Component Return =====
     return (
-        <CardButton
-            className="border-2 mt-2 mb-5 neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue"
-            classNames={{ cardHeader:"pb-3", cardTitle:"flex justify-between" }}
-            onClick={onClick}
-            title={<>
-                <span>{merc.display}</span>
-                <span>Lvl: {level}</span>
-            </>}
-            disabled={isGameSaving && (!isHired) && !canHireMerc({ resources: saveFile?.resources, merc })}
-        >
+        <Card className="py-0 pt-6 mt-2 mb-5 gap-3 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
+            <CardHeader className="">
+                <CardTitle className="flex justify-between">
+                    <span>{merc.display}</span>
+                    <span>Lvl: {level}</span>
+                </CardTitle>
+            </CardHeader>
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
                     {isHired 
@@ -102,7 +99,13 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
                     </ul>
                 </div>
             </CardContent>
-            {/* <CardFooter></CardFooter> */}
-        </CardButton>
+            <CardFooter className="px-0">
+                {!isHired && (
+                    <Button variant="neonEffectWithGlow" className="w-full neColorBlue rounded-none" onClick={onClick} disabled={isGameSaving}>
+                        Hire
+                    </Button>
+                )}
+            </CardFooter>
+        </Card>
     )
 }

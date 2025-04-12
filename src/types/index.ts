@@ -97,33 +97,42 @@ export interface PotentialBusinesses {
 // ===== Contracts =====
 
 
-export interface ContractSubType {
+export interface ContractRole {
     display: string;
 }
 
 export interface ContractType {
     display: string;
     dangerLevel: number;
-    subTypes: Record<keyof MercRoleLevels, ContractSubType>;
+    roles: Record<keyof MercRoleLevels, ContractRole>;
 }
 
 export type ContractTypeKey = "specialDelivery" | "agentSaboteur" | "gunForHire" | "thievery" | "sos" | "cyberpsycho";
 
 export type ContractTypes = Record<ContractTypeKey, ContractType>;
 
-export interface ContractMercAssigned {
+export interface ContractMercSlot {
     key: Merc["key"];
 }
 
-export type ContractMercsAssigned = Array<ContractMercAssigned>
-
 export interface Contract {
-    key: string;
+    key: string; // `${createdAt.getTime()}_${generationIndex}`
+    createdAt: Date;
+    generationIndex: number;
+    type: ContractTypeKey;
+    innateRole: keyof MercRoleLevels;
+    innateSubRole?: keyof MercRoleLevels;
+    roleLevels: MercRoleLevels;
+    stage: "unsigned" | "signed" | "researching" | "inProgress" | "completed";
+    client: string;
+    xp: number;
     display: string;
     description?: string;
     rewards: ResourceRewards;
     time: number;
-    mercsAssigned?: ContractMercsAssigned;
+    mercSlots: {
+        main?: ContractMercSlot | null;
+    };
 }
 
 export type Contracts = Record<Contract["key"], Contract>;
@@ -138,9 +147,14 @@ export interface PotentialContracts {
 //______________________________________________________________________________________
 // ===== SaveFile =====
 
+export interface SaveFileFlags {
+    hasHiredFirstMerc: boolean;
+    // ...
+}
+
 export interface SaveFile extends Omit<
     SaveFilePrisma, 
-    'resources' | 'mercs' | 'businesses' | 'contracts' | 'potentialMercs' | 'potentialBusinesses' | 'potentialContracts'
+    'resources' | 'mercs' | 'businesses' | 'contracts' | 'potentialMercs' | 'potentialBusinesses' | 'potentialContracts' | 'flags'
 > {
     resources: Resources;
     mercs: Mercs;
@@ -149,6 +163,7 @@ export interface SaveFile extends Omit<
     potentialMercs: PotentialMercs;
     potentialBusinesses: PotentialBusinesses;
     potentialContracts: PotentialContracts;
+    // flags: SaveFileFlags;
 }
 
 export interface SaveFileOptional {
@@ -161,6 +176,7 @@ export interface SaveFileOptional {
     potentialMercs?: PotentialMercs;
     potentialBusinesses?: PotentialBusinesses;
     potentialContracts?: PotentialContracts;
+    flags?: SaveFileFlags;
     inGameTime?: number;
     createdAt?: Date;
     updatedAt?: Date;

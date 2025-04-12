@@ -37,6 +37,12 @@ export const SCALING_MERC_LEVEL_DIFFERENCE_CORE = { min: -2, max: 2 };
 
 export const SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL = { min: -5, max: 5 };
 
+export const SCALING_CONTRACT_LEVEL = 5
+
+export const SCALING_CONTRACT_LEVEL_CORE = { min: -2, max: 2 };
+
+export const SCALING_CONTRACT_LEVEL_ADDITIONAL = { min: -5, max: 5 };
+
 export const SCALING_REGENERATED_TIME = 60 * 5;
 
 
@@ -142,7 +148,7 @@ export const CONTRACT_TYPES: ContractTypes = {
     specialDelivery: {
         display: "Special Delivery",
         dangerLevel: 1,
-        subTypes: {
+        roles: {
             solo: { display: "Weaponry" },
             tech: { display: "Cyberware" },
             corpo: { display: "Intel" },
@@ -151,7 +157,7 @@ export const CONTRACT_TYPES: ContractTypes = {
     agentSaboteur: {
         display: "Agent Saboteur",
         dangerLevel: 2,
-        subTypes: {
+        roles: {
             tech: { display: "Hacking" },
             solo: { display: "Destruction" },
             corpo: { display: "Espionage" },
@@ -160,7 +166,7 @@ export const CONTRACT_TYPES: ContractTypes = {
     gunForHire: {
         display: "Gun For Hire",
         dangerLevel: 3,
-        subTypes: {
+        roles: {
             tech: { display: "Assassination" },
             solo: { display: "Elimination" },
             corpo: { display: "Reconnaissance" },
@@ -169,7 +175,7 @@ export const CONTRACT_TYPES: ContractTypes = {
     thievery: {
         display: "Thievery",
         dangerLevel: 4,
-        subTypes: {
+        roles: {
             solo: { display: "Weaponry" },
             tech: { display: "Cyberware" },
             corpo: { display: "Intel" },
@@ -178,7 +184,7 @@ export const CONTRACT_TYPES: ContractTypes = {
     sos: {
         display: "SOS",
         dangerLevel: 5,
-        subTypes: {
+        roles: {
             corpo : { display: "Search and Rescue" },
             tech: { display: "Security" },
             solo: { display: "Cover Fire Needed" },
@@ -187,13 +193,15 @@ export const CONTRACT_TYPES: ContractTypes = {
     cyberpsycho: {
         display: "Cyberpsycho",
         dangerLevel: 6,
-        subTypes: {
+        roles: {
             tech: { display: "Unknown" },
             corpo: { display: "Unknown" },
             solo: { display: "Unknown" },
         }
     } 
 }
+
+export const CONTRACT_TYPE_KEYS = Object.keys(CONTRACT_TYPES) as Array<keyof ContractTypes>;
 
 
 
