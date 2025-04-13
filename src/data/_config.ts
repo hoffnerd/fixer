@@ -46,6 +46,7 @@ export const SCALING_CONTRACT_LEVEL_ADDITIONAL = { min: -5, max: 5 };
 export const SCALING_REGENERATED_TIME = 60 * 5;
 
 
+
 //______________________________________________________________________________________
 // ===== SaveFile =====
 

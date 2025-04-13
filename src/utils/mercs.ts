@@ -219,6 +219,7 @@ const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLe
     const type = getRandomItemFromArray<keyof ContractTypes>(CONTRACT_TYPE_KEYS)!;
     const contractType = CONTRACT_TYPES[type];
     const timeScale = handleScaling(getContractTime, { xpPlayer, xpEntity });
+
     return {
         key:`${createdAt.getTime()}_${index}`,
         createdAt,
@@ -230,6 +231,7 @@ const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLe
         stage: "unsigned",
         client: "defaultClient",
         xp: xpEntity,
+        visualLevel: levelEntity + levelScale,
         display: `${contractType.display} - ${contractType.roles[innateRole].display}`,
         rewards: generateResources({ level, xpEntity, innateRole, innateSubRole, options:{ exponent: 2} }),
         time: timeScale.value,

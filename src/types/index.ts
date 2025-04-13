@@ -126,6 +126,7 @@ export interface Contract {
     stage: "unsigned" | "signed" | "researching" | "inProgress" | "completed";
     client: string;
     xp: number;
+    visualLevel: number;
     display: string;
     description?: string;
     rewards: ResourceRewards;
