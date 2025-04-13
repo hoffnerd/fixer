@@ -8,7 +8,7 @@ import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 // Data -----------------------------------------------------------------------------
 import { DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
 import { addResourceRewards, xpToLevel } from "@/utils";
-import { canHireMerc, getRandomMercs } from "@/utils/mercs";
+import { canHireMerc, getRandomContracts, getRandomMercs } from "@/utils/mercs";
 // Other ----------------------------------------------------------------------------
 // import { getRandomMerc } from "@/utils";
 
@@ -38,6 +38,7 @@ export const readSaveFile = async (id?: string | null) => serverAction<SaveFile>
 
 const rawCreateSaveFile = async () => {
     const mercs = getRandomMercs({}, 0, 3);
+    const contracts = getRandomContracts(0, 3);
     return await db.saveFile.create({ 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: { 
@@ -45,6 +46,10 @@ const rawCreateSaveFile = async () => {
             potentialMercs: {
                 ...DEFAULT_SAVE_FILE.potentialMercs,
                 mercs,
+            },
+            potentialContracts: {
+                ...DEFAULT_SAVE_FILE.potentialContracts,
+                contracts,
             },
         } 
     })

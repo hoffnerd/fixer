@@ -1,5 +1,5 @@
 import { type Business, type ContractTypes, type MercRoleLevels, type Resources, type ResourcesExist, type SaveFile, type SaveFileOptional } from "@/types";
-import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon, Search } from "lucide-react";
+import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon, Search, UserCircleIcon } from "lucide-react";
 
 
 
@@ -45,12 +45,17 @@ export const SCALING_CONTRACT_LEVEL_ADDITIONAL = { min: -5, max: 5 };
 
 export const SCALING_REGENERATED_TIME = 60 * 5;
 
+export const SCALING_BUSINESS_XP_REWARD = 5;
+
+export const SCALING_CONTRACT_XP_REWARD = SCALING_BUSINESS_XP_REWARD * 3;
+
 
 
 //______________________________________________________________________________________
 // ===== SaveFile =====
 
 export const DEFAULT_RESOURCES: ResourcesExist = {
+    xp: 0,
     euros: 0,
     weapons: 0,
     medicals: 0,
@@ -77,6 +82,7 @@ export const MERC_ROLE_KEYS = Object.keys(DEFAULT_MERC_ROLE_LEVELS) as Array<key
 
 export const DEFAULT_SAVE_FILE: SaveFileOptional = {
     resources: {
+        xp: 0,
         euros: 100,
         weapons: 5,
         medicals: 5,
@@ -118,6 +124,11 @@ export const RESOURCE_TO_ROLE_MAP = {
 }
 
 export const RESOURCES_INFO = {
+    xp: {
+        display: "Reputation",
+        description: "Reputation is a measure of the value of a person or entity. It is often used to gauge the trustworthiness of a person or organization.",
+        IconComponent: UserCircleIcon,
+    },
     euros: {    
         display: "Eurodollars",
         description: "The European Currency Unit (symbol: €$ or §; and abbreviated to ecu), more commonly referred to as Eurodollar (ed) or Eurobuck (eb), and colloquially known as eddie and ebuck, is the main currency of Europe and North America.",

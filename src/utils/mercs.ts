@@ -17,7 +17,8 @@ import {
     CONTRACT_TYPES,
     SCALING_CONTRACT_LEVEL,
     SCALING_CONTRACT_LEVEL_CORE,
-    SCALING_CONTRACT_LEVEL_ADDITIONAL, 
+    SCALING_CONTRACT_LEVEL_ADDITIONAL,
+    SCALING_CONTRACT_XP_REWARD, 
 } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { generateMercName } from "./nameGeneration";
@@ -233,7 +234,10 @@ const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLe
         xp: xpEntity,
         visualLevel: levelEntity + levelScale,
         display: `${contractType.display} - ${contractType.roles[innateRole].display}`,
-        rewards: generateResources({ level, xpEntity, innateRole, innateSubRole, options:{ exponent: 2} }),
+        rewards: {
+            ...generateResources({ level, xpEntity, innateRole, innateSubRole, options:{ exponent: 2} }),
+            xp: SCALING_CONTRACT_XP_REWARD,
+        },
         time: timeScale.value,
         mercSlots: {
             main: null,

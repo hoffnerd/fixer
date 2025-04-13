@@ -13,6 +13,7 @@ export type GenericObject = Record<string, unknown>;
 // ===== Resources =====
 
 export interface ResourcesExist {
+    xp: number;
     euros: number;
     weapons: number;
     medicals: number;
@@ -20,6 +21,7 @@ export interface ResourcesExist {
 }
 
 export interface Resources {
+    xp?: number;
     euros?: number;
     weapons?: number;
     medicals?: number;
@@ -27,11 +29,11 @@ export interface Resources {
 }
 
 export interface ResourceRewards {
+    xp?: number;
     euros?: number;
     weapons?: number;
     medicals?: number;
     hacks?: number;
-    xp?: number;
 }
 
 

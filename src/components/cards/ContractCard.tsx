@@ -21,6 +21,15 @@ import { xpToLevel } from "@/utils";
 
 
 //______________________________________________________________________________________
+// ===== Micro-Components =====
+
+function ContractStageContent({ contract }: Readonly<{ contract: Contract; }>) {
+    return <></>
+}
+
+
+
+//______________________________________________________________________________________
 // ===== Component =====
 
 export default function ContractCard({ contract }: Readonly<{ contract: Contract; }>) {
@@ -59,46 +68,34 @@ export default function ContractCard({ contract }: Readonly<{ contract: Contract
     // ===== Component Return =====
     return (
         <Card className="py-0 pt-6 mt-2 mb-5 gap-3 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
-            <CardHeader className="">
+            <CardHeader>
                 <CardTitle className="flex justify-between">
                     <span>{contract.display}</span>
-                    <span>Lvl: {level}</span>
+                    <span>Lvl: {contract.visualLevel}</span>
                 </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
-                    {contract.stage 
-                        ? <>
-                            <p>Active Contract/Job:</p>
-                            <p>None</p>
-                        </>
-                        : <>
-                            <p>Costs:</p>
-                            <ul className="whitespace-nowrap">
-                                {Object.entries(contract.initialCost).map(([key, value]) => (
-                                    <ResourceBadge 
-                                        key={key} 
-                                        resourceKey={key as keyof typeof RESOURCES_INFO} 
-                                        value={(value ?? 0) as number}
-                                        options={{ hideTooltip: true }}
-                                    />
-                                ))}
-                            </ul>   
-                        </>
-                    }
+                    <ContractStageContent contract={contract} />
                 </div>
                 <div className="flex justify-end">
                     <ul className="whitespace-nowrap">
-                        <li>Corpo: {contract.roleLevels.corpo}</li>
-                        <li>Solo: {contract.roleLevels.solo}</li>
-                        <li>Tech: {contract.roleLevels.tech}</li>
+                        <li>Rewards</li>
+                        {Object.entries(contract.rewards).map(([key, value]) => (
+                            <ResourceBadge 
+                                key={key} 
+                                resourceKey={key as keyof typeof RESOURCES_INFO} 
+                                value={(value ?? 0) as number}
+                                options={{ hideTooltip: true }}
+                            />
+                        ))}
                     </ul>
                 </div>
             </CardContent>
             <CardFooter className="px-0">
-                {!contract.stage && (
+                {contract.stage === "unsigned" && (
                     <Button variant="neonEffectWithGlow" className="w-full neColorBlue rounded-none" onClick={onClick} disabled={isGameSaving}>
-                        Hire
+                        Sign
                     </Button>
                 )}
             </CardFooter>

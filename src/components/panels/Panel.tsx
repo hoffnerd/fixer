@@ -8,7 +8,7 @@ import { useGameStore } from "@/stores/useGameStore";
 import { Button } from "../shadcn/ui/button";
 import { useSaveFile } from "@/hooks/useSaveFile";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../shadcn/ui/sheet";
-import { MercCarousel } from "../MercCarousel";
+import { EntityCarousel } from "../EntityCarousel";
 import { ReadableTime } from "@/_legoBlocks/nextjsCommon/components/microComponents";
 // Data -----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
@@ -24,7 +24,6 @@ interface PanelButtonConfig{
     sheetSide: "top" | "right" | "bottom" | "left";
     sheetTitle: string;
     sheetDescription: string;
-    InnerSheetContent: React.ComponentType;
 }
 
 type PanelButtonConfigs = Record<ActiveMobilePanels, PanelButtonConfig>;
@@ -41,30 +40,39 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
         buttonText: "Buy More Businesses",
         sheetSide: "left",
         sheetTitle: "Businesses Available to Buy",
-        sheetDescription: "until the next Businesses are available to buy.",
-        InnerSheetContent: MercCarousel
+        sheetDescription: "until the next Businesses are available to buy."
     },
     mercs: { 
         buttonText: "Hire More Mercs",
         sheetSide: "bottom",
         sheetTitle: "Mercs Available to Hire",
-        sheetDescription: "until the next Mercs are available to hire.",
-        InnerSheetContent: MercCarousel
+        sheetDescription: "until the next Mercs are available to hire."
     },
     contracts: { 
         buttonText: "Find More Contracts",
         sheetSide: "right",
         sheetTitle: "Contracts Available to Sign",
-        sheetDescription: "until the next Contracts are available to sign.",
-        InnerSheetContent: MercCarousel
+        sheetDescription: "until the next Contracts are available to sign."
     }, 
     other: { 
         buttonText: "",
         sheetSide: "top",
         sheetTitle: "",
-        sheetDescription: "",
-        InnerSheetContent: MercCarousel
+        sheetDescription: ""
     },
+}
+
+
+
+//______________________________________________________________________________________
+// ===== Pure Functions =====
+
+const panelKeyToEntityType = (panelKey: ActiveMobilePanels) => {
+    switch (panelKey) {
+        case "resources": return "businesses";
+        case "contracts": return "contracts";
+        default: return "mercs";
+    }
 }
 
 
@@ -80,7 +88,7 @@ function TimeDisplay(){
 }
 
 function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) {
-    const { buttonText, sheetSide, sheetTitle, sheetDescription, InnerSheetContent } = PANEL_BUTTON_CONFIGS[panelKey];
+    const { buttonText, sheetSide, sheetTitle, sheetDescription } = PANEL_BUTTON_CONFIGS[panelKey];
     const isGameSaving = useGameStore((state) => state.isGameSaving); 
     return (
         <Sheet>
@@ -107,7 +115,7 @@ function PanelButton({ panelKey }: Readonly<{ panelKey: ActiveMobilePanels; }>) 
                 <div className="flex justify-center">
                     <div className="w-[1400px]">
                         <div className="flex justify-center">
-                            <InnerSheetContent />
+                            <EntityCarousel type={panelKeyToEntityType(panelKey)} />
                         </div>
                     </div>
                 </div>

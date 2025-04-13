@@ -19,7 +19,6 @@ model SaveFile {
     potentialMercs      Json?
     potentialBusinesses Json?
     potentialContracts  Json?
-    xp                  Int      @default(0)
     inGameTime          Int      @default(0)
     createdAt           DateTime @default(now())
     updatedAt           DateTime @updatedAt
