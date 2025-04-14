@@ -156,6 +156,12 @@ export const RESOURCES_INFO = {
 //______________________________________________________________________________________
 // ===== Contract =====
 
+export const INTEL_BONUS_DETAILS = [
+    {
+        
+    }
+]
+
 export const CONTRACT_TYPES: ContractTypes = {
     specialDelivery: {
         display: "Special Delivery",

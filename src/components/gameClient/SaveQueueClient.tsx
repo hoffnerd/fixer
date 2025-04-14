@@ -28,11 +28,30 @@ const getRequiredMutationProps = (saveQueueObj: SaveQueueObj) => {
         case "updateResourcesMutation":
             if(!props?.income) return { error: "No Income provided!" };
             return { income: props.income };
+        case "assignMercMutation":
+            if(!props?.assignType) return { error: "No Type provided!" };
+            if(props.assignType === "contract" && !props?.contractKey) return { error: "No Contract provided!" };
+            if(props.assignType === "business" && !props?.businessKey) return { error: "No Business provided!" };
+            if(!props?.mercKey) return { error: "No Merc provided!" };
+            return { 
+                mercKey: props.mercKey,
+                assignType: props.assignType,
+                contractKey: props.contractKey,
+                businessKey: props.businessKey,
+                slot: props?.slot,
+            };
         case "hireMercMutation": 
             if(!props?.mercKey) return { error: "No Merc provided!" };
             return { mercKey: props.mercKey };
+            
+        case "signContractMutation": 
+        case "cancelContractMutation": 
+            if(!props?.contractKey) return { error: "No Contract provided!" };
+            return { contractKey: props.contractKey };
 
-        case "regenerateMercsMutation": return {};
+        case "regenerateMercsMutation": 
+        case "regenerateContractsMutation": 
+            return {};
         default: return { error: "Unknown Mutation Key!" };
     }
 }

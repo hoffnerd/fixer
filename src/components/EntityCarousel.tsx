@@ -71,7 +71,7 @@ export function EntityCarousel({ type }: Readonly<{ type: Type; }>) {
     return (
         <Carousel 
             className="w-full mx-8" 
-            orientation={type === "mercs" ? "horizontal" : "vertical"}
+            // orientation={type === "mercs" ? "horizontal" : "vertical"}
             opts={{ align: "center" }}
         >
             <CarouselContent>

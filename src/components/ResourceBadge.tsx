@@ -58,7 +58,7 @@ export default function ResourceBadge({
                 ? <IconComponent />
                 : <ResourceToolTip resourceInfo={resourceInfo} />
             }
-            <span>&nbsp;: {value}</span>
+            <span>: {value}</span>
         </li>
     );
 }

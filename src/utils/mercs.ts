@@ -233,7 +233,8 @@ const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLe
         client: "defaultClient",
         xp: xpEntity,
         visualLevel: levelEntity + levelScale,
-        display: `${contractType.display} - ${contractType.roles[innateRole].display}`,
+        display: contractType.display,
+        roleDisplay: contractType.roles[innateRole].display,
         rewards: {
             ...generateResources({ level, xpEntity, innateRole, innateSubRole, options:{ exponent: 2} }),
             xp: SCALING_CONTRACT_XP_REWARD,

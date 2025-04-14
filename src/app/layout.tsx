@@ -5,7 +5,7 @@ import { type Metadata } from "next";
 // Styles ---------------------------------------------------------------------------
 import "@/styles/globals.css";
 // Fonts ----------------------------------------------------------------------------
-import { Geist } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 // Data -----------------------------------------------------------------------------
 import { PROJECT_DESCRIPTION, PROJECT_DISPLAY_NAME } from "@/data/_config";
 // Components -----------------------------------------------------------------------
@@ -34,9 +34,14 @@ export const metadata: Metadata = {
 //______________________________________________________________________________________
 // ===== Fonts =====
 
-const geist = Geist({
+// const geist = Geist({
+//     subsets: ["latin"],
+//     variable: "--font-geist-sans",
+// });
+
+const robotoMono = Roboto_Mono({
     subsets: ["latin"],
-    variable: "--font-geist-sans",
+    variable: "--font-roboto-mono-sans",
 });
 
 
@@ -47,7 +52,7 @@ const geist = Geist({
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const isDevMode = process.env.NODE_ENV === "development";
     return (
-        <html lang="en" className={`${geist.variable} dark neonEffect neScrollBar neColorPurple`}>
+        <html lang="en" className={`${robotoMono.variable} dark neonEffect neScrollBar neColorPurple`}>
             <body>
                 <ClientProvider shouldRenderDevTools={isDevMode}>
                     <Debugger pathsToHideOn={["/scaling"]} shouldRender={isDevMode}>

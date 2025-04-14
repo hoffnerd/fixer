@@ -1,7 +1,7 @@
 "use server"
 
 // Types ----------------------------------------------------------------------------
-import { type PotentialMercs, type ResourceRewards, type SaveFile } from "@/types";
+import { type Contracts, type MercAssignType, type MercSlot, type PotentialContracts, type PotentialMercs, type ResourceRewards, type SaveFile, type SaveFileOptional } from "@/types";
 // Server ---------------------------------------------------------------------------
 import { db } from "./db";
 import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
@@ -86,6 +86,11 @@ export const updateResources = async ({
     });
 }, { trace: "updateResources" });
 
+
+
+//______________________________________________________________________________________
+// ===== Merc Updates =====
+
 export const hireMerc = async ({
     id, 
     mercKey,
@@ -155,5 +160,160 @@ export const regenerateMercs = async ({
             updatedAt: new Date(),
         }
     });
-})
+}, { trace: "regenerateMercs" })
 
+export const assignMerc = async ({
+    id,
+    assignType,
+    mercKey,
+    contractKey,
+    businessKey,
+    slot="main",
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    assignType: MercAssignType;
+    mercKey: string;
+    contractKey?: string;
+    businessKey?: string;
+    slot?: MercSlot;
+    inGameTime?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.mercs) throw new Error("No Mercs to available!");
+
+    let selectedMerc = saveFile.mercs?.[mercKey];
+    if(!selectedMerc) throw new Error("Merc not found");
+    selectedMerc.mercSlot = { type: assignType, slot, contractKey, businessKey };
+
+    let data: SaveFileOptional = {
+        inGameTime: inGameTime ?? saveFile?.inGameTime,
+        mercs: {
+            ...saveFile.mercs,
+            [mercKey]: selectedMerc
+        },
+    } 
+
+    if(assignType === "contract" && contractKey && slot === "main"){
+        let selectedContract = saveFile.contracts?.[contractKey];
+        if(!selectedContract) throw new Error("Contract not found");
+        selectedContract.mercSlots[slot] = { key: mercKey };
+        data.contracts = { ...saveFile.contracts, [contractKey]: selectedContract };
+    }
+
+    if(assignType === "business" && businessKey && (slot === "manager" || slot === "security")){
+        let selectedBusiness = saveFile.businesses?.[businessKey];
+        if(!selectedBusiness) throw new Error("Business not found");
+        if(!selectedBusiness.mercSlots) selectedBusiness.mercSlots = {};
+        selectedBusiness.mercSlots[slot] = { key: mercKey };
+        data.businesses = { ...saveFile.businesses, [businessKey]: selectedBusiness };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: { ...data, updatedAt: new Date() }
+    } as any);
+}, { trace: "assignMerc" });
+
+
+
+//______________________________________________________________________________________
+// ===== Contract Updates =====
+
+export const signContract = async ({
+    id, 
+    contractKey,
+    inGameTime,
+    timeLeft,
+}: Readonly<{ 
+    id: string;
+    contractKey: string;
+    inGameTime?: number; 
+    timeLeft?: number;
+}>) => serverAction<SaveFile>(async () => {
+    const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.potentialContracts) throw new Error("No potential contracts to sign");
+
+    let selectedContract = saveFile.potentialContracts.contracts?.[contractKey];
+    if(!selectedContract) throw new Error("Contract not found");
+    selectedContract.stage = "signed";
+
+    let potentialContracts: PotentialContracts = { ...saveFile.potentialContracts };
+    if(potentialContracts.contracts?.[contractKey]) delete potentialContracts.contracts[contractKey];
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            contracts: {
+                ...saveFile.contracts,
+                [contractKey]: selectedContract
+            },
+            potentialContracts: {
+                ...potentialContracts,
+                regeneratedTime: timeLeftToUse,
+            },
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "signContract" });
+
+export const cancelContract = async ({
+    id, 
+    contractKey,
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    contractKey: string;
+    inGameTime?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.contracts) throw new Error("No contracts to cancel");
+
+    let selectedContract = saveFile.contracts?.[contractKey];
+    if(!selectedContract) throw new Error("Contract not found");
+    
+    let contracts: Contracts = { ...saveFile.contracts };
+    if(contracts[contractKey]) delete contracts[contractKey];
+
+    let newResources = { ...saveFile.resources };
+    if(newResources?.xp && newResources.xp > 0) newResources.xp -= (selectedContract.rewards.xp ?? 0);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            resources: newResources,
+            contracts,
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "cancelContract" });
+
+export const regenerateContracts = async ({ 
+    id, 
+    inGameTime,
+    timeLeft 
+}: Readonly<{ 
+    id: string; 
+    inGameTime?: number; 
+    timeLeft?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
+    const saveFile = await rawReadSaveFile(id);
+    const levelPlayer = xpToLevel((saveFile?.xp ?? 0), SCALING_CORE_MAGIC_NUMBER_PLAYER) || 0;
+    const contracts = getRandomContracts(levelPlayer, 3);
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: { 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            potentialContracts: { regeneratedTime: timeLeftToUse, contracts } as any,
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    });
+}, { trace: "regenerateContracts" })

@@ -13,6 +13,7 @@ import Businesses from "@/components/panels/Businesses";
 import MercCard from "./cards/MercCard";
 import { DEFAULT_RESOURCES } from "@/data/_config";
 import ResourceBadge from "./ResourceBadge";
+import ContractCard from "./cards/ContractCard";
 // Other ----------------------------------------------------------------------------
 
 
@@ -26,6 +27,7 @@ export default function GameBoard() {
     // ===== Hooks =====
     const { saveFile } = useSaveFile();
     const mercs = saveFile?.mercs ?? {};
+    const contracts = saveFile?.contracts ?? {};
     const resources = { ...DEFAULT_RESOURCES, ...(saveFile?.resources ?? {}) };
 
     //______________________________________________________________________________________
@@ -52,7 +54,9 @@ export default function GameBoard() {
             </Panel>
             <Panel panelKey="contracts">
                 <h3 className="text-3xl pb-2">Contracts</h3>
-                
+                {Object.entries(contracts).map(([key, contract]) => (
+                    <ContractCard key={key} contract={contract}/>
+                ))}
             </Panel>
 
         </div>

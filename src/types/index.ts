@@ -41,6 +41,10 @@ export interface ResourceRewards {
 //______________________________________________________________________________________
 // ===== Mercs =====
 
+export type MercAssignType = "contract" | "business";
+
+export type MercSlot = "main" | "manager" | "security";
+
 export interface MercRoleLevels {
     corpo: number;
     solo: number;
@@ -55,6 +59,12 @@ export interface Merc {
     roleLevels: MercRoleLevels;
     xp: number;
     initialCost: Resources;
+    mercSlot?: {
+        type: MercAssignType;
+        slot: MercSlot;
+        contractKey?: Contract["key"];
+        businessKey?: Business["key"];
+    }
 }
 
 export type Mercs = Record<Merc["key"], Merc>;
@@ -130,6 +140,7 @@ export interface Contract {
     xp: number;
     visualLevel: number;
     display: string;
+    roleDisplay: string
     description?: string;
     rewards: ResourceRewards;
     time: number;
@@ -196,10 +207,23 @@ export interface SaveFileOptional {
 // ===== Stores =====
 
 export interface SaveQueueObj {
-    mutationKey: "hireMercMutation" | "updateResourcesMutation" | "regenerateMercsMutation";
+    mutationKey: 
+        "updateResourcesMutation" 
+        | "hireMercMutation"
+        | "assignMercMutation"
+        | "regenerateMercsMutation"
+        | "signContractMutation"
+        | "regenerateContractsMutation"
+        | "cancelContractMutation"
+
+        ;
     props?: {
         income?: ResourceRewards;
+        assignType?: "contract" | "business"
+        slot?: "main" | "manager" | "security"
         mercKey?: string;
+        contractKey?: string;
+        businessKey?: string;
     }
 }
 

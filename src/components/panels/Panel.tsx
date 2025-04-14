@@ -38,7 +38,7 @@ const BORDER = "border-4 rounded-3xl neonEffect neBorder neBorderGlow neColorPur
 const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
     resources: { 
         buttonText: "Buy More Businesses",
-        sheetSide: "left",
+        sheetSide: "bottom",
         sheetTitle: "Businesses Available to Buy",
         sheetDescription: "until the next Businesses are available to buy."
     },
@@ -50,7 +50,7 @@ const PANEL_BUTTON_CONFIGS: PanelButtonConfigs = {
     },
     contracts: { 
         buttonText: "Find More Contracts",
-        sheetSide: "right",
+        sheetSide: "bottom",
         sheetTitle: "Contracts Available to Sign",
         sheetDescription: "until the next Contracts are available to sign."
     }, 

@@ -4,10 +4,11 @@
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
-import { hireMerc, readSaveFile, regenerateMercs, updateResources } from "@/server/saveFile";
+import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 import { toast } from "sonner";
+import type { MercAssignType, MercSlot } from "@/types";
 // Other ----------------------------------------------------------------------------
 
 
@@ -56,6 +57,11 @@ export function useSaveFile() {
         },
     })
 
+
+
+    //______________________________________________________________________________________
+    // ===== Merc Mutations =====
+
     const hireMercMutation = useMutation({
         mutationFn: async (props: Readonly<{ mercKey: string; inGameTime: number; timeLeft?: number; }>) => {
             if(!data?.data?.id) return;
@@ -72,10 +78,85 @@ export function useSaveFile() {
         },
     })
 
+    const assignMercMutation = useMutation({
+        mutationFn: async (props: Readonly<{ 
+            assignType: MercAssignType;
+            mercKey: string;
+            contractKey?: string;
+            businessKey?: string;
+            slot?: MercSlot; 
+        }>) => {
+            if(!data?.data?.id) return;
+            return await assignMerc({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
     const regenerateMercsMutation = useMutation({
         mutationFn: async (props: Readonly<{ inGameTime: number; timeLeft?: number; }>) => {
             if(!data?.data?.id) return;
             return await regenerateMercs({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
+
+
+    //______________________________________________________________________________________
+    // ===== Contract Mutations =====
+
+    const signContractMutation = useMutation({
+        mutationFn: async (props: Readonly<{ contractKey: string; inGameTime: number; timeLeft?: number; }>) => {
+            if(!data?.data?.id) return;
+            return await signContract({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
+    const cancelContractMutation = useMutation({
+        mutationFn: async (props: Readonly<{ contractKey: string; inGameTime: number; }>) => {
+            if(!data?.data?.id) return;
+            return await cancelContract({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
+    const regenerateContractsMutation = useMutation({
+        mutationFn: async (props: Readonly<{ inGameTime: number; timeLeft?: number; }>) => {
+            if(!data?.data?.id) return;
+            return await regenerateContracts({ id: data.data.id, ...props });
         },
         onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
         onSuccess: async (data) => {
@@ -115,7 +196,11 @@ export function useSaveFile() {
         mutations: {
             updateResourcesMutation,
             hireMercMutation,
+            assignMercMutation,
             regenerateMercsMutation,
+            signContractMutation,
+            cancelContractMutation,
+            regenerateContractsMutation,
         }
     }
 }

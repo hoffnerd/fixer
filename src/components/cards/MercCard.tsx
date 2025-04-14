@@ -22,9 +22,34 @@ import { canHireMerc } from "@/utils/mercs";
 
 
 //______________________________________________________________________________________
+// ===== True Constants =====
+
+const DEFAULT_OPTIONS = {
+    childrenAs: "footer",
+}
+
+
+
+//______________________________________________________________________________________
 // ===== Component =====
 
-export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc; isHired?: boolean; }>) {
+export default function MercCard({ 
+    children, 
+    merc, 
+    isHired=false,
+    options={}, 
+}: Readonly<{ 
+    children?: React.ReactNode; 
+    merc: Merc; 
+    isHired?: boolean;
+    options?: { childrenAs?: "footer"; };
+}>) {
+
+    //______________________________________________________________________________________
+    // ===== Options =====
+    const { childrenAs } = { ...DEFAULT_OPTIONS, ...options };
+ 
+
 
     //______________________________________________________________________________________
     // ===== Hooks =====
@@ -49,7 +74,6 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
     // ===== Functions =====
 
     const onClick = () => {
-        console.log({ trace: "onClick", "merc.key":merc.key, isHired });
         if(isHired) return;
         if(!canHireMerc({ resources: saveFile?.resources, merc })) {
             toast.error("You do not have enough resources to hire this merc!");
@@ -105,6 +129,7 @@ export default function MercCard({ merc, isHired=false }: Readonly<{ merc: Merc;
                         Hire
                     </Button>
                 )}
+                {childrenAs === "footer" && children}
             </CardFooter>
         </Card>
     )
