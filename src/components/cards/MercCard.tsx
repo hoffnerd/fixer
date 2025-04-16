@@ -1,7 +1,7 @@
 
 
 // Types ----------------------------------------------------------------------------
-import type { Merc } from "@/types";
+import type { Business, Contract, Merc } from "@/types";
 import type { RESOURCES_INFO } from "@/data/_config";
 // Packages -------------------------------------------------------------------------
 import { toast } from "sonner";
@@ -20,35 +20,124 @@ import { xpToLevel } from "@/utils";
 import { canHireMerc } from "@/utils/mercs";
 
 
+//______________________________________________________________________________________
+// ===== Types =====
+
+interface Options {
+    childrenAs?: "footer" | "content";
+}
+
 
 //______________________________________________________________________________________
 // ===== True Constants =====
 
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: Options = {
     childrenAs: "footer",
 }
 
 
 
 //______________________________________________________________________________________
+// ===== Micro-Components =====
+
+function MercCardHiredFooter({ 
+    children,
+    childrenFooter,
+    merc, 
+    options={}, 
+}: Readonly<{ 
+    children?: React.ReactNode; 
+    childrenFooter?: React.ReactNode; 
+    merc: Merc; 
+    options?: Options;
+}>){
+    const { childrenAs } = { ...DEFAULT_OPTIONS, ...options };
+ 
+    if(childrenAs === "footer" && children) return children;
+    if(childrenAs !== "footer" && childrenFooter) return childrenFooter;
+    return (
+        <div className="w-full grid grid-cols-2">
+
+        </div>
+    )
+}
+
+function MercCardUnhiredContent({ merc }: Readonly<{ merc: Merc; }>) {
+    return <>
+        <p>Costs:</p>
+        <ul className="whitespace-nowrap">
+            {Object.entries(merc.initialCost).map(([key, value]) => (
+                <ResourceBadge 
+                    key={key} 
+                    resourceKey={key as keyof typeof RESOURCES_INFO} 
+                    value={(value ?? 0) as number}
+                    options={{ hideTooltip: true }}
+                />
+            ))}
+        </ul> 
+    </>
+}
+
+function MercCardHiredContent({ 
+    children,
+    childrenContent,
+    merc, 
+    options={}, 
+}: Readonly<{ 
+    children?: React.ReactNode; 
+    childrenContent?: React.ReactNode; 
+    merc: Merc; 
+    options?: Options;
+}>) {
+    const { childrenAs } = { ...DEFAULT_OPTIONS, ...options };
+    const { saveFile } = useSaveFile();
+    const contract = (merc?.mercSlot && merc.mercSlot.type === "contract" && merc.mercSlot.contractKey && saveFile?.contracts?.[merc.mercSlot.contractKey]) as Contract | null;
+    const business = (merc?.mercSlot && merc.mercSlot.type === "business" && merc.mercSlot.businessKey && saveFile?.businesses?.[merc.mercSlot.businessKey]) as Business | null;
+    const jobDisplay = contract?.display 
+        ? `${contract.display} - ${contract.roleDisplay}`
+        : business?.display ?? null;
+
+    return (
+        <div className="grid grid-cols-3 gap-1">
+            <span className="col-span-3">Contract/Job:</span>
+            <span className={`ml-4 mt-[-8px] col-span-3 neonEffect neText neTextGlow ${jobDisplay ? "neColorBlue" : "neColorRed"}`}>
+                {jobDisplay ?? "None"}
+            </span>
+
+            {(childrenAs === "content" && children) || (childrenAs !== "content" && childrenContent)}
+        </div>
+    )
+}
+
+
+//______________________________________________________________________________________
 // ===== Component =====
 
 export default function MercCard({ 
-    children, 
+    children,
+    childrenFooter,
+    childrenContent,
     merc, 
     isHired=false,
     options={}, 
 }: Readonly<{ 
     children?: React.ReactNode; 
+    childrenFooter?: React.ReactNode; 
+    childrenContent?: React.ReactNode; 
     merc: Merc; 
     isHired?: boolean;
-    options?: { childrenAs?: "footer"; };
+    options?: { childrenAs?: "footer" | "content"; };
 }>) {
 
     //______________________________________________________________________________________
     // ===== Options =====
     const { childrenAs } = { ...DEFAULT_OPTIONS, ...options };
  
+
+
+    //______________________________________________________________________________________
+    // ===== Constants =====
+    const level = xpToLevel((merc.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
 
 
     //______________________________________________________________________________________
@@ -63,10 +152,6 @@ export default function MercCard({
     const isGameSaving = useGameStore((state) => state.isGameSaving);
 
 
-
-    //______________________________________________________________________________________
-    // ===== Constants =====
-    const level = xpToLevel((merc.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
 
 
 
@@ -96,23 +181,8 @@ export default function MercCard({
             <CardContent className="grid grid-cols-3 gap-2">
                 <div className="col-span-2">
                     {isHired 
-                        ? <>
-                            <p>Active Contract/Job:</p>
-                            <p>None</p>
-                        </>
-                        : <>
-                            <p>Costs:</p>
-                            <ul className="whitespace-nowrap">
-                                {Object.entries(merc.initialCost).map(([key, value]) => (
-                                    <ResourceBadge 
-                                        key={key} 
-                                        resourceKey={key as keyof typeof RESOURCES_INFO} 
-                                        value={(value ?? 0) as number}
-                                        options={{ hideTooltip: true }}
-                                    />
-                                ))}
-                            </ul>   
-                        </>
+                        ? <MercCardHiredContent children={children} childrenContent={childrenContent} merc={merc} options={options} />
+                        : <MercCardUnhiredContent merc={merc} />
                     }
                 </div>
                 <div className="flex justify-end">
@@ -129,7 +199,7 @@ export default function MercCard({
                         Hire
                     </Button>
                 )}
-                {childrenAs === "footer" && children}
+                {isHired && <MercCardHiredFooter children={children} childrenFooter={childrenFooter} merc={merc} options={options} />}
             </CardFooter>
         </Card>
     )

@@ -11,7 +11,7 @@ import { useGameStore } from "@/stores/useGameStore";
 // Components -----------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 import { DEFAULT_BUSINESS, SCALING_REGENERATED_TIME } from "@/data/_config";
-import { addResourceRewards } from "@/utils";
+import { addResourceRewards, basicSortComparison } from "@/utils";
 // Other ----------------------------------------------------------------------------
 
 
@@ -50,7 +50,7 @@ const findIncomeRates = (saveFile?: SaveFile) => {
 
     const incomeRatesSeconds = Object.keys(incomeRates)
         .map(x => parseInt(x))
-        .sort((a, b) => a - b)
+        .sort(basicSortComparison)
         .reverse();
 
     return { incomeRates, incomeRatesSeconds };

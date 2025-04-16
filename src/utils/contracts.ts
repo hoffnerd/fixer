@@ -1,27 +1,10 @@
 
 // Types ----------------------------------------------------------------------------
-import type { Contract, ContractTypes, Resources } from "@/types";
+import type { Merc, Contract, ContractTypes, Resources, MercRoleLevels } from "@/types";
 // Data -----------------------------------------------------------------------------
-import { 
-    SCALING_CORE_MAGIC_NUMBER, 
-    SCALING_MERC_INNATE_SKILL_POINTS, 
-    SCALING_MERC_INNATE_SUB_SKILL_POINTS, 
-    SCALING_MERC_LEVEL_DIFFERENCE_CORE,
-    SCALING_MERC_LEVEL_DIFFERENCE_ADDITIONAL,
-    DEFAULT_MERC_ROLE_LEVELS, 
-    MERC_ROLE_KEYS,
-    SCALING_CORE_MAGIC_NUMBER_PLAYER,
-    ROLE_TO_RESOURCE_MAP,
-    DEFAULT_RESOURCES,
-    CONTRACT_TYPES,
-    CONTRACT_TYPE_KEYS, 
-} from "@/data/_config";
 // Other ----------------------------------------------------------------------------
-import { getRandomItemFromArray, getRandomNumber, getRange, levelToXp } from ".";
-import { getComps, getEuros, handleMassScaling } from "./scaling";
-import { object } from "zod";
-import { generateMercRoles } from "./mercs";
-
+import { basicSortComparison, getRandomItemFromArray } from ".";
+import { CONTRACT_WEIGHT_UNFORESEEN } from "@/data/_config";
 
 
 //______________________________________________________________________________________    
@@ -29,28 +12,60 @@ import { generateMercRoles } from "./mercs";
 
 
 //______________________________________________________________________________________    
-// ===== Contract Assists =====
+// ===== Functions =====
 
-export const canSignContract = ({ resources, contract, }: Readonly<{ resources?: Resources; contract: Contract; }>) => {
-    return true;
+const findContractRoles = ({
+    roleLevels,
+    innateRole,
+    innateSubRole,
+}: Readonly<{
+    roleLevels: MercRoleLevels;
+    innateRole: keyof MercRoleLevels;
+    innateSubRole: keyof MercRoleLevels;
+}>) => {
+    let contractNonInnateRoles = Object.keys(roleLevels)
+        .filter(x => x !== innateRole && x !== innateSubRole) as Array<keyof MercRoleLevels>;
+
+    let contractInnateSubRole = innateSubRole;
+    if(innateRole === innateSubRole){
+        contractInnateSubRole = getRandomItemFromArray<keyof MercRoleLevels>(contractNonInnateRoles)!;
+        contractNonInnateRoles.splice(contractNonInnateRoles.indexOf(contractInnateSubRole), 1);
+    }
+
+    return { 
+        contractInnateSubRole, 
+        contractNonInnateRole: getRandomItemFromArray<keyof MercRoleLevels>(contractNonInnateRoles)!
+    };
 }
 
+const calculateRoleFactor = (contractRoleLevel: number, mercRoleLevel: number) => {
+    const roleFactor = Math.floor((mercRoleLevel / contractRoleLevel) * 100);
+    return roleFactor > 100 ? 100 : roleFactor;
+}
 
+const calculateTotalRoleFactor = (contract: Contract, merc: Merc) => {
+    const { contractInnateSubRole, contractNonInnateRole } = findContractRoles(contract);
+    const innateRoleFactor = calculateRoleFactor(contract.roleLevels[contract.innateRole], merc.roleLevels[contract.innateRole]);
+    const innateSubRoleFactor = calculateRoleFactor(contract.roleLevels[contractInnateSubRole], merc.roleLevels[contractInnateSubRole]);
+    const nonInnateRoleFactor = calculateRoleFactor(contract.roleLevels[contractNonInnateRole], merc.roleLevels[contractNonInnateRole]);
+    return Math.floor((innateRoleFactor * 0.50) + (innateSubRoleFactor * 0.33) + (nonInnateRoleFactor * 0.17));
+}
 
-//______________________________________________________________________________________    
-// ===== Contract Generation =====
+const calculateIntelBonus = (contract: Contract) => {
+    return 0;
+}
 
-const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLevelAsLevelEntity?: boolean; }>={}): Contract => {
-    const { shouldUseLevelAsLevelEntity } = { shouldUseLevelAsLevelEntity: false, ...options };
-    const levelEntity = shouldUseLevelAsLevelEntity ? level : generateMercLevel(level);
-    const xpEntity = levelEntity ? levelToXp(levelEntity, SCALING_CORE_MAGIC_NUMBER) : 0;
-    const createdAt = new Date();
-    const type = getRandomItemFromArray<keyof ContractTypes>(CONTRACT_TYPE_KEYS)!;
-    const {} = generateMercRoles(level);
-    return {
-        key:`${createdAt.toISOString()}_${index}`,
-        createdAt,
-        generationIndex: index,
-        type,
-    }
+export const getContractSuccessChanceDisplay = (contract: Contract, merc: Merc) => {
+    const totalRoleFactor = calculateTotalRoleFactor(contract, merc);
+    const intelBonus = calculateIntelBonus(contract);
+
+    const unforeseenEventChanceDisplay = CONTRACT_WEIGHT_UNFORESEEN * 100;
+    let maxChance = unforeseenEventChanceDisplay + totalRoleFactor;
+    if(maxChance > 100) maxChance = 100;
+
+    let displayChance = totalRoleFactor + intelBonus;
+    if(displayChance > 100) displayChance = 100;
+
+    if(maxChance === displayChance) return `${displayChance}%`;
+    return `${displayChance}%-${maxChance}%`;
 }

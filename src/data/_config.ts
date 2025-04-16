@@ -162,6 +162,8 @@ export const INTEL_BONUS_DETAILS = [
     }
 ]
 
+export const CONTRACT_WEIGHT_UNFORESEEN = 0.25;
+
 export const CONTRACT_TYPES: ContractTypes = {
     specialDelivery: {
         display: "Special Delivery",

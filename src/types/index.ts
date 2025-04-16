@@ -43,7 +43,7 @@ export interface ResourceRewards {
 
 export type MercAssignType = "contract" | "business";
 
-export type MercSlot = "main" | "manager" | "security";
+export type MercSlot = "main" | "manager" | "security" | "unassign";
 
 export interface MercRoleLevels {
     corpo: number;
@@ -55,7 +55,7 @@ export interface Merc {
     key: string;
     display: string;
     innateRole: keyof MercRoleLevels;
-    innateSubRole?: keyof MercRoleLevels;
+    innateSubRole: keyof MercRoleLevels;
     roleLevels: MercRoleLevels;
     xp: number;
     initialCost: Resources;
@@ -133,7 +133,7 @@ export interface Contract {
     generationIndex: number;
     type: ContractTypeKey;
     innateRole: keyof MercRoleLevels;
-    innateSubRole?: keyof MercRoleLevels;
+    innateSubRole: keyof MercRoleLevels;
     roleLevels: MercRoleLevels;
     stage: "unsigned" | "signed" | "researching" | "inProgress" | "completed";
     client: string;
@@ -220,7 +220,7 @@ export interface SaveQueueObj {
     props?: {
         income?: ResourceRewards;
         assignType?: "contract" | "business"
-        slot?: "main" | "manager" | "security"
+        slot?: MercSlot
         mercKey?: string;
         contractKey?: string;
         businessKey?: string;

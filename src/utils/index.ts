@@ -10,6 +10,8 @@ import type { ResourceRewards } from "@/types";
 //______________________________________________________________________________________
 // ===== General =====
 
+export const basicSortComparison = <T>(a: T, b: T) => a < b ? -1 : a > b ? 1 : 0;
+
 export const xpToLevel = (xp=0, magicNumber=1) => Math.floor( Math.sqrt(xp / magicNumber) );
 
 export const levelToXp = (level=0, magicNumber=1) => Math.floor( (level**2) * magicNumber );

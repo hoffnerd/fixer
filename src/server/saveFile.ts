@@ -184,7 +184,9 @@ export const assignMerc = async ({
 
     let selectedMerc = saveFile.mercs?.[mercKey];
     if(!selectedMerc) throw new Error("Merc not found");
-    selectedMerc.mercSlot = { type: assignType, slot, contractKey, businessKey };
+
+    if(slot === "unassign") delete selectedMerc.mercSlot;
+    else selectedMerc.mercSlot = { type: assignType, slot, contractKey, businessKey };
 
     let data: SaveFileOptional = {
         inGameTime: inGameTime ?? saveFile?.inGameTime,
@@ -194,18 +196,44 @@ export const assignMerc = async ({
         },
     } 
 
-    if(assignType === "contract" && contractKey && slot === "main"){
+    if(assignType === "contract" && contractKey){
         let selectedContract = saveFile.contracts?.[contractKey];
         if(!selectedContract) throw new Error("Contract not found");
-        selectedContract.mercSlots[slot] = { key: mercKey };
+        if(!selectedContract.mercSlots) selectedContract.mercSlots = {};
+
+
+        if(slot === "main"){
+            selectedContract.mercSlots[slot] = { key: mercKey };
+        } 
+        else if(slot === "unassign"){
+            let newMercSlots = { ...selectedContract.mercSlots };
+            for (const [k, value] of Object.entries(newMercSlots)) {
+                const key = k as keyof typeof newMercSlots;
+                if(value?.key && value.key === mercKey) delete newMercSlots[key];
+            }
+            selectedContract.mercSlots = newMercSlots;
+        }
+
         data.contracts = { ...saveFile.contracts, [contractKey]: selectedContract };
     }
 
-    if(assignType === "business" && businessKey && (slot === "manager" || slot === "security")){
+    if(assignType === "business" && businessKey){
         let selectedBusiness = saveFile.businesses?.[businessKey];
         if(!selectedBusiness) throw new Error("Business not found");
         if(!selectedBusiness.mercSlots) selectedBusiness.mercSlots = {};
-        selectedBusiness.mercSlots[slot] = { key: mercKey };
+
+        if(slot === "manager" || slot === "security"){
+            selectedBusiness.mercSlots[slot] = { key: mercKey };
+        }
+        else if(slot === "unassign"){
+            let newMercSlots = { ...selectedBusiness.mercSlots };
+            for (const [k, value] of Object.entries(newMercSlots)) {
+                const key = k as keyof typeof newMercSlots;
+                if(value.key === mercKey) delete newMercSlots[key];
+            }
+            selectedBusiness.mercSlots = newMercSlots;
+        }
+
         data.businesses = { ...saveFile.businesses, [businessKey]: selectedBusiness };
     }
 

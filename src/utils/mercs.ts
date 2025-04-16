@@ -22,7 +22,7 @@ import {
 } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { generateMercName } from "./nameGeneration";
-import { getRandomItemFromArray, getRandomNumber, getRange, levelToXp } from ".";
+import { basicSortComparison, getRandomItemFromArray, getRandomNumber, getRange, levelToXp } from ".";
 import { getComps, getContractTime, getEuros, handleMassScaling, handleScaling, type HandleScalingOptions } from "./scaling";
 
 
@@ -117,7 +117,7 @@ const generateResources = ({
         compsB: { callback: getComps, options: {} },
         compsC: { callback: getComps, options: {} },
     }, { ...options, xpPlayer: levelToXp(level, SCALING_CORE_MAGIC_NUMBER_PLAYER), xpEntity });
-    const values = [ scaling.compsA.value, scaling.compsB.value, scaling.compsC.value ].sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
+    const values = [ scaling.compsA.value, scaling.compsB.value, scaling.compsC.value ].sort(basicSortComparison);
 
     let innateRoleScaleValue = values[2];
     let innateSubRoleScaleValue = values[1];
