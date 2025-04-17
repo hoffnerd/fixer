@@ -2,9 +2,8 @@
 
 // Types ----------------------------------------------------------------------------
 import type { Contract } from "@/types";
-import type { RESOURCES_INFO } from "@/data/_config";
 // Packages -------------------------------------------------------------------------
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 // Data -----------------------------------------------------------------------------
 import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Stores ---------------------------------------------------------------------------
@@ -12,17 +11,14 @@ import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
-import { Popover, PopoverTrigger, PopoverContentNoPortal } from "../shadcn/ui/popover";
+import { Card, CardContent, CardFooter } from "@/components/shadcn/ui/card";
 import { Button } from "@/components/shadcn/ui/button";
-import ToolTipCapsule from "@/_legoBlocks/nextjsCommon/components/shadcn/ToolTipCapsule";
-import ResourceBadge from "../ResourceBadge";
-import { ReadableTime } from "@/_legoBlocks/nextjsCommon/components/microComponents";
-// Other ----------------------------------------------------------------------------
-import { xpToLevel } from "@/utils";
-import { useEffect, useState } from "react";
+import ContractCardHeader from "./contract/ContractCardHeader";
 import ContractSignedContent from "./contract/ContractSignedContent";
 import ContractSignedFooter from "./contract/ContractSignedFooter";
+// Other ----------------------------------------------------------------------------
+import { xpToLevel } from "@/utils";
+import { getHighestRoleLevel } from "@/utils/contracts";
 
 
 
@@ -58,13 +54,17 @@ function ContractStageFooter({ contract }: Readonly<{ contract: Contract; }>) {
 }
 
 function ContractStageContent({ contract }: Readonly<{ contract: Contract; }>) {
+    const highestRoleLevel = getHighestRoleLevel(contract);
 
 
     if(contract.stage === "unsigned") return <>
+        <div className="grid grid-cols-3 gap-1">
+            <span className="col-span-2">Level:</span>
+            <span>{highestRoleLevel}</span>
+        </div>
         <div className="text-xs text-gray-500 max-h-20 overflow-hidden text-ellipsis">
             {DESCRIPTION}
         </div>
-        <div>Completion in: <ReadableTime timeInSeconds={contract.time} /></div>
     </>
 
     if(contract.stage === "signed") return <ContractSignedContent contract={contract} />
@@ -129,34 +129,11 @@ export default function ContractCard({ contract }: Readonly<{ contract: Contract
     //______________________________________________________________________________________
     // ===== Component Return =====
     return (
-        <Card className="py-0 pt-6 mt-2 mb-5 gap-1 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
-            <CardHeader>
-                <CardTitle className="flex justify-between">
-                    <div className="flex flex-col">
-                        <span>{contract.display}</span>
-                        <span className="pt-1">- {contract.roleDisplay}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span>Lvl: {level}</span>
-                        <span className="pt-1">Rewards:</span>
-                    </div>
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-2">
-                <div className="col-span-2 flex flex-col">
+        <Card className="py-0 mt-2 mb-5 gap-1 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
+            <ContractCardHeader contract={contract} />
+            <CardContent className="">
+                <div className="flex flex-col">
                     <ContractStageContent contract={contract} />
-                </div>
-                <div className="flex justify-end">
-                    <ul className="whitespace-nowrap">
-                        {Object.entries(contract.rewards).map(([key, value]) => (
-                            <ResourceBadge 
-                                key={key} 
-                                resourceKey={key as keyof typeof RESOURCES_INFO} 
-                                value={(value ?? 0) as number}
-                                options={{ hideTooltip: true }}
-                            />
-                        ))}
-                    </ul>
                 </div>
             </CardContent>
             <CardFooter className="px-0">

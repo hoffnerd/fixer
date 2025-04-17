@@ -2,28 +2,20 @@
 
 // Types ----------------------------------------------------------------------------
 import type { Contract } from "@/types";
-import type { RESOURCES_INFO } from "@/data/_config";
 // Packages -------------------------------------------------------------------------
-import { toast } from "sonner";
 // Data -----------------------------------------------------------------------------
-import { SCALING_CORE_MAGIC_NUMBER, SCALING_REGENERATED_TIME } from "@/data/_config";
+import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
 import { Popover, PopoverTrigger, PopoverContentNoPortal } from "@/components/shadcn/ui/popover";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/shadcn/ui/sheet";
 import { Button } from "@/components/shadcn/ui/button";
-import ToolTipCapsule from "@/_legoBlocks/nextjsCommon/components/shadcn/ToolTipCapsule";
-import ResourceBadge from "@/components/ResourceBadge";
-import { ReadableTime } from "@/_legoBlocks/nextjsCommon/components/microComponents";
+import MercCard from "../MercCard";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
-import { useEffect, useState } from "react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/shadcn/ui/sheet";
-import { BanIcon, UserXIcon } from "lucide-react";
-import MercCard from "../MercCard";
 import { getContractSuccessChanceDisplay } from "@/utils/contracts";
 
 
@@ -67,29 +59,6 @@ function ContractMercAssignedFooter({ contract }: Readonly<{ contract: Contract;
                 </Button>
             </PopoverContentNoPortal>
         </Popover>
-        <ToolTipCapsule 
-            content={<div>Unassign <span className="neonEffect neText neTextGlow neColorBlue">{merc?.display ?? "Merc"}</span> from this Contract</div>} 
-            options={{ childrenAs: "trigger" }}
-        >
-            <div>
-                <Button 
-                    variant="neonEffect" 
-                    className="w-full neColorYellow rounded-none" 
-                    onClick={() => pushToSaveQueue({ 
-                        mutationKey: "assignMercMutation",
-                        props: { 
-                            assignType:"contract", 
-                            mercKey: contract?.mercSlots?.main?.key, 
-                            contractKey: contract.key,
-                            slot: "unassign",
-                        }
-                    })}
-                    disabled={isGameSaving}
-                >
-                    <UserXIcon/>
-                </Button>
-            </div>
-        </ToolTipCapsule>
     </>
 }
  
@@ -117,7 +86,7 @@ function ContractNoMercFooter({ contract }: Readonly<{ contract: Contract; }>) {
                             <MercCard 
                                 key={key} 
                                 merc={merc} 
-                                isHired={true}
+                                options={{ isHired: true }}
                                 childrenContent={<>
                                     <span className="col-span-2">Completion Chance:</span>
                                     <span className={`neonEffect neText neTextGlow ${merc?.key ? "neColorGreen" : "neColorRed"}`}>
@@ -142,22 +111,6 @@ function ContractNoMercFooter({ contract }: Readonly<{ contract: Contract; }>) {
                 </div>
             </SheetContent>
         </Sheet>
-        <ToolTipCapsule 
-            content="Warning! This will cancel the contract. You will not be able to sign it again and lose reputation."
-            className="max-w-56"
-            options={{ childrenAs: "trigger" }}
-        >
-            <div>
-                <Button 
-                    variant="neonEffect" 
-                    className="w-full neColorRed rounded-none" 
-                    onClick={()=>pushToSaveQueue({ mutationKey: "cancelContractMutation", props: { contractKey: contract.key } })} 
-                    disabled={isGameSaving}
-                >
-                    <BanIcon/>
-                </Button>
-            </div>
-        </ToolTipCapsule>
     </>
 }
 
@@ -208,7 +161,7 @@ export default function ContractSignedFooter({ contract }: Readonly<{ contract: 
     //______________________________________________________________________________________
     // ===== Component Return =====
     return (
-        <div className="w-full grid grid-cols-7">
+        <div className="w-full grid grid-cols-6">
             {contract.mercSlots?.main 
                 ? <ContractMercAssignedFooter contract={contract} />
                 : <ContractNoMercFooter contract={contract} />

@@ -45,6 +45,13 @@ export type MercAssignType = "contract" | "business";
 
 export type MercSlot = "main" | "manager" | "security" | "unassign";
 
+export interface MercSlotObject {
+    type: MercAssignType;
+    slot: MercSlot;
+    contractKey?: Contract["key"];
+    businessKey?: Business["key"];
+}
+
 export interface MercRoleLevels {
     corpo: number;
     solo: number;
@@ -59,12 +66,7 @@ export interface Merc {
     roleLevels: MercRoleLevels;
     xp: number;
     initialCost: Resources;
-    mercSlot?: {
-        type: MercAssignType;
-        slot: MercSlot;
-        contractKey?: Contract["key"];
-        businessKey?: Business["key"];
-    }
+    mercSlot?: MercSlotObject;
 }
 
 export type Mercs = Record<Merc["key"], Merc>;

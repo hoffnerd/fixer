@@ -1,16 +1,26 @@
 "use server"
 
 // Types ----------------------------------------------------------------------------
-import { type Contracts, type MercAssignType, type MercSlot, type PotentialContracts, type PotentialMercs, type ResourceRewards, type SaveFile, type SaveFileOptional } from "@/types";
+import type {
+    Contracts,
+    Merc,
+    MercAssignType,
+    Mercs,
+    MercSlot,
+    PotentialContracts,
+    PotentialMercs,
+    ResourceRewards,
+    SaveFile,
+    SaveFileOptional,
+} from "@/types";
 // Server ---------------------------------------------------------------------------
 import { db } from "./db";
 import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 // Data -----------------------------------------------------------------------------
 import { DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
+// Other ----------------------------------------------------------------------------
 import { addResourceRewards, xpToLevel } from "@/utils";
 import { canHireMerc, getRandomContracts, getRandomMercs } from "@/utils/mercs";
-// Other ----------------------------------------------------------------------------
-// import { getRandomMerc } from "@/utils";
 
 
 
@@ -303,6 +313,13 @@ export const cancelContract = async ({
 
     let selectedContract = saveFile.contracts?.[contractKey];
     if(!selectedContract) throw new Error("Contract not found");
+
+    let mercs: Mercs = { ...saveFile.mercs };
+    if(selectedContract.mercSlots.main?.key && saveFile.mercs?.[selectedContract.mercSlots.main.key]?.mercSlot?.type === "contract"){
+        let selectedMerc = { ...saveFile.mercs[selectedContract.mercSlots.main.key] } as Merc;
+        delete selectedMerc.mercSlot;
+        mercs[selectedContract.mercSlots.main.key] = selectedMerc;
+    }
     
     let contracts: Contracts = { ...saveFile.contracts };
     if(contracts[contractKey]) delete contracts[contractKey];
@@ -316,6 +333,7 @@ export const cancelContract = async ({
         data: {
             resources: newResources,
             contracts,
+            mercs,
             inGameTime: inGameTime ?? saveFile?.inGameTime,
             updatedAt: new Date(),
         }

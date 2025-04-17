@@ -5,6 +5,7 @@ import type { Business, Contract, Merc } from "@/types";
 import type { RESOURCES_INFO } from "@/data/_config";
 // Packages -------------------------------------------------------------------------
 import { toast } from "sonner";
+import { SettingsIcon } from "lucide-react";
 // Data -----------------------------------------------------------------------------
 import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Stores ---------------------------------------------------------------------------
@@ -13,6 +14,15 @@ import { useGameStore } from "@/stores/useGameStore";
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
+import { 
+    DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuGroup, 
+    DropdownMenuItem, 
+    DropdownMenuLabel, 
+    DropdownMenuSeparator, 
+    DropdownMenuTrigger 
+} from "@/components/shadcn/ui/dropdown-menu";
 import { Button } from "@/components/shadcn/ui/button";
 import ResourceBadge from "../ResourceBadge";
 // Other ----------------------------------------------------------------------------
@@ -20,12 +30,16 @@ import { xpToLevel } from "@/utils";
 import { canHireMerc } from "@/utils/mercs";
 
 
+
 //______________________________________________________________________________________
 // ===== Types =====
 
 interface Options {
     childrenAs?: "footer" | "content";
+    isHired?: boolean;
+    allowManageMerc?: boolean;
 }
+
 
 
 //______________________________________________________________________________________
@@ -33,12 +47,14 @@ interface Options {
 
 const DEFAULT_OPTIONS: Options = {
     childrenAs: "footer",
+    isHired: false,
+    allowManageMerc: false,
 }
 
 
 
 //______________________________________________________________________________________
-// ===== Micro-Components =====
+// ===== Micro-Components - Footer =====
 
 function MercCardHiredFooter({ 
     children,
@@ -62,19 +78,26 @@ function MercCardHiredFooter({
     )
 }
 
+
+
+//______________________________________________________________________________________
+// ===== Micro-Component - Content =====
+
 function MercCardUnhiredContent({ merc }: Readonly<{ merc: Merc; }>) {
     return <>
-        <p>Costs:</p>
-        <ul className="whitespace-nowrap">
+        <p className="pl-6">Initial Hiring Cost:</p>
+        <div className="grid grid-cols-3 gap-[0.1rem] py-[0.1rem] bg-white/10">
             {Object.entries(merc.initialCost).map(([key, value]) => (
-                <ResourceBadge 
-                    key={key} 
-                    resourceKey={key as keyof typeof RESOURCES_INFO} 
-                    value={(value ?? 0) as number}
-                    options={{ hideTooltip: true }}
-                />
+                <div key={key} className="bg-primary-foreground flex justify-center">
+                    <ResourceBadge 
+                        className="py-2 align-middle"
+                        resourceKey={key as keyof typeof RESOURCES_INFO} 
+                        value={(value ?? 0) as number}
+                        options={{ hideTooltip: true, elementType: "div" }}
+                    />
+                </div>
             ))}
-        </ul> 
+        </div>
     </>
 }
 
@@ -98,16 +121,104 @@ function MercCardHiredContent({
         : business?.display ?? null;
 
     return (
-        <div className="grid grid-cols-3 gap-1">
-            <span className="col-span-3">Contract/Job:</span>
-            <span className={`ml-4 mt-[-8px] col-span-3 neonEffect neText neTextGlow ${jobDisplay ? "neColorBlue" : "neColorRed"}`}>
-                {jobDisplay ?? "None"}
-            </span>
+        <div className="px-6">
+            <div className="grid grid-cols-3 gap-1">
+                <span className="col-span-3">Contract/Job:</span>
+                <span className={`ml-4 mt-[-8px] col-span-3 neonEffect neText neTextGlow ${jobDisplay ? "neColorBlue" : "neColorRed"}`}>
+                    {jobDisplay ?? "None"}
+                </span>
 
-            {(childrenAs === "content" && children) || (childrenAs !== "content" && childrenContent)}
+                {(childrenAs === "content" && children) || (childrenAs !== "content" && childrenContent)}
+            </div>
         </div>
     )
 }
+
+
+
+//______________________________________________________________________________________
+// ===== Micro-Component - Header =====
+
+export function MercCardHeader({ merc, options={} }: Readonly<{ merc: Merc; options?: Options; }>) { 
+    const { isHired, allowManageMerc } = { ...DEFAULT_OPTIONS, ...options };
+    const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
+    const isGameSaving = useGameStore((state) => state.isGameSaving);
+    const unassignClick = () => {
+        if(!merc.mercSlot?.type) return;
+        pushToSaveQueue({ 
+            mutationKey: "assignMercMutation", 
+            props: {
+                assignType: merc.mercSlot.type, 
+                mercKey: merc.key, 
+                slot: "unassign",
+                contractKey: merc.mercSlot.contractKey,
+                businessKey: merc.mercSlot.businessKey,
+            } 
+        })
+    }
+    return (
+        <CardHeader className="px-0">
+            <CardTitle>
+                <div className="flex justify-between border-b border-b-white/10">
+                    <div className="mx-auto my-[10px]">{merc.display}</div>
+                    {isHired && allowManageMerc && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="rounded-none border-l border-l-white/10">
+                                    <SettingsIcon/>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                                <DropdownMenuLabel className="text-center neonEffect neText neTextGlow neColorBlue">
+                                    Manage Merc
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem disabled>
+                                        Level Up Merc Roles
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        Train
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={unassignClick} disabled={isGameSaving || (!merc.mercSlot?.type)}>
+                                        Unassign from Job
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem disabled>
+                                        Develop Contract
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem disabled>
+                                        Fire
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+                </div>
+                <div className="grid grid-cols-3 gap-[0.1rem] pb-[0.1rem] bg-white/10">
+                    <div className="bg-primary-foreground">
+                        <div className="py-2 text-center">
+                            Corpo: {merc.roleLevels.corpo}
+                        </div>
+                    </div>
+                    <div className="bg-primary-foreground">
+                        <div className="py-2 text-center">
+                            Solo: {merc.roleLevels.solo}
+                        </div>
+                    </div>
+                    <div className="bg-primary-foreground">
+                        <div className="py-2 text-center">
+                            Tech: {merc.roleLevels.tech}
+                        </div>
+                    </div>
+                </div>
+            </CardTitle>
+        </CardHeader>
+    )
+}
+
 
 
 //______________________________________________________________________________________
@@ -118,26 +229,25 @@ export default function MercCard({
     childrenFooter,
     childrenContent,
     merc, 
-    isHired=false,
     options={}, 
 }: Readonly<{ 
     children?: React.ReactNode; 
     childrenFooter?: React.ReactNode; 
     childrenContent?: React.ReactNode; 
     merc: Merc; 
-    isHired?: boolean;
-    options?: { childrenAs?: "footer" | "content"; };
+    options?: Options;
 }>) {
 
     //______________________________________________________________________________________
     // ===== Options =====
-    const { childrenAs } = { ...DEFAULT_OPTIONS, ...options };
+    const { isHired } = { ...DEFAULT_OPTIONS, ...options };
  
 
 
     //______________________________________________________________________________________
     // ===== Constants =====
     const level = xpToLevel((merc.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
+
 
 
     //______________________________________________________________________________________
@@ -150,8 +260,6 @@ export default function MercCard({
     // ===== Stores =====
     const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const isGameSaving = useGameStore((state) => state.isGameSaving);
-
-
 
 
 
@@ -168,30 +276,17 @@ export default function MercCard({
     }
 
 
+
     //______________________________________________________________________________________
     // ===== Component Return =====
     return (
-        <Card className="py-0 pt-6 mt-2 mb-5 gap-3 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
-            <CardHeader className="">
-                <CardTitle className="flex justify-between">
-                    <span>{merc.display}</span>
-                    <span>Lvl: {level}</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                    {isHired 
-                        ? <MercCardHiredContent children={children} childrenContent={childrenContent} merc={merc} options={options} />
-                        : <MercCardUnhiredContent merc={merc} />
-                    }
-                </div>
-                <div className="flex justify-end">
-                    <ul className="whitespace-nowrap">
-                        <li>Corpo: {merc.roleLevels.corpo}</li>
-                        <li>Solo: {merc.roleLevels.solo}</li>
-                        <li>Tech: {merc.roleLevels.tech}</li>
-                    </ul>
-                </div>
+        <Card className="py-0 mt-2 mb-5 gap-3 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
+            <MercCardHeader merc={merc} options={options} />
+            <CardContent className="px-0">
+                {isHired 
+                    ? <MercCardHiredContent children={children} childrenContent={childrenContent} merc={merc} options={options} />
+                    : <MercCardUnhiredContent merc={merc} />
+                }
             </CardContent>
             <CardFooter className="px-0">
                 {!isHired && (

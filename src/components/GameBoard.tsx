@@ -6,13 +6,12 @@
 import { useSaveFile } from "@/hooks/useSaveFile";
 // Hooks ----------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
+import { DEFAULT_RESOURCES } from "@/data/_config";
 // Components -----------------------------------------------------------------------
 import Panel from "@/components/panels/Panel";
-import Resources from "@/components/panels/Resources";
+import ResourceBadge from "./ResourceBadge";
 import Businesses from "@/components/panels/Businesses";
 import MercCard from "./cards/MercCard";
-import { DEFAULT_RESOURCES } from "@/data/_config";
-import ResourceBadge from "./ResourceBadge";
 import ContractCard from "./cards/ContractCard";
 // Other ----------------------------------------------------------------------------
 
@@ -49,7 +48,7 @@ export default function GameBoard() {
             <Panel panelKey="mercs">
                 <h3 className="text-3xl pb-2">Mercs</h3>
                 {Object.entries(mercs).map(([key, merc]) => (
-                    <MercCard key={key} merc={merc} isHired={true}/>
+                    <MercCard key={key} merc={merc} options={{ isHired: true, allowManageMerc: true }}/>
                 ))}
             </Panel>
             <Panel panelKey="contracts">

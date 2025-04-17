@@ -7,6 +7,7 @@ import { RESOURCES_INFO } from "@/data/_config";
 // Components -----------------------------------------------------------------------
 import ResourceToolTip from "./ResourceToolTip";
 // Other ----------------------------------------------------------------------------
+import { cn } from "@/lib/shadcn";
 
 
 
@@ -15,6 +16,7 @@ import ResourceToolTip from "./ResourceToolTip";
 
 interface Options {
     hideTooltip?: boolean;
+    elementType?: "li" | "div" | "fragment";
 }
 
 
@@ -24,7 +26,29 @@ interface Options {
 
 const DEFAULT_OPTIONS: Options = {
     hideTooltip: false,
+    elementType: "li",
 };
+
+
+
+//______________________________________________________________________________________
+// ===== Micro-Components =====
+
+function ElementType({
+    children,
+    className,
+    elementType,
+}: Readonly<{
+    children: React.ReactNode;
+    className?: string;
+    elementType: Options["elementType"];
+}>){
+    switch (elementType) {
+        case "li": return <li className={cn("flex", className)}>{children}</li>;
+        case "div": return <div className={className}>{children}</div>;
+        default: return <>{children}</>;
+    }
+}
 
 
 
@@ -32,10 +56,14 @@ const DEFAULT_OPTIONS: Options = {
 // ===== Component =====
 
 export default function ResourceBadge({
+    className,
+    classNames={},
     resourceKey,
     value,
     options,
 }: Readonly<{ 
+    className?: string;
+    classNames?: { iconComponent?: string; spanText?: string; };
     resourceKey: keyof ResourcesType; 
     value: number;
     options?: Options;
@@ -43,7 +71,7 @@ export default function ResourceBadge({
 
     //______________________________________________________________________________________
     // ===== Options =====
-    const { hideTooltip } = { ...DEFAULT_OPTIONS, ...options };
+    const { hideTooltip, elementType } = { ...DEFAULT_OPTIONS, ...options };
 
     //______________________________________________________________________________________
     // ===== Constants =====
@@ -53,12 +81,12 @@ export default function ResourceBadge({
     //______________________________________________________________________________________
     // ===== Component Return =====
     return (
-        <li className="flex">
+        <ElementType className={cn("flex", className)} elementType={elementType}>
             {hideTooltip 
-                ? <IconComponent />
+                ? <IconComponent className={classNames?.iconComponent} />
                 : <ResourceToolTip resourceInfo={resourceInfo} />
             }
-            <span>: {value}</span>
-        </li>
+            <span className={classNames?.spanText}>: {value}</span>
+        </ElementType>
     );
 }

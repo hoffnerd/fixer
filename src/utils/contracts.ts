@@ -1,10 +1,10 @@
 
 // Types ----------------------------------------------------------------------------
-import type { Merc, Contract, ContractTypes, Resources, MercRoleLevels } from "@/types";
+import type { Merc, Contract, MercRoleLevels } from "@/types";
 // Data -----------------------------------------------------------------------------
+import { CONTRACT_WEIGHT_UNFORESEEN, SCALING_CONTRACT_LEVEL } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
-import { basicSortComparison, getRandomItemFromArray } from ".";
-import { CONTRACT_WEIGHT_UNFORESEEN } from "@/data/_config";
+import { getRandomItemFromArray } from ".";
 
 
 //______________________________________________________________________________________    
@@ -13,6 +13,18 @@ import { CONTRACT_WEIGHT_UNFORESEEN } from "@/data/_config";
 
 //______________________________________________________________________________________    
 // ===== Functions =====
+
+export const getHighestRoleLevel = (contract: Contract) => {
+    const { roleLevels } = contract;
+    let highestRoleLevel = 0;
+    Object.keys(roleLevels).forEach(key => {
+        const level = roleLevels[key as keyof typeof roleLevels];
+        if(level > highestRoleLevel) highestRoleLevel = level;
+    });
+    highestRoleLevel -= SCALING_CONTRACT_LEVEL;
+    if(highestRoleLevel < 0) return 0;
+    return highestRoleLevel;
+}
 
 const findContractRoles = ({
     roleLevels,
@@ -37,6 +49,11 @@ const findContractRoles = ({
         contractNonInnateRole: getRandomItemFromArray<keyof MercRoleLevels>(contractNonInnateRoles)!
     };
 }
+
+
+
+//______________________________________________________________________________________    
+// ===== Calculations =====
 
 const calculateRoleFactor = (contractRoleLevel: number, mercRoleLevel: number) => {
     const roleFactor = Math.floor((mercRoleLevel / contractRoleLevel) * 100);

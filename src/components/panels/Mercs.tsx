@@ -29,6 +29,8 @@ export default function Mercs() {
     if(!saveFile) return <></>;
     return <>
         <h3 className="text-3xl pb-2">Mercs</h3>
-        {Object.entries(mercs).map(([key, merc]) => <MercCard key={key} merc={merc} isHired={true}/>)}
+        {Object.entries(mercs).map(([key, merc]) => (
+            <MercCard key={key} merc={merc} options={{ isHired: true, allowManageMerc: true }}/>
+        ))}
     </>
 }

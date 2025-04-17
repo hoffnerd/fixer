@@ -1,5 +1,5 @@
-import { type Business, type ContractTypes, type MercRoleLevels, type Resources, type ResourcesExist, type SaveFile, type SaveFileOptional } from "@/types";
-import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon, Search, UserCircleIcon } from "lucide-react";
+import type { Business, ContractTypes, MercRoleLevels, ResourcesExist, SaveFileOptional } from "@/types";
+import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon, UserCircleIcon } from "lucide-react";
 
 
 
@@ -169,36 +169,36 @@ export const CONTRACT_TYPES: ContractTypes = {
         display: "Special Delivery",
         dangerLevel: 1,
         roles: {
+            corpo: { display: "Intel" },
             solo: { display: "Weaponry" },
             tech: { display: "Cyberware" },
-            corpo: { display: "Intel" },
         },
     },
     agentSaboteur: {
         display: "Agent Saboteur",
         dangerLevel: 2,
         roles: {
-            tech: { display: "Hacking" },
-            solo: { display: "Destruction" },
             corpo: { display: "Espionage" },
+            solo: { display: "Destruction" },
+            tech: { display: "Hacking" },
         },
     },
     gunForHire: {
         display: "Gun For Hire",
         dangerLevel: 3,
         roles: {
-            tech: { display: "Assassination" },
-            solo: { display: "Elimination" },
             corpo: { display: "Reconnaissance" },
+            solo: { display: "Elimination" },
+            tech: { display: "Assassination" },
         },
     },
     thievery: {
         display: "Thievery",
         dangerLevel: 4,
         roles: {
+            corpo: { display: "Intel" },
             solo: { display: "Weaponry" },
             tech: { display: "Cyberware" },
-            corpo: { display: "Intel" },
         },
     },
     sos: {
@@ -206,17 +206,17 @@ export const CONTRACT_TYPES: ContractTypes = {
         dangerLevel: 5,
         roles: {
             corpo : { display: "Search and Rescue" },
-            tech: { display: "Security" },
             solo: { display: "Cover Fire Needed" },
+            tech: { display: "Security" },
         },
     },
     cyberpsycho: {
         display: "Cyberpsycho",
         dangerLevel: 6,
         roles: {
-            tech: { display: "Unknown" },
             corpo: { display: "Unknown" },
             solo: { display: "Unknown" },
+            tech: { display: "Unknown" },
         }
     } 
 }
