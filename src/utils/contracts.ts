@@ -2,9 +2,9 @@
 // Types ----------------------------------------------------------------------------
 import type { Merc, Contract, MercRoleLevels } from "@/types";
 // Data -----------------------------------------------------------------------------
-import { CONTRACT_WEIGHT_UNFORESEEN, SCALING_CONTRACT_LEVEL } from "@/data/_config";
+import { CONTRACT_WEIGHT_ROLE_FACTOR, CONTRACT_WEIGHT_UNFORESEEN, SCALING_CONTRACT_LEVEL } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
-import { getRandomItemFromArray } from ".";
+import { getRandomItemFromArray, getRandomNumber } from ".";
 
 
 //______________________________________________________________________________________    
@@ -70,6 +70,41 @@ const calculateTotalRoleFactor = (contract: Contract, merc: Merc) => {
 
 const calculateIntelBonus = (contract: Contract) => {
     return 0;
+}
+
+const calculateUnforeseenEvent = (contract: Contract, intelBonus: number = 0) => {
+    let unforeseenEventNumber = getRandomNumber(0, 100) + intelBonus;
+    if(unforeseenEventNumber > 100) unforeseenEventNumber = 100;
+
+    let unforeseenEvent = { criticalBonus: 0, hasEvent: false, event: null };
+    if(unforeseenEventNumber >= 96){
+        // Critical Success of Unforeseen Event
+        unforeseenEvent.criticalBonus = 5;
+    }
+    else if(unforeseenEventNumber >= 51){
+        // Success of Unforeseen Event
+    }
+    else if(unforeseenEventNumber >= 5){
+        // Failure of Unforeseen Event
+        unforeseenEvent.hasEvent = true;
+    }
+    else{
+        // Critical Failure of Unforeseen Event
+        unforeseenEvent.criticalBonus = -5;
+        unforeseenEvent.hasEvent = true;
+    }
+    return { ...unforeseenEvent, number: unforeseenEventNumber };
+}
+
+export const calculateSuccessChance = (contract: Contract, merc: Merc) => {
+    const totalRoleFactor = calculateTotalRoleFactor(contract, merc);
+    const intelBonus = calculateIntelBonus(contract);
+    const unforeseenEvent = calculateUnforeseenEvent(contract, intelBonus);
+    let successChance = Math.floor(
+        (totalRoleFactor * CONTRACT_WEIGHT_ROLE_FACTOR) + (unforeseenEvent.number * CONTRACT_WEIGHT_UNFORESEEN)
+    ) + unforeseenEvent.criticalBonus;
+    if(successChance > 100) successChance = 100;
+    return { successChance, unforeseenEvent: unforeseenEvent.event };
 }
 
 export const getContractSuccessChanceDisplay = (contract: Contract, merc: Merc) => {

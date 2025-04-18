@@ -21,6 +21,7 @@ import { DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATE
 // Other ----------------------------------------------------------------------------
 import { addResourceRewards, xpToLevel } from "@/utils";
 import { canHireMerc, getRandomContracts, getRandomMercs } from "@/utils/mercs";
+import { calculateSuccessChance } from "@/utils/contracts";
 
 
 
@@ -292,6 +293,50 @@ export const signContract = async ({
             potentialContracts: {
                 ...potentialContracts,
                 regeneratedTime: timeLeftToUse,
+            },
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "signContract" });
+
+export const updateContractStage = async ({
+    id, 
+    contractKey,
+    stage,
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    contractKey: string;
+    stage: "signed" | "researching" | "inProgress" | "completed";
+    inGameTime?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.contracts) throw new Error("No contracts found!");
+
+    let contracts: Contracts = { ...saveFile.contracts };
+    let selectedContract = saveFile.contracts[contractKey];
+    if(!selectedContract) throw new Error("Contract not found!");
+
+    if(stage === "completed"){
+        const merc = selectedContract.mercSlots?.main?.key && saveFile.mercs[selectedContract.mercSlots.main.key];
+        if(!merc) throw new Error("Merc not found");
+        const { successChance, unforeseenEvent } = calculateSuccessChance(selectedContract, merc);
+        
+    }
+    else if(stage === "signed" && selectedContract.stage === "researching"){
+        // add intel bonus
+    }
+    selectedContract.stage = stage;
+
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            contracts: {
+                ...saveFile.contracts,
+                [contractKey]: selectedContract
             },
             inGameTime: inGameTime ?? saveFile?.inGameTime,
             updatedAt: new Date(),
