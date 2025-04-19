@@ -4,11 +4,11 @@
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Server ---------------------------------------------------------------------------
-import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc } from "@/server/saveFile";
+import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 import { toast } from "sonner";
-import type { MercAssignType, MercSlot } from "@/types";
+import type { ContractStageSwappable, MercAssignType, MercSlot } from "@/types";
 // Other ----------------------------------------------------------------------------
 
 
@@ -137,6 +137,22 @@ export function useSaveFile() {
         },
     })
 
+    const updateContractStageMutation = useMutation({
+        mutationFn: async (props: Readonly<{ contractKey: string; stage: ContractStageSwappable; inGameTime: number; }>) => {
+            if(!data?.data?.id) return;
+            return await updateContractStage({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
     const cancelContractMutation = useMutation({
         mutationFn: async (props: Readonly<{ contractKey: string; inGameTime: number; }>) => {
             if(!data?.data?.id) return;
@@ -191,14 +207,16 @@ export function useSaveFile() {
         saveFileId: data?.data?.id,
         clearSaveFile,
         updateResourcesMutation,
-        hireMercMutation,
 
         mutations: {
             updateResourcesMutation,
+
             hireMercMutation,
             assignMercMutation,
             regenerateMercsMutation,
+
             signContractMutation,
+            updateContractStageMutation,
             cancelContractMutation,
             regenerateContractsMutation,
         }

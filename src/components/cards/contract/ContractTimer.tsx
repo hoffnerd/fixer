@@ -36,29 +36,32 @@ function TimeLeft({
     //______________________________________________________________________________________
     // ===== Constants =====
     const level = xpToLevel((contract.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
-    const mercKey = contract?.mercSlots?.main?.key;
 
 
 
     //______________________________________________________________________________________
     // ===== Hooks =====
     const { saveFile } = useSaveFile();
-    const merc = mercKey && saveFile?.mercs?.[mercKey]?.key ? saveFile.mercs[mercKey] : null;
 
 
 
     //______________________________________________________________________________________
     // ===== Stores =====
+    const setInitialTimes = useGameStore((state) => state.setInitialTimes);
+    const updateTimes = useGameStore((state) => state.updateTimes);
+    const removeTimes = useGameStore((state) => state.removeTimes);
     const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const isGameSaving = useGameStore((state) => state.isGameSaving);
     const sessionTime = useGameStore((state) => state.sessionTime);
+    const contractTimes = useGameStore((state) => state.contractTimes);
+    const contractTime = contractTimes[contract.key];
 
 
 
     //______________________________________________________________________________________
     // ===== State =====
     const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
-    const [timeUntil, setTimeUntil] = useState(timeUntilDefault);
+    // const [timeUntil, setTimeUntil] = useState(timeUntilDefault);
 
 
     //______________________________________________________________________________________
@@ -67,6 +70,7 @@ function TimeLeft({
     useEffect(() => {
         if(sessionStartTime !== null) return;
         setSessionStartTime(sessionTime);
+        setInitialTimes({ contractKey: contract.key, time: timeUntilDefault, timeLeft: timeUntilDefault });
     }, [sessionTime])
 
     // useEffect(() => {
@@ -76,22 +80,25 @@ function TimeLeft({
 
     useEffect(() => {
         if(sessionStartTime === null) return;
-        if(timeUntil <= 0) return;
-        setTimeUntil((prev) => prev - 1);
+        if(!contractTime) return;
+        if(contractTime.timeLeft <= 0) return;
+        updateTimes({ contractKey: contract.key });
     }, [sessionTime])
 
     useEffect(() => {
-        if(timeUntil > 0) return;
+        if(!contractTime) return;
+        if(contractTime.timeLeft > 0) return;
+        removeTimes({ contractKey: contract.key });
         if(contract.stage === "signed"){
             pushToSaveQueue({ mutationKey: "cancelContractMutation", props: { contractKey: contract.key } });
         }
         if(contract.stage === "researching"){
-            // Add intel bonus
+            pushToSaveQueue({ mutationKey: "updateContractStageMutation", props: { contractKey: contract.key, stage: "signed" } });
         }
         if(contract.stage === "inProgress"){
             // Complete contract
         }
-    }, [timeUntil])
+    }, [contractTime])
 
 
     //______________________________________________________________________________________
@@ -99,7 +106,7 @@ function TimeLeft({
      return (
         <ToolTipCapsule content={children} options={{ childrenAs: "trigger" }}>
             <span className={className}>
-                <ReadableTime timeInSeconds={timeUntil} options={{ showHours: false }} />
+                <ReadableTime timeInSeconds={contractTime?.timeLeft ?? timeUntilDefault} options={{ showHours: false }} />
             </span>
         </ToolTipCapsule>
     );
@@ -140,7 +147,7 @@ export default function ContractTimer({ contract }: Readonly<{ contract: Contrac
             </TimeLeft>
         );
         case "inProgress": return (
-            <TimeLeft key="inProgress" className="neonEffect neText neTextGlow neColorGreen" contract={contract}>
+            <TimeLeft key="inProgress" className="neonEffect neText neTextGlow neColorGreen" contract={contract} timeUntilDefault={contract.time}>
                 Time until this contract is completed.
             </TimeLeft>
         );

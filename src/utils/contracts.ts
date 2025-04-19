@@ -5,6 +5,7 @@ import type { Merc, Contract, MercRoleLevels } from "@/types";
 import { CONTRACT_WEIGHT_ROLE_FACTOR, CONTRACT_WEIGHT_UNFORESEEN, SCALING_CONTRACT_LEVEL } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { getRandomItemFromArray, getRandomNumber } from ".";
+import { getJobShare, handleScaling } from "./scaling";
 
 
 //______________________________________________________________________________________    
@@ -56,6 +57,7 @@ const findContractRoles = ({
 // ===== Calculations =====
 
 const calculateRoleFactor = (contractRoleLevel: number, mercRoleLevel: number) => {
+    if(contractRoleLevel === 0) return 100;
     const roleFactor = Math.floor((mercRoleLevel / contractRoleLevel) * 100);
     return roleFactor > 100 ? 100 : roleFactor;
 }
@@ -76,22 +78,28 @@ const calculateUnforeseenEvent = (contract: Contract, intelBonus: number = 0) =>
     let unforeseenEventNumber = getRandomNumber(0, 100) + intelBonus;
     if(unforeseenEventNumber > 100) unforeseenEventNumber = 100;
 
-    let unforeseenEvent = { criticalBonus: 0, hasEvent: false, event: null };
+    let unforeseenEvent = { criticalBonus: 0, value: "", hasEvent: false, event: null };
     if(unforeseenEventNumber >= 96){
         // Critical Success of Unforeseen Event
         unforeseenEvent.criticalBonus = 5;
+        unforeseenEvent.value = "criticalSuccess";
+        console.log({ trace:"calculateUnforeseenEvent > Critical Success", ...unforeseenEvent, unforeseenEventNumber });
     }
     else if(unforeseenEventNumber >= 51){
         // Success of Unforeseen Event
+        unforeseenEvent.value = "success";
+        console.log({ trace:"calculateUnforeseenEvent > Success", ...unforeseenEvent, unforeseenEventNumber });
     }
     else if(unforeseenEventNumber >= 5){
         // Failure of Unforeseen Event
-        unforeseenEvent.hasEvent = true;
+        unforeseenEvent.value = "failure";
+        console.log({ trace:"calculateUnforeseenEvent > Failure", ...unforeseenEvent, unforeseenEventNumber });
     }
     else{
         // Critical Failure of Unforeseen Event
         unforeseenEvent.criticalBonus = -5;
-        unforeseenEvent.hasEvent = true;
+        unforeseenEvent.value = "criticalFailure";
+        console.log({ trace:"calculateUnforeseenEvent > Critical Failure", ...unforeseenEvent, unforeseenEventNumber });
     }
     return { ...unforeseenEvent, number: unforeseenEventNumber };
 }
@@ -103,8 +111,17 @@ export const calculateSuccessChance = (contract: Contract, merc: Merc) => {
     let successChance = Math.floor(
         (totalRoleFactor * CONTRACT_WEIGHT_ROLE_FACTOR) + (unforeseenEvent.number * CONTRACT_WEIGHT_UNFORESEEN)
     ) + unforeseenEvent.criticalBonus;
+    console.log({ trace:"calculateSuccessChance", totalRoleFactor, intelBonus, successChance });
     if(successChance > 100) successChance = 100;
-    return { successChance, unforeseenEvent: unforeseenEvent.event };
+    return { successChance, unforeseenEvent };
+}
+
+export const getContractJobShareDisplay = (xpPlayer: number, merc: Merc) => {
+    const { range } = handleScaling(getJobShare, { xpPlayer, xpEntity: merc.xp });
+    if(!range) return "Unknown";
+    if(range.length === 0) return "Unknown";
+    if(range.length === 1) return `${range[0]}%`;
+    return `${range[0]}%-${range[range.length-1]}%`;
 }
 
 export const getContractSuccessChanceDisplay = (contract: Contract, merc: Merc) => {

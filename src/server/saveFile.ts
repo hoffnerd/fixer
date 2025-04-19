@@ -3,6 +3,7 @@
 // Types ----------------------------------------------------------------------------
 import type {
     Contracts,
+    ContractStageSwappable,
     Merc,
     MercAssignType,
     Mercs,
@@ -17,9 +18,9 @@ import type {
 import { db } from "./db";
 import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 // Data -----------------------------------------------------------------------------
-import { DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
+import { CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE, DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
-import { addResourceRewards, xpToLevel } from "@/utils";
+import { addResourceRewards, getRandomNumber, xpToLevel } from "@/utils";
 import { canHireMerc, getRandomContracts, getRandomMercs } from "@/utils/mercs";
 import { calculateSuccessChance } from "@/utils/contracts";
 
@@ -160,7 +161,7 @@ export const regenerateMercs = async ({
 }>) => serverAction<SaveFile>(async () => {
     const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
     const saveFile = await rawReadSaveFile(id);
-    const levelPlayer = xpToLevel((saveFile?.xp ?? 0), SCALING_CORE_MAGIC_NUMBER_PLAYER) || 0;
+    const levelPlayer = xpToLevel((saveFile?.resources?.xp ?? 0), SCALING_CORE_MAGIC_NUMBER_PLAYER) || 0;
     const mercs = getRandomMercs(saveFile.mercs, levelPlayer, 3);
     return await db.saveFile.update({ 
         where: { id }, 
@@ -308,27 +309,19 @@ export const updateContractStage = async ({
 }: Readonly<{ 
     id: string;
     contractKey: string;
-    stage: "signed" | "researching" | "inProgress" | "completed";
+    stage: ContractStageSwappable;
     inGameTime?: number; 
 }>) => serverAction<SaveFile>(async () => {
     const saveFile = await rawReadSaveFile(id);
     if(!saveFile?.contracts) throw new Error("No contracts found!");
 
-    let contracts: Contracts = { ...saveFile.contracts };
     let selectedContract = saveFile.contracts[contractKey];
     if(!selectedContract) throw new Error("Contract not found!");
 
-    if(stage === "completed"){
-        const merc = selectedContract.mercSlots?.main?.key && saveFile.mercs[selectedContract.mercSlots.main.key];
-        if(!merc) throw new Error("Merc not found");
-        const { successChance, unforeseenEvent } = calculateSuccessChance(selectedContract, merc);
-        
-    }
-    else if(stage === "signed" && selectedContract.stage === "researching"){
+    if(stage === "signed" && selectedContract.stage === "researching"){
         // add intel bonus
     }
     selectedContract.stage = stage;
-
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return await db.saveFile.update({ 
@@ -342,7 +335,81 @@ export const updateContractStage = async ({
             updatedAt: new Date(),
         }
     } as any);
-}, { trace: "signContract" });
+}, { trace: "updateContractStage" });
+
+export const completeContract = async ({
+    id, 
+    contractKey,
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    contractKey: string;
+    inGameTime?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.contracts) throw new Error("No contracts found!");
+
+    let data: SaveFileOptional = {
+        inGameTime: inGameTime ?? saveFile?.inGameTime,
+    };
+    let contracts: Contracts = { ...saveFile.contracts };
+    let selectedContract = saveFile.contracts[contractKey];
+    if(!selectedContract) throw new Error("Contract not found!");
+
+    let newResources = { ...saveFile.resources };
+    let merc = (selectedContract.mercSlots?.main?.key && saveFile.mercs[selectedContract.mercSlots.main.key]
+        ? { ...saveFile.mercs[selectedContract.mercSlots.main.key] }
+        : null
+    ) as Merc | null;
+    if(!merc?.key) throw new Error("Merc not found");
+
+    const { successChance, unforeseenEvent } = calculateSuccessChance(selectedContract, merc);
+    const roll = getRandomNumber(0, 100);
+    if(roll <= successChance){
+        // Success
+        Object.entries(selectedContract.rewards).forEach(([k, value]) => {
+            const key = k as keyof typeof newResources;
+            if(newResources[key]) newResources[key] += value;
+        });
+        merc.xp += (selectedContract.rewards.xp ?? 0);
+        delete merc.mercSlot;
+        data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+    } else {
+        // Failure
+        let deathChance = 0;
+        if(unforeseenEvent.value === "criticalFailure"){
+            deathChance = CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE * 2;
+        }
+        else if(unforeseenEvent.value === "failure"){
+            deathChance = CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE;
+        }
+        if(deathChance > 0){
+            const deathRoll = getRandomNumber(0, 100);
+            if(roll <= deathChance){
+                // Merc dies
+                merc.xp = 0;
+                delete merc.mercSlot;
+                data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+            }
+        }
+    }
+
+    data.resources = newResources;
+
+
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            contracts: {
+                ...saveFile.contracts,
+                [contractKey]: selectedContract
+            },
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "updateContractStage" });
 
 export const cancelContract = async ({
     id, 
@@ -396,7 +463,7 @@ export const regenerateContracts = async ({
 }>) => serverAction<SaveFile>(async () => {
     const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
     const saveFile = await rawReadSaveFile(id);
-    const levelPlayer = xpToLevel((saveFile?.xp ?? 0), SCALING_CORE_MAGIC_NUMBER_PLAYER) || 0;
+    const levelPlayer = xpToLevel((saveFile?.resources?.xp ?? 0), SCALING_CORE_MAGIC_NUMBER_PLAYER) || 0;
     const contracts = getRandomContracts(levelPlayer, 3);
     return await db.saveFile.update({ 
         where: { id }, 

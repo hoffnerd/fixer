@@ -16,6 +16,7 @@ import { Button } from "@/components/shadcn/ui/button";
 import ContractCardHeader from "./contract/ContractCardHeader";
 import ContractSignedContent from "./contract/ContractSignedContent";
 import ContractSignedFooter from "./contract/ContractSignedFooter";
+import ContractProgressBarFooter from "./contract/ContractProgressBarFooter";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
 import { getHighestRoleLevel } from "@/utils/contracts";
@@ -26,6 +27,7 @@ import { getHighestRoleLevel } from "@/utils/contracts";
 // ===== True Constants =====
 
 const DESCRIPTION = "This is a contract description. It can be as long as you want. It can even be multiple lines. This is a contract description. It can be as long as you want. It can even be multiple lines. This is a contract description. It can be as long as you want. It can even be multiple lines.";
+
 
 
 //______________________________________________________________________________________
@@ -45,18 +47,14 @@ function ContractStageFooter({ contract }: Readonly<{ contract: Contract; }>) {
             Sign
         </Button>
     </>
-
     if(contract.stage === "signed") return <ContractSignedFooter contract={contract} />
     if(contract.stage === "researching") return <span>Researching</span>
-    if(contract.stage === "inProgress") return <span>In Progress</span>
-    
+    if(contract.stage === "inProgress") return <ContractProgressBarFooter contract={contract} />
     return <span>Unknown</span>
 }
 
 function ContractStageContent({ contract }: Readonly<{ contract: Contract; }>) {
     const highestRoleLevel = getHighestRoleLevel(contract);
-
-
     if(contract.stage === "unsigned") return <>
         <div className="grid grid-cols-3 gap-1">
             <span className="col-span-2">Level:</span>
@@ -66,12 +64,7 @@ function ContractStageContent({ contract }: Readonly<{ contract: Contract; }>) {
             {DESCRIPTION}
         </div>
     </>
-
-    if(contract.stage === "signed") return <ContractSignedContent contract={contract} />
-    if(contract.stage === "researching") return <span>Researching</span>
-    if(contract.stage === "inProgress") return <span>In Progress</span>
-    
-    return <span>Unknown</span>
+    return <ContractSignedContent contract={contract} />
 }
 
 

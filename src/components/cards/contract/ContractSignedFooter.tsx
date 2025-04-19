@@ -16,7 +16,7 @@ import { Button } from "@/components/shadcn/ui/button";
 import MercCard from "../MercCard";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
-import { getContractSuccessChanceDisplay } from "@/utils/contracts";
+import { getContractJobShareDisplay, getContractSuccessChanceDisplay } from "@/utils/contracts";
 
 
 
@@ -37,7 +37,12 @@ function ContractMercAssignedFooter({ contract }: Readonly<{ contract: Contract;
     }
 
     return <>
-        <Button variant="neonEffect" className="w-full neColorGreen rounded-none col-span-3" onClick={onClick} disabled={isGameSaving}>
+        <Button 
+            variant="neonEffect" 
+            className="w-full neColorGreen rounded-none col-span-3" 
+            onClick={()=>pushToSaveQueue({ mutationKey: "updateContractStageMutation", props: { contractKey: contract.key, stage: "inProgress" } })}
+            disabled={isGameSaving}
+        >
             Start
         </Button>
         <Popover>
@@ -88,6 +93,10 @@ function ContractNoMercFooter({ contract }: Readonly<{ contract: Contract; }>) {
                                 merc={merc} 
                                 options={{ isHired: true }}
                                 childrenContent={<>
+                                    <span className="col-span-2">Merc Rewarded:</span>
+                                    <span className={`neonEffect neText neTextGlow ${merc?.key ? "neColorYellow" : "neColorRed"}`}>
+                                        {merc?.key ? getContractJobShareDisplay((saveFile?.resources?.xp ?? 0), merc) : "Unknown"}
+                                    </span>
                                     <span className="col-span-2">Completion Chance:</span>
                                     <span className={`neonEffect neText neTextGlow ${merc?.key ? "neColorGreen" : "neColorRed"}`}>
                                         {merc?.key ? getContractSuccessChanceDisplay(contract, merc) : "Unknown"}

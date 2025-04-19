@@ -129,6 +129,10 @@ export interface ContractMercSlot {
     key: Merc["key"];
 }
 
+export type ContractStageSwappable = "signed" | "researching" | "inProgress";
+
+export type ContractStage = "unsigned" | ContractStageSwappable | "completed";
+
 export interface Contract {
     key: string; // `${createdAt.getTime()}_${generationIndex}`
     createdAt: Date;
@@ -137,7 +141,7 @@ export interface Contract {
     innateRole: keyof MercRoleLevels;
     innateSubRole: keyof MercRoleLevels;
     roleLevels: MercRoleLevels;
-    stage: "unsigned" | "signed" | "researching" | "inProgress" | "completed";
+    stage: ContractStage;
     client: string;
     xp: number;
     visualLevel: number;
@@ -170,7 +174,7 @@ export interface SaveFileFlags {
 
 export interface SaveFile extends Omit<
     SaveFilePrisma, 
-    'resources' | 'mercs' | 'businesses' | 'contracts' | 'potentialMercs' | 'potentialBusinesses' | 'potentialContracts' | 'flags'
+    'xp' | 'resources' | 'mercs' | 'businesses' | 'contracts' | 'potentialMercs' | 'potentialBusinesses' | 'potentialContracts' | 'flags'
 > {
     resources: Resources;
     mercs: Mercs;
@@ -184,7 +188,6 @@ export interface SaveFile extends Omit<
 
 export interface SaveFileOptional {
     id?: string;
-    xp?: number;
     resources?: Resources;
     mercs?: Mercs;
     businesses?: Businesses;
@@ -215,6 +218,7 @@ export interface SaveQueueObj {
         | "assignMercMutation"
         | "regenerateMercsMutation"
         | "signContractMutation"
+        | "updateContractStageMutation"
         | "regenerateContractsMutation"
         | "cancelContractMutation"
 
@@ -226,6 +230,7 @@ export interface SaveQueueObj {
         mercKey?: string;
         contractKey?: string;
         businessKey?: string;
+        stage?: ContractStageSwappable;
     }
 }
 
@@ -247,8 +252,18 @@ export interface GameStoreState {
     inGameTime: number;
     lastSavedTime: Date;
     activeMobilePanel: ActiveMobilePanels;
+
+    // Not controllable by basic `setStoreKeyValuePair`function
     saveQueue: Array<SaveQueueObj>;
     activeSaveQueueObj: SaveQueueObj | null;
+    contractTimes: Record<Contract["key"], {
+        time: number;
+        timeLeft: number;
+    }>;
+    businessTimes: Record<Business["key"], {
+        time: number;
+        timeLeft: number;
+    }>;
 }
 
 export interface GameStoreFunctions {
@@ -256,5 +271,30 @@ export interface GameStoreFunctions {
     pushToSaveQueue: (saveQueueObj: SaveQueueObj) => void;
     activateSaveQueueObj: () => void;
     finishSaveQueueObj: () => void;
+    setInitialTimes: ({
+        contractKey,
+        businessKey,
+        time,
+        timeLeft,
+    }: Readonly<{
+        contractKey?: Contract["key"];
+        businessKey?: Business["key"];
+        time: number;
+        timeLeft: number;
+    }>) => void;
+    updateTimes: ({
+        contractKey,
+        businessKey,
+    }: Readonly<{
+        contractKey?: Contract["key"];
+        businessKey?: Business["key"];
+    }>) => void;
+    removeTimes: ({
+        contractKey,
+        businessKey,
+    }: Readonly<{
+        contractKey?: Contract["key"];
+        businessKey?: Business["key"];
+    }>) => void;
 }
 

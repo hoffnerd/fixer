@@ -69,7 +69,7 @@ const calculateJobShare = (levelPlayer:number, levelEntity:number, options:Reado
     const upperLimit = 50 + buffer;
     const levelDif = levelEntity - levelPlayer;
     const rawJobShare = upperLimit / (1 + Math.exp(-speed * levelDif));
-    const adjustedJobShare = Math.max(1, rawJobShare - buffer);
+    const adjustedJobShare = Math.floor(Math.max(1, rawJobShare - buffer));
     return adjustedJobShare;
 }
 
@@ -120,8 +120,12 @@ export const getComps = (props:GetScaleProps) => {
 }
 
 export const getJobShare = (props:GetScaleProps) => {
-    const { levelPlayer, levelPlayerLowest, levelEntity, levelEntityLowest } = props;
-    const step = 0.01;
+    let { levelPlayer, levelPlayerLowest, levelEntity, levelEntityLowest } = { ...props };
+    if(levelPlayer < 1) levelPlayer = 1;
+    if(levelPlayerLowest < 1) levelPlayerLowest = 1;
+    if(levelEntity < 1) levelEntity = 1;
+    if(levelEntityLowest < 1) levelEntityLowest = 1;
+    const step = 1; // 0.01
     const min = calculateJobShare(levelPlayerLowest, levelEntityLowest);
     const max = calculateJobShare(levelPlayer, levelEntity);
     const range = getRange({ min, max, step });

@@ -77,7 +77,7 @@ export function EntityCarousel({ type }: Readonly<{ type: Type; }>) {
             <CarouselContent>
                 {Object.entries(entities).map(([key, entity]) => (
                     <CarouselItem key={key} className="md:basis-1/2 lg:basis-1/3">
-                        <div className="p-1">
+                        <div className="p-1 select-none">
                             {renderCard(entity)}
                         </div>
                     </CarouselItem>

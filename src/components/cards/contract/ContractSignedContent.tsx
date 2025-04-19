@@ -12,7 +12,7 @@ import { useSaveFile } from "@/hooks/useSaveFile";
 import { ReadableTime } from "@/_legoBlocks/nextjsCommon/components/microComponents";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
-import { getContractSuccessChanceDisplay, getHighestRoleLevel } from "@/utils/contracts";
+import { getContractJobShareDisplay, getContractSuccessChanceDisplay, getHighestRoleLevel } from "@/utils/contracts";
 
 
 
@@ -49,15 +49,23 @@ export default function ContractSignedContent({ contract }: Readonly<{ contract:
                 <span><ReadableTime timeInSeconds={contract.time} /></span>
             </>}
 
-            <span className="col-span-2">Completion Chance:</span>
-            <span className={`neonEffect neText neTextGlow ${merc?.key ? "neColorGreen" : "neColorRed"}`}>
-                {merc?.key ? getContractSuccessChanceDisplay(contract, merc) : "Unknown"}
-            </span>
-
             <span className="col-span-2">Assigned Merc:</span>
             <span className={`neonEffect neText neTextGlow ${merc?.display ? "neColorBlue" : "neColorRed"}`}>
                 {merc?.display ?? "None"}
             </span>
+
+            {contract.mercSlots?.main?.key && <>
+                <span className="col-span-2">Merc Rewarded:</span>
+                <span className={`neonEffect neText neTextGlow ${merc?.key ? "neColorYellow" : "neColorRed"}`}>
+                    {merc?.key ? getContractJobShareDisplay((saveFile?.resources?.xp ?? 0), merc) : "Unknown"}
+                </span>
+
+                <span className="col-span-2">Completion Chance:</span>
+                <span className={`neonEffect neText neTextGlow ${merc?.key ? "neColorGreen" : "neColorRed"}`}>
+                    {merc?.key ? getContractSuccessChanceDisplay(contract, merc) : "Unknown"}
+                </span>
+            </>}
+
         </div>
         {/* <ul className="list-disc ml-1">
             <li>

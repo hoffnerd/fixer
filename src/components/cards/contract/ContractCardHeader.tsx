@@ -133,7 +133,10 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                                         <SheetTrigger asChild>
                                             <DropdownMenuItem>View Details</DropdownMenuItem>
                                         </SheetTrigger>
-                                        <DropdownMenuItem onClick={unassignClick} disabled={isGameSaving || (!contract?.mercSlots?.main?.key)}>
+                                        <DropdownMenuItem 
+                                            onClick={unassignClick} 
+                                            disabled={isGameSaving || (!contract?.mercSlots?.main?.key) || contract.stage !== "signed"}
+                                        >
                                             Unassign Merc
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>

@@ -103,7 +103,6 @@ export const DEFAULT_SAVE_FILE: SaveFileOptional = {
         regeneratedTime: SCALING_REGENERATED_TIME,
         contracts: {},
     },
-    xp: 0,
 }
 
 
@@ -161,6 +160,8 @@ export const INTEL_BONUS_DETAILS = [
         
     }
 ]
+
+export const CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE = 25;
 
 export const CONTRACT_WEIGHT_UNFORESEEN = 0.25;
 
