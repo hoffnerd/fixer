@@ -7,6 +7,10 @@ import { type SaveFile as SaveFilePrisma } from "@prisma/client";
 
 export type GenericObject = Record<string, unknown>;
 
+export interface DynamicMessage {
+    text: string;
+    className?: string;
+}
 
 
 //______________________________________________________________________________________

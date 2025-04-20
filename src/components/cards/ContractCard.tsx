@@ -129,7 +129,7 @@ export default function ContractCard({ contract }: Readonly<{ contract: Contract
                     <ContractStageContent contract={contract} />
                 </div>
             </CardContent>
-            <CardFooter className="px-0">
+            <CardFooter className="px-0 pt-2">
                 <ContractStageFooter contract={contract} />
             </CardFooter>
         </Card>

@@ -23,6 +23,7 @@ import { CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE, DEFAULT_SAVE_FILE, SCALING_CORE_
 import { addResourceRewards, getRandomNumber, xpToLevel } from "@/utils";
 import { canHireMerc, getRandomContracts, getRandomMercs } from "@/utils/mercs";
 import { calculateSuccessChance } from "@/utils/contracts";
+import { getJobShare, handleScaling } from "@/utils/scaling";
 
 
 
@@ -349,10 +350,11 @@ export const completeContract = async ({
     const saveFile = await rawReadSaveFile(id);
     if(!saveFile?.contracts) throw new Error("No contracts found!");
 
+    let hasSucceeded = false;
+    let message = [];
     let data: SaveFileOptional = {
         inGameTime: inGameTime ?? saveFile?.inGameTime,
     };
-    let contracts: Contracts = { ...saveFile.contracts };
     let selectedContract = saveFile.contracts[contractKey];
     if(!selectedContract) throw new Error("Contract not found!");
 
@@ -363,17 +365,30 @@ export const completeContract = async ({
     ) as Merc | null;
     if(!merc?.key) throw new Error("Merc not found");
 
+    const { value: jobShare } = handleScaling(getJobShare, { xpPlayer: saveFile.resources.xp, xpEntity: merc.xp });
+
     const { successChance, unforeseenEvent } = calculateSuccessChance(selectedContract, merc);
     const roll = getRandomNumber(0, 100);
     if(roll <= successChance){
         // Success
-        Object.entries(selectedContract.rewards).forEach(([k, value]) => {
+        Object.entries(selectedContract.rewards).forEach(([k, v]) => {
             const key = k as keyof typeof newResources;
+            const value = v * (jobShare / 100);
             if(newResources[key]) newResources[key] += value;
         });
         merc.xp += (selectedContract.rewards.xp ?? 0);
         delete merc.mercSlot;
         data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+        hasSucceeded = true;
+
+        message = [ 
+            { text: "Success!" },
+            { text: merc.display, className: "neonEffect neText neTextGlow neColorBlue" },
+            { text: "has successfully completed the" },
+            { text: `${selectedContract.display} - ${selectedContract.roleDisplay}`, className: "neonEffect neText neTextGlow neColorBlue" },
+            { text: "contract!" },
+
+        ];
     } else {
         // Failure
         let deathChance = 0;
@@ -385,30 +400,26 @@ export const completeContract = async ({
         }
         if(deathChance > 0){
             const deathRoll = getRandomNumber(0, 100);
-            if(roll <= deathChance){
+            if(deathRoll <= deathChance){
                 // Merc dies
-                merc.xp = 0;
-                delete merc.mercSlot;
-                data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+                let newMercs = { ...saveFile.mercs };
+                delete newMercs[merc.key];
+                data.mercs = newMercs;
             }
         }
     }
 
-    data.resources = newResources;
-
-
+    let contracts: Contracts = { ...saveFile.contracts };
+    delete contracts[contractKey];
+    data.contracts = contracts;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return await db.saveFile.update({ 
-        where: { id }, 
-        data: {
-            contracts: {
-                ...saveFile.contracts,
-                [contractKey]: selectedContract
-            },
-            updatedAt: new Date(),
-        }
-    } as any);
+    const newSaveFile = await db.saveFile.update({
+        where: { id },
+        data: { ...data, updatedAt: new Date() }
+    } as any) as unknown as SaveFile;
+
+    return { newSaveFile,  };
 }, { trace: "updateContractStage" });
 
 export const cancelContract = async ({
