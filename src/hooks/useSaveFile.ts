@@ -1,14 +1,14 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
+import type { ContractStageSwappable, MercAssignType, MercSlot } from "@/types";
 // Packages -------------------------------------------------------------------------
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 // Server ---------------------------------------------------------------------------
 import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
-import { toast } from "sonner";
-import type { ContractStageSwappable, MercAssignType, MercSlot } from "@/types";
 // Other ----------------------------------------------------------------------------
 
 

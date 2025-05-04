@@ -149,6 +149,7 @@ export default function ContractTimer({ contract }: Readonly<{ contract: Contrac
         );
         case "inProgress": return (
             <TimeLeft key="inProgress" className="neonEffect neText neTextGlow neColorGreen" contract={contract} timeUntilDefault={contract.time}>
+            {/* <TimeLeft key="inProgress" className="neonEffect neText neTextGlow neColorGreen" contract={contract} timeUntilDefault={10}> */}
                 Time until this contract is completed.
             </TimeLeft>
         );

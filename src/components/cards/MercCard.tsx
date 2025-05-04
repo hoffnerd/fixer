@@ -139,7 +139,7 @@ function MercCardHiredContent({
 //______________________________________________________________________________________
 // ===== Micro-Component - Header =====
 
-export function MercCardHeader({ merc, options={} }: Readonly<{ merc: Merc; options?: Options; }>) { 
+export function MercCardHeader({ merc, mercContract, mercBusiness, options={} }: Readonly<{ merc: Merc; mercContract?: Contract; mercBusiness?: Business; options?: Options; }>) {
     const { isHired, allowManageMerc } = { ...DEFAULT_OPTIONS, ...options };
     const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const isGameSaving = useGameStore((state) => state.isGameSaving);
@@ -180,7 +180,7 @@ export function MercCardHeader({ merc, options={} }: Readonly<{ merc: Merc; opti
                                     <DropdownMenuItem disabled>
                                         Train
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={unassignClick} disabled={isGameSaving || (!merc.mercSlot?.type)}>
+                                    <DropdownMenuItem onClick={unassignClick} disabled={isGameSaving || (!merc.mercSlot?.type) || mercContract?.stage === "inProgress"}>
                                         Unassign from Job
                                     </DropdownMenuItem>
                                     <DropdownMenuItem disabled>
@@ -257,6 +257,13 @@ export default function MercCard({
 
 
     //______________________________________________________________________________________
+    // ===== Constants from SaveFile =====
+    const mercContract = (merc?.mercSlot?.type === "contract" && merc.mercSlot.contractKey && saveFile?.contracts?.[merc.mercSlot.contractKey]) as Contract | undefined;
+    const mercBusiness = (merc?.mercSlot?.type === "business" && merc.mercSlot.businessKey && saveFile?.businesses?.[merc.mercSlot.businessKey]) as Business | undefined;
+
+
+
+    //______________________________________________________________________________________
     // ===== Stores =====
     const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const isGameSaving = useGameStore((state) => state.isGameSaving);
@@ -281,7 +288,7 @@ export default function MercCard({
     // ===== Component Return =====
     return (
         <Card className="py-0 mt-2 mb-5 gap-3 border-2 overflow-hidden neonEffect neBorder neBorderGlow glowIntensityLow neColorBlue">
-            <MercCardHeader merc={merc} options={options} />
+            <MercCardHeader merc={merc} mercContract={mercContract} mercBusiness={mercBusiness} options={options} />
             <CardContent className="px-0">
                 {isHired 
                     ? <MercCardHiredContent children={children} childrenContent={childrenContent} merc={merc} options={options} />
