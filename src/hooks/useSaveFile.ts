@@ -6,7 +6,7 @@ import type { ContractStageSwappable, MercAssignType, MercSlot } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 // Server ---------------------------------------------------------------------------
-import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage } from "@/server/saveFile";
+import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage, completeContract } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Other ----------------------------------------------------------------------------
@@ -153,6 +153,26 @@ export function useSaveFile() {
         },
     })
 
+    const completeContractMutation = useMutation({
+        mutationFn: async (props: Readonly<{ contractKey: string; inGameTime: number; }>) => {
+            if(!data?.data?.id) return;
+            return await completeContract({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            if(data?.data?.message){
+                if(data?.data?.hasSucceeded) toast.success(data.data.message);
+                else toast.error(data.data.message);
+            }
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
     const cancelContractMutation = useMutation({
         mutationFn: async (props: Readonly<{ contractKey: string; inGameTime: number; }>) => {
             if(!data?.data?.id) return;
@@ -217,6 +237,7 @@ export function useSaveFile() {
 
             signContractMutation,
             updateContractStageMutation,
+            completeContractMutation,
             cancelContractMutation,
             regenerateContractsMutation,
         }

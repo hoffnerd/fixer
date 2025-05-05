@@ -83,23 +83,23 @@ const calculateUnforeseenEvent = (contract: Contract, intelBonus: number = 0) =>
         // Critical Success of Unforeseen Event
         unforeseenEvent.criticalBonus = 5;
         unforeseenEvent.value = "criticalSuccess";
-        console.log({ trace:"calculateUnforeseenEvent > Critical Success", ...unforeseenEvent, unforeseenEventNumber });
+        // console.log({ trace:"calculateUnforeseenEvent > Critical Success", ...unforeseenEvent, unforeseenEventNumber });
     }
     else if(unforeseenEventNumber >= 51){
         // Success of Unforeseen Event
         unforeseenEvent.value = "success";
-        console.log({ trace:"calculateUnforeseenEvent > Success", ...unforeseenEvent, unforeseenEventNumber });
+        // console.log({ trace:"calculateUnforeseenEvent > Success", ...unforeseenEvent, unforeseenEventNumber });
     }
     else if(unforeseenEventNumber >= 5){
         // Failure of Unforeseen Event
         unforeseenEvent.value = "failure";
-        console.log({ trace:"calculateUnforeseenEvent > Failure", ...unforeseenEvent, unforeseenEventNumber });
+        // console.log({ trace:"calculateUnforeseenEvent > Failure", ...unforeseenEvent, unforeseenEventNumber });
     }
     else{
         // Critical Failure of Unforeseen Event
         unforeseenEvent.criticalBonus = -5;
         unforeseenEvent.value = "criticalFailure";
-        console.log({ trace:"calculateUnforeseenEvent > Critical Failure", ...unforeseenEvent, unforeseenEventNumber });
+        // console.log({ trace:"calculateUnforeseenEvent > Critical Failure", ...unforeseenEvent, unforeseenEventNumber });
     }
     return { ...unforeseenEvent, number: unforeseenEventNumber };
 }
@@ -111,7 +111,7 @@ export const calculateSuccessChance = (contract: Contract, merc: Merc) => {
     let successChance = Math.floor(
         (totalRoleFactor * CONTRACT_WEIGHT_ROLE_FACTOR) + (unforeseenEvent.number * CONTRACT_WEIGHT_UNFORESEEN)
     ) + unforeseenEvent.criticalBonus;
-    console.log({ trace:"calculateSuccessChance", totalRoleFactor, intelBonus, successChance });
+    // console.log({ trace:"calculateSuccessChance", totalRoleFactor, intelBonus, successChance });
     if(successChance > 100) successChance = 100;
     return { successChance, unforeseenEvent };
 }

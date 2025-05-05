@@ -46,6 +46,7 @@ const getRequiredMutationProps = (saveQueueObj: SaveQueueObj) => {
             
         case "signContractMutation": 
         case "cancelContractMutation": 
+        case "completeContractMutation": 
             if(!props?.contractKey) return { error: "No Contract provided!" };
             return { contractKey: props.contractKey };
             

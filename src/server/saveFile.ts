@@ -4,6 +4,7 @@
 import type {
     Contracts,
     ContractStageSwappable,
+    DynamicMessage,
     Merc,
     MercAssignType,
     Mercs,
@@ -346,12 +347,12 @@ export const completeContract = async ({
     id: string;
     contractKey: string;
     inGameTime?: number; 
-}>) => serverAction<SaveFile>(async () => {
+}>) => serverAction<{ newSaveFile: SaveFile; hasSucceeded: boolean; message?: String; }>(async () => {
     const saveFile = await rawReadSaveFile(id);
     if(!saveFile?.contracts) throw new Error("No contracts found!");
 
     let hasSucceeded = false;
-    let message = [];
+    let message = "";
     let data: SaveFileOptional = {
         inGameTime: inGameTime ?? saveFile?.inGameTime,
     };
@@ -371,26 +372,21 @@ export const completeContract = async ({
     const roll = getRandomNumber(0, 100);
     if(roll <= successChance){
         // Success
-        Object.entries(selectedContract.rewards).forEach(([k, v]) => {
-            const key = k as keyof typeof newResources;
-            const value = v * (jobShare / 100);
-            if(newResources[key]) newResources[key] += value;
-        });
-        merc.xp += (selectedContract.rewards.xp ?? 0);
-        delete merc.mercSlot;
-        data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+        message = `Success! ${merc.display} has successfully completed the ${selectedContract.display} - ${selectedContract.roleDisplay} contract!`;
         hasSucceeded = true;
 
-        message = [ 
-            { text: "Success!" },
-            { text: merc.display, className: "neonEffect neText neTextGlow neColorBlue" },
-            { text: "has successfully completed the" },
-            { text: `${selectedContract.display} - ${selectedContract.roleDisplay}`, className: "neonEffect neText neTextGlow neColorBlue" },
-            { text: "contract!" },
-
-        ];
+        Object.entries(selectedContract.rewards).forEach(([k, v]) => {
+            const key = k as keyof typeof newResources;
+            let value = v * (jobShare / 100);
+            if(value < 1) value = 1;
+            if(newResources[key]) newResources[key] = Math.floor(newResources[key] + value);
+        });
+        data.resources = newResources;
+        merc.xp += (selectedContract.rewards.xp ?? 0);
     } else {
         // Failure
+        message = `Failure! ${merc.display} has failed the ${selectedContract.display} - ${selectedContract.roleDisplay} contract!`;
+
         let deathChance = 0;
         if(unforeseenEvent.value === "criticalFailure"){
             deathChance = CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE * 2;
@@ -405,9 +401,13 @@ export const completeContract = async ({
                 let newMercs = { ...saveFile.mercs };
                 delete newMercs[merc.key];
                 data.mercs = newMercs;
+                message = `${message} Unfortunately, ${merc.display} has died!`;
             }
         }
     }
+
+    delete merc.mercSlot;
+    data.mercs = { ...saveFile.mercs, [merc.key]: merc };
 
     let contracts: Contracts = { ...saveFile.contracts };
     delete contracts[contractKey];
@@ -418,9 +418,9 @@ export const completeContract = async ({
         where: { id },
         data: { ...data, updatedAt: new Date() }
     } as any) as unknown as SaveFile;
-
-    return { newSaveFile,  };
-}, { trace: "updateContractStage" });
+    
+    return { newSaveFile, hasSucceeded, message };
+}, { trace: "completeContract" });
 
 export const cancelContract = async ({
     id, 

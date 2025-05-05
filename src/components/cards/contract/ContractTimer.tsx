@@ -86,7 +86,7 @@ function TimeLeft({
     }, [sessionTime])
 
     useEffect(() => {
-        console.log({ trace: "TimeLeft useEffect", contractTime, contract });
+        // console.log({ trace: "TimeLeft useEffect", contractTime, contract });
         if(!contractTime) return;
         if(contractTime.timeLeft > 0) return;
         removeTimes({ contractKey: contract.key });
@@ -97,7 +97,7 @@ function TimeLeft({
             pushToSaveQueue({ mutationKey: "updateContractStageMutation", props: { contractKey: contract.key, stage: "signed" } });
         }
         if(contract.stage === "inProgress"){
-            // Complete contract
+            pushToSaveQueue({ mutationKey: "completeContractMutation", props: { contractKey: contract.key } });
         }
     }, [ contractTime?.timeLeft ])
 

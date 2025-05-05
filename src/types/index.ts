@@ -223,6 +223,7 @@ export interface SaveQueueObj {
         | "regenerateMercsMutation"
         | "signContractMutation"
         | "updateContractStageMutation"
+        | "completeContractMutation"
         | "regenerateContractsMutation"
         | "cancelContractMutation"
 
