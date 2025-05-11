@@ -4,23 +4,28 @@
 import type { Contract } from "@/types";
 // Packages -------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
-import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
-import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
-import { Progress, ProgressCustom } from "@/components/shadcn/ui/progress";
+import { ProgressCustom } from "@/components/shadcn/ui/progress";
 // Other ----------------------------------------------------------------------------
-import { xpToLevel } from "@/utils";
-import { getContractJobShareDisplay, getContractSuccessChanceDisplay, getHighestRoleLevel } from "@/utils/contracts";
+import { cn } from "@/lib/shadcn";
 
 
 
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function ContractProgressBarFooter({ contract }: Readonly<{ contract: Contract; }>) {
+export default function ContractProgressBarFooter({
+    className,
+    classNameIndicator,
+    contract,
+}: Readonly<{
+    className?: string;
+    classNameIndicator?: string;
+    contract: Contract;
+}>) {
 
     //______________________________________________________________________________________
     // ===== Stores =====
@@ -33,8 +38,8 @@ export default function ContractProgressBarFooter({ contract }: Readonly<{ contr
     return (
         <ProgressCustom 
             value={( Math.abs(( contractTime.timeLeft / contractTime.time ) - 1) * 100)}
-            className="h-4 rounded-none"
-            classNameIndicator="neonEffect neBackground neColorGreen"
+            className={cn("h-4 rounded-none", className)}
+            classNameIndicator={cn("neonEffect neBackground neColorGreen", classNameIndicator)}
         />
     )
 }

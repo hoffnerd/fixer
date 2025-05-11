@@ -370,6 +370,7 @@ export const completeContract = async ({
 
     const { successChance, unforeseenEvent } = calculateSuccessChance(selectedContract, merc);
     const roll = getRandomNumber(0, 100);
+    console.log({ trace: "completeContract", roll, successChance, conditional: roll <= successChance });
     if(roll <= successChance){
         // Success
         message = `Success! ${merc.display} has successfully completed the ${selectedContract.display} - ${selectedContract.roleDisplay} contract!`;
@@ -377,10 +378,18 @@ export const completeContract = async ({
 
         Object.entries(selectedContract.rewards).forEach(([k, v]) => {
             const key = k as keyof typeof newResources;
+
+            if(key === "xp") {
+                newResources[key] = (newResources[key] ?? 0) + v;
+                return;
+            };
+
             let value = v * (jobShare / 100);
             if(value < 1) value = 1;
-            if(newResources[key]) newResources[key] = Math.floor(newResources[key] + value);
+            const newResourcesValue = Math.floor((newResources[key] ?? 0) + value);
+            newResources[key] = newResourcesValue;
         });
+        console.log({ trace: "updateResources", newResources, "electedContract.rewards": selectedContract.rewards });
         data.resources = newResources;
         merc.xp += (selectedContract.rewards.xp ?? 0);
     } else {

@@ -79,7 +79,7 @@ function ContractNoMercFooter({ contract }: Readonly<{ contract: Contract; }>) {
                     Assign Merc
                 </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="h-dvh overflow-auto">
                 <SheetHeader>
                     <SheetTitle className="flex justify-center">Assign Merc to Contract</SheetTitle>
                 </SheetHeader>

@@ -139,7 +139,7 @@ export default function Panel({ children, panelKey }: Readonly<{ children?: Reac
     // ===== Component Return =====
     return (
         <div className={`hidden overflow-hidden lg:block ${activeMobilePanel === panelKey && "xs:block"} ${BORDER} relative`}>
-            <div className={`h-full overflow-auto p-3 pb-11`}>
+            <div className={`h-full overflow-auto p-3 pb-11 neonEffect neScrollBar neColorPurple`}>
                 {children}
                 <PanelButton panelKey={panelKey}/>
             </div>

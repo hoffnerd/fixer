@@ -47,7 +47,12 @@ function ContractStageFooter({ contract }: Readonly<{ contract: Contract; }>) {
             Sign
         </Button>
     </>
-    if(contract.stage === "signed") return <ContractSignedFooter contract={contract} />
+    if(contract.stage === "signed") return (
+        <div className="flex flex-col w-full">
+            <ContractSignedFooter contract={contract} />
+            <ContractProgressBarFooter contract={contract} classNameIndicator="neColorRed" />
+        </div>
+    )
     if(contract.stage === "researching") return <span>Researching</span>
     if(contract.stage === "inProgress") return <ContractProgressBarFooter contract={contract} />
     return <span>Unknown</span>
