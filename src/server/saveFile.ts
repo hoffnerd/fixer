@@ -352,6 +352,7 @@ export const completeContract = async ({
     if(!saveFile?.contracts) throw new Error("No contracts found!");
 
     let hasSucceeded = false;
+    let hasMercDied = false;
     let message = "";
     let data: SaveFileOptional = {
         inGameTime: inGameTime ?? saveFile?.inGameTime,
@@ -370,7 +371,6 @@ export const completeContract = async ({
 
     const { successChance, unforeseenEvent } = calculateSuccessChance(selectedContract, merc);
     const roll = getRandomNumber(0, 100);
-    console.log({ trace: "completeContract", roll, successChance, conditional: roll <= successChance });
     if(roll <= successChance){
         // Success
         message = `Success! ${merc.display} has successfully completed the ${selectedContract.display} - ${selectedContract.roleDisplay} contract!`;
@@ -384,12 +384,15 @@ export const completeContract = async ({
                 return;
             };
 
-            let value = v * (jobShare / 100);
+            let valueShared = Math.floor(v * (jobShare / 100));
+            if(valueShared < 1) valueShared = 1;
+
+            let value = v - valueShared;
             if(value < 1) value = 1;
+
             const newResourcesValue = Math.floor((newResources[key] ?? 0) + value);
             newResources[key] = newResourcesValue;
         });
-        console.log({ trace: "updateResources", newResources, "electedContract.rewards": selectedContract.rewards });
         data.resources = newResources;
         merc.xp += (selectedContract.rewards.xp ?? 0);
     } else {
@@ -411,12 +414,15 @@ export const completeContract = async ({
                 delete newMercs[merc.key];
                 data.mercs = newMercs;
                 message = `${message} Unfortunately, ${merc.display} has died!`;
+                hasMercDied = true;
             }
         }
     }
 
-    delete merc.mercSlot;
-    data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+    if(!hasMercDied) {
+        delete merc.mercSlot;
+        data.mercs = { ...saveFile.mercs, [merc.key]: merc };
+    }
 
     let contracts: Contracts = { ...saveFile.contracts };
     delete contracts[contractKey];
