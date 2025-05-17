@@ -10,7 +10,7 @@ import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
 // Components -----------------------------------------------------------------------
 import { useSaveFile } from "@/hooks/useSaveFile";
-import { DEFAULT_BUSINESS, SCALING_REGENERATED_TIME } from "@/data/_config";
+import { SCALING_REGENERATED_TIME } from "@/data/_config";
 import { addResourceRewards, basicSortComparison } from "@/utils";
 // Other ----------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ const findIncomeRates = (saveFile?: SaveFile) => {
     Object.keys(businesses).forEach((x: keyof Businesses) => {
         const businessKey = x;
         const business = businesses?.[businessKey] ?? {};
-        const { time, income } = { ...DEFAULT_BUSINESS, ...business };
+        const { time, income } = { time:0, income:{}, ...business };
         if(!time) return;
         if(incomeRates?.[time]){
             // Income at this time has already been calculated once so lets add the additional income

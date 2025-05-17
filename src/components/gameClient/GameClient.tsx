@@ -12,7 +12,7 @@ import GameStorePortals from "./GameStorePortals";
 import InGameTime from "./InGameTime";
 import ResourcesWatcher from "./ResourcesWatcher";
 import SessionTime from "./SessionTime";
-import { getRandomMercs, getRandomContracts } from "@/utils/mercs";
+import { getRandomMercs, getRandomContracts, getRandomBusinesses } from "@/utils/mercs";
 import SaveQueueClient from "./SaveQueueClient";
 // Data -----------------------------------------------------------------------------
 // Other ----------------------------------------------------------------------------
@@ -59,6 +59,13 @@ function SaveFileClientPortals({ saveFile }: Readonly<{ saveFile: SaveFile }>) {
                     onClick={()=>console.log( getRandomContracts(0, 10) )}
                 >
                     Log & Generate Random Contracts
+                </Button>
+                <Button 
+                    variant="neonEffect"
+                    className="neColorBlue"
+                    onClick={()=>console.log( getRandomBusinesses(0, 10) )}
+                >
+                    Log & Generate Random Businesses
                 </Button>
             </div> 
         </Portal>

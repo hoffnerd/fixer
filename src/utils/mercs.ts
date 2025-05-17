@@ -1,6 +1,6 @@
 
 // Types ----------------------------------------------------------------------------
-import type { Contract, Contracts, ContractTypes, Merc, MercRoleLevels, Mercs, Resources } from "@/types";
+import type { Business, Businesses, Contract, Contracts,  Merc, MercRoleLevels, Mercs, Resources } from "@/types";
 // Data -----------------------------------------------------------------------------
 import { 
     SCALING_CORE_MAGIC_NUMBER, 
@@ -18,12 +18,19 @@ import {
     SCALING_CONTRACT_LEVEL,
     SCALING_CONTRACT_LEVEL_CORE,
     SCALING_CONTRACT_LEVEL_ADDITIONAL,
-    SCALING_CONTRACT_XP_REWARD, 
+    SCALING_CONTRACT_XP_REWARD,
+    SCALING_BUSINESS_LEVEL_CORE,
+    SCALING_BUSINESS_LEVEL_ADDITIONAL,
+    SCALING_BUSINESS_LEVEL,
+    BUSINESS_TYPE_KEYS,
+    BUSINESS_TYPES,
+    SCALING_CORE_MAGIC_NUMBER_BUSINESS,
+    SCALING_BUSINESS_XP_REWARD, 
 } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { generateMercName } from "./nameGeneration";
 import { basicSortComparison, getRandomItemFromArray, getRandomNumber, getRange, levelToXp } from ".";
-import { getComps, getContractTime, getEuros, handleMassScaling, handleScaling, type HandleScalingOptions } from "./scaling";
+import { getBusinessTime, getComps, getContractTime, getEuros, handleMassScaling, handleScaling, type HandleScalingOptions } from "./scaling";
 
 
 
@@ -40,15 +47,6 @@ export const canHireMerc = ({ resources, merc, }: Readonly<{ resources?: Resourc
     const playerResources = { ...DEFAULT_RESOURCES,  ...resources };
     const initialCost = { ...DEFAULT_RESOURCES,  ...merc.initialCost };
     return Object.entries(playerResources).every(([key, value]) => value >= initialCost[key as keyof Resources]);
-}
-
-
-
-//______________________________________________________________________________________    
-// ===== Contract Assists =====
-
-export const canSignContract = ({ resources, contract, }: Readonly<{ resources?: Resources; contract: Contract; }>) => {
-    return true;
 }
 
 
@@ -197,6 +195,95 @@ export const getRandomMercs = (mercs:Mercs={}, level=0, amount=1, options:Readon
 
 
 //______________________________________________________________________________________    
+// ===== Business Generation =====
+
+const getBusinessTypesAllowedForRole = (role: keyof MercRoleLevels) => {
+    let types = structuredClone(BUSINESS_TYPES);
+    Object.entries(BUSINESS_TYPES).forEach(([k, v]) => {
+        const key = k as keyof typeof BUSINESS_TYPES;
+        const value = v as typeof BUSINESS_TYPES[typeof key];
+        const roleKeys = Object.keys(value.roles);
+        if(!roleKeys.includes(role)) delete types[key];
+    });
+    return types;
+}
+
+/**
+ * Generates a random business with specified level and options.
+ * @param level - int, specifies the level of player OR the business being generated, if `options.shouldUseLevelAsLevelEntity` is set to `true`.
+ * @param index - int, specifies the index of the business being generated.
+ * @param options
+ * @param options.shouldUseLevelAsLevelEntity - boolean, default is `false`. If set to `true`, the 
+ * level parameter will be used as the level of the business entity instead of the player level.
+ */
+const generateRandomBusiness = (level=0, index=0, options:Readonly<{ shouldUseLevelAsLevelEntity?: boolean; }>={}): Business => {
+    const { shouldUseLevelAsLevelEntity } = { shouldUseLevelAsLevelEntity: false, ...options };
+    const levelEntity = shouldUseLevelAsLevelEntity ? level : generateEntityLevel(level, SCALING_BUSINESS_LEVEL_CORE, SCALING_BUSINESS_LEVEL_ADDITIONAL);
+    const xpEntity = levelEntity ? levelToXp(levelEntity, SCALING_CORE_MAGIC_NUMBER_BUSINESS) : 0;
+    const xpPlayer = levelToXp(level, SCALING_CORE_MAGIC_NUMBER_PLAYER);
+
+    const levelScale = generateEntityLevel(SCALING_BUSINESS_LEVEL, SCALING_BUSINESS_LEVEL_CORE, SCALING_BUSINESS_LEVEL_ADDITIONAL);
+    const { innateRole, innateSubRole, roleLevels } = generateRoles(levelEntity + levelScale)
+
+    const types = getBusinessTypesAllowedForRole(innateRole);
+    const typesKeys = Object.keys(types) as Array<keyof typeof types>;
+    const type = getRandomItemFromArray<keyof typeof types>(typesKeys)!;
+    const businessType = types[type];
+
+    // @ts-ignore
+    const roleDisplay = (innateRole && businessType?.roles?.[innateRole]?.display ? businessType.roles[innateRole].display : "") as string;
+
+    const timeScale = handleScaling(getBusinessTime, { xpPlayer, xpEntity });
+    const createdAt = new Date();
+
+    return {
+        key:`${createdAt.getTime()}_${index}`,
+        createdAt,
+        generationIndex: index,
+        type,
+        innateRole,
+        innateSubRole,
+        roleLevels,
+        stage: "open",
+        xp: xpEntity,
+        display: businessType.display,
+        roleDisplay,
+        staticIncome: {
+            xp: SCALING_BUSINESS_XP_REWARD,
+        },
+        time: timeScale.value,
+        mercSlots: {
+            manager: null,
+            security: null,
+            illicitActivity: null,
+        }
+    }
+}
+
+/**
+ * Returns a random Business object
+ * @param level - int, specifies the level of player
+ * @param index - int, specifies the index of the business being generated.
+ */
+export const getRandomBusiness = (level=0, index=0) => generateRandomBusiness(level, index);
+
+/**
+ * Generates a specified number of random businesses around a given level.
+ * @param level - int, specifies the level of player
+ * @param amount - int, specifies the number of random businesses that should be generated and returned
+ */
+export const getRandomBusinesses = (level=0, amount=1) => {
+    let businesses: Businesses = {};
+    for (let i = 0; i < amount; i++) {
+        const randomBusiness = getRandomBusiness(level, i);
+        businesses[randomBusiness.key] = randomBusiness;
+    }
+    return businesses;
+}
+
+
+
+//______________________________________________________________________________________    
 // ===== Contract Generation =====
 
 /**
@@ -217,7 +304,7 @@ const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLe
     const { innateRole, innateSubRole, roleLevels } = generateRoles(levelEntity + levelScale)
 
     const createdAt = new Date();
-    const type = getRandomItemFromArray<keyof ContractTypes>(CONTRACT_TYPE_KEYS)!;
+    const type = getRandomItemFromArray<keyof typeof CONTRACT_TYPES>(CONTRACT_TYPE_KEYS)!;
     const contractType = CONTRACT_TYPES[type];
     const timeScale = handleScaling(getContractTime, { xpPlayer, xpEntity });
 
@@ -232,7 +319,6 @@ const generateRandomContract = (level=0, index=0, options:Readonly<{ shouldUseLe
         stage: "unsigned",
         client: "defaultClient",
         xp: xpEntity,
-        visualLevel: levelEntity + levelScale,
         display: contractType.display,
         roleDisplay: contractType.roles[innateRole].display,
         rewards: {

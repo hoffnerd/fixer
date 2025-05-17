@@ -1,3 +1,4 @@
+import type { BUSINESS_TYPES, CONTRACT_TYPES, DEFAULT_MERC_ROLE_LEVELS } from "@/data/_config";
 import { type SaveFile as SaveFilePrisma } from "@prisma/client";
 
 
@@ -47,7 +48,7 @@ export interface ResourceRewards {
 
 export type MercAssignType = "contract" | "business";
 
-export type MercSlot = "main" | "manager" | "security" | "unassign";
+export type MercSlot = keyof BusinessMercSlots | keyof ContractMercSlots | "unassign";
 
 export interface MercSlotObject {
     type: MercAssignType;
@@ -56,11 +57,7 @@ export interface MercSlotObject {
     businessKey?: Business["key"];
 }
 
-export interface MercRoleLevels {
-    corpo: number;
-    solo: number;
-    tech: number;
-}
+export type MercRoleLevels = typeof DEFAULT_MERC_ROLE_LEVELS;
 
 export interface Merc {
     key: string;
@@ -85,22 +82,62 @@ export interface PotentialMercs {
 //______________________________________________________________________________________
 // ===== Business =====
 
+export interface BusinessTypeMercSlotInfoRole{ 
+    display: string;
+}
+
+export interface BusinessTypeMercSlotInfoObject {
+    display: string;
+
+    /** 
+     * Optional number, default is `0`. The number of levels the player 
+     * needs to earn on that business to unlock the merc slot. 
+     **/
+    unlockedAt?: number;
+
+    /** The innate role of the merc slot. If undefined, will be generated */
+    innateRole?: keyof MercRoleLevels;
+    
+    roles?: Record<keyof MercRoleLevels, ContractRole>;
+
+}  
+
+export interface BusinessType {
+    display: string;
+    nameGeneration: Array<{ 
+        prefix: string, 
+        postfix: string, 
+        chanceMultiple?: number 
+    }>;
+    mercSlotsInfo: Record<keyof Business["mercSlots"], BusinessTypeMercSlotInfoObject>;
+
+}
+
 export interface BusinessMercSlot {
     key: Merc["key"];
 }
 
-export interface Business {
-    key: string;
-    display: string;
-    description?: string;
-    income: ResourceRewards;
-    time: number;
-    xp: number;
-    mercSlots?: {
-        manager?: BusinessMercSlot,
-        security?: BusinessMercSlot,
-    };
+export interface BusinessMercSlots {
+    manager?: BusinessMercSlot | null,
+    security?: BusinessMercSlot | null,
+    illicitActivity?: BusinessMercSlot | null,
+}
 
+export interface Business {
+    key: string; // `${createdAt.getTime()}_${generationIndex}`
+    createdAt: Date;
+    generationIndex: number;
+    type: keyof typeof BUSINESS_TYPES;
+    innateRole: keyof MercRoleLevels;
+    innateSubRole: keyof MercRoleLevels;
+    roleLevels: MercRoleLevels;
+    stage: "open" | "closed";
+    xp: number;
+    display: string;
+    roleDisplay: string;
+    staticIncome: ResourceRewards;
+    time: number;
+    mercSlots?: BusinessMercSlots;
 }
 
 export type Businesses = Record<Business["key"], Business>;
@@ -119,18 +156,12 @@ export interface ContractRole {
     display: string;
 }
 
-export interface ContractType {
-    display: string;
-    dangerLevel: number;
-    roles: Record<keyof MercRoleLevels, ContractRole>;
-}
-
-export type ContractTypeKey = "specialDelivery" | "agentSaboteur" | "gunForHire" | "thievery" | "sos" | "cyberpsycho";
-
-export type ContractTypes = Record<ContractTypeKey, ContractType>;
-
 export interface ContractMercSlot {
     key: Merc["key"];
+}
+
+export interface ContractMercSlots {
+    main?: ContractMercSlot | null;
 }
 
 export type ContractStageSwappable = "signed" | "researching" | "inProgress";
@@ -141,22 +172,19 @@ export interface Contract {
     key: string; // `${createdAt.getTime()}_${generationIndex}`
     createdAt: Date;
     generationIndex: number;
-    type: ContractTypeKey;
+    type: keyof typeof CONTRACT_TYPES;
     innateRole: keyof MercRoleLevels;
     innateSubRole: keyof MercRoleLevels;
     roleLevels: MercRoleLevels;
     stage: ContractStage;
     client: string;
     xp: number;
-    visualLevel: number;
     display: string;
     roleDisplay: string
     description?: string;
     rewards: ResourceRewards;
     time: number;
-    mercSlots: {
-        main?: ContractMercSlot | null;
-    };
+    mercSlots: ContractMercSlots;
 }
 
 export type Contracts = Record<Contract["key"], Contract>;

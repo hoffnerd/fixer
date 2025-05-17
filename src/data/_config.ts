@@ -1,4 +1,4 @@
-import type { Business, ContractTypes, MercRoleLevels, ResourcesExist, SaveFileOptional } from "@/types";
+import type { Business, ResourcesExist, SaveFileOptional } from "@/types";
 import { BadgeEuroIcon, CircuitBoardIcon, DrillIcon, HeartPulseIcon, UserCircleIcon } from "lucide-react";
 
 
@@ -20,6 +20,8 @@ export const PROJECT_DESCRIPTION = "A Cyberpunk experience where you manage your
 export const SCALING_CORE_MAGIC_NUMBER = 5;
 
 export const SCALING_CORE_MAGIC_NUMBER_PLAYER = SCALING_CORE_MAGIC_NUMBER * 5;
+
+export const SCALING_CORE_MAGIC_NUMBER_BUSINESS = SCALING_CORE_MAGIC_NUMBER_PLAYER;
 
 export const SCALING_EURO_MAGIC_NUMBER = 5;
 
@@ -43,11 +45,17 @@ export const SCALING_CONTRACT_LEVEL_CORE = { min: -2, max: 2 };
 
 export const SCALING_CONTRACT_LEVEL_ADDITIONAL = { min: -5, max: 5 };
 
+export const SCALING_BUSINESS_LEVEL = SCALING_CONTRACT_LEVEL
+
+export const SCALING_BUSINESS_LEVEL_CORE = SCALING_CONTRACT_LEVEL_CORE
+
+export const SCALING_BUSINESS_LEVEL_ADDITIONAL = SCALING_CONTRACT_LEVEL_ADDITIONAL;
+
 export const SCALING_REGENERATED_TIME = 60 * 5;
 
-export const SCALING_BUSINESS_XP_REWARD = 5;
+export const SCALING_BUSINESS_XP_REWARD = 3;
 
-export const SCALING_CONTRACT_XP_REWARD = SCALING_BUSINESS_XP_REWARD * 3;
+export const SCALING_CONTRACT_XP_REWARD = SCALING_BUSINESS_XP_REWARD * 5;
 
 
 
@@ -62,22 +70,13 @@ export const DEFAULT_RESOURCES: ResourcesExist = {
     hacks: 0,
 }
 
-export const DEFAULT_BUSINESS: Business = {
-    key: "defaultBusiness",
-    display: "Default Business",
-    description: "This is a default business",
-    time: 0,
-    xp: 0,
-    income: {},
-}
-
-export const DEFAULT_MERC_ROLE_LEVELS: MercRoleLevels = {
+export const DEFAULT_MERC_ROLE_LEVELS = {
     corpo: 0,
     solo: 0,
     tech: 0,
 }
 
-export const MERC_ROLE_KEYS = Object.keys(DEFAULT_MERC_ROLE_LEVELS) as Array<keyof MercRoleLevels>;
+export const MERC_ROLE_KEYS = Object.keys(DEFAULT_MERC_ROLE_LEVELS) as Array<keyof typeof DEFAULT_MERC_ROLE_LEVELS>;
 
 
 export const DEFAULT_SAVE_FILE: SaveFileOptional = {
@@ -167,7 +166,7 @@ export const CONTRACT_WEIGHT_UNFORESEEN = 0.25;
 
 export const CONTRACT_WEIGHT_ROLE_FACTOR = 1 - CONTRACT_WEIGHT_UNFORESEEN;
 
-export const CONTRACT_TYPES: ContractTypes = {
+export const CONTRACT_TYPES = {
     specialDelivery: {
         display: "Special Delivery",
         dangerLevel: 1,
@@ -208,9 +207,9 @@ export const CONTRACT_TYPES: ContractTypes = {
         display: "SOS",
         dangerLevel: 5,
         roles: {
-            corpo : { display: "Search and Rescue" },
+            corpo: { display: "Search and Rescue" },
             solo: { display: "Cover Fire Needed" },
-            tech: { display: "Security" },
+            tech: { display: "Defense Required" },
         },
     },
     cyberpsycho: {
@@ -224,7 +223,134 @@ export const CONTRACT_TYPES: ContractTypes = {
     } 
 }
 
-export const CONTRACT_TYPE_KEYS = Object.keys(CONTRACT_TYPES) as Array<keyof ContractTypes>;
+export const CONTRACT_TYPE_KEYS = Object.keys(CONTRACT_TYPES) as Array<keyof typeof CONTRACT_TYPES>;
+
+
+
+//______________________________________________________________________________________
+// ===== Businesses =====
+
+const ILLICIT_ACTIVITY = { 
+    display: "Illicit Activity",
+    unlockedAt: 5,
+    roles: {
+        corpo: { display: "Espionage" },
+        netrunner: { display: "XBDs" },
+        nomad: { display: "Courier Service" },
+        rocker: { display: "Pirate Radio Station" },
+        solo: { display: "Beat Downs" },
+        tech: { display: "Drugs" },
+    }
+};
+
+export const BUSINESS_TYPES = {
+    blackMarket: {
+        display: "Black Market Exchange",
+        roles: {
+            corpo: { display: "Intelligence Hub" },
+            netrunner: { display: "Hacks" },
+            nomad: { display: "Artifacts" },
+            // rocker: { display: "Unknown" },
+            solo: { display: "Weapons" },
+            tech: { display: "Cyberware" },
+        }
+    },
+    clinic: {
+        display: "Clinic",
+        roles: {
+            corpo: { display: "Rejuvenation Spa" },
+            netrunner: { display: "Data Haven" },
+            // nomad: { display: "Unknown" },
+            rocker: { display: "Rehabilitation Center" },
+            // solo: { display: "Street Clinic" },
+            tech: { display: "Ripperdoc Den" },
+        }
+    },
+    club: {
+        display: "Club",
+        roles: {
+            corpo: { display: "Cabaret" },
+            netrunner: { display: "Braindance Lounge" },
+            nomad: { display: "Speakeasy" },
+            rocker: { display: "Strip Club" },
+            solo: { display: "Saloon" },
+            tech: { display: "Disco" },
+        }
+    },
+    gamblingDen: {
+        display: "Gambling Den",
+        roles: {
+            corpo: { display: "Trading Hall" },
+            // netrunner: { display: "Unknown" },
+            nomad: { display: "Street Racing" },
+            rocker: { display: "Casino" },
+            solo: { display: "Fight Club 🤫" },
+            tech: { display: "Pachinko Parlor" },
+        }
+    },
+    restaurant: {
+        display: "Restaurant",
+        roles: {
+            corpo: { display: "Bistro" },
+            netrunner: { display: "Café" },
+            nomad: { display: "Canteen" },
+            rocker: { display: "Food Cart" },
+            solo: { display: "Meathouse" },
+            tech: { display: "Vending Machines" },
+        }
+    },
+    // : {
+    //     display: "",
+    //     roles: {
+    //         corpo: { display: "Unknown" },
+    //         netrunner: { display: "Unknown" },
+    //         nomad: { display: "Unknown" },
+    //         rocker: { display: "Unknown" },
+    //         solo: { display: "Unknown" },
+    //         tech: { display: "Unknown" },
+    //     }
+    // },
+
+    // ===== Specifics =====
+    counterIntelligence: {
+        display: "Counter Intelligence",
+        roles: {
+            corpo: { display: "" },
+        }
+    },
+    aiDevelopment: {
+        display: "AI Development",
+        roles: {
+            netrunner: { display: "" },
+        }
+    },
+    chopShop: {
+        display: "Chop Shop",
+        roles: {
+            nomad: { display: "" },
+        }
+    },
+    musicStudio: {
+        display: "Music Studio",
+        roles: {
+            rocker: { display: "" },
+        }
+    },
+    privateSecurityFirm: {
+        display: "Private Security Firm",
+        roles: {
+            solo: { display: "" },
+        }
+    },
+    droneGarage: {
+        display: "Drone Garage",
+        roles: {
+            tech: { display: "" },
+        }
+    },
+}
+
+export const BUSINESS_TYPE_KEYS = Object.keys(BUSINESS_TYPES) as Array<keyof typeof BUSINESS_TYPES>;
 
 
 
