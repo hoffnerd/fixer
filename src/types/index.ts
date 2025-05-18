@@ -253,6 +253,7 @@ export interface SaveQueueObj {
         | "updateContractStageMutation"
         | "completeContractMutation"
         | "regenerateContractsMutation"
+        | "regenerateBusinessesMutation"
         | "cancelContractMutation"
 
         ;

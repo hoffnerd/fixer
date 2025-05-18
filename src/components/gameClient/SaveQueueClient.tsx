@@ -56,7 +56,8 @@ const getRequiredMutationProps = (saveQueueObj: SaveQueueObj) => {
             return { contractKey: props.contractKey, stage: props.stage };
 
         case "regenerateMercsMutation": 
-        case "regenerateContractsMutation": 
+        case "regenerateContractsMutation":
+        case "regenerateBusinessesMutation":
             return {};
         default: return { error: "Unknown Mutation Key!" };
     }

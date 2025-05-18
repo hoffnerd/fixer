@@ -126,6 +126,16 @@ export default function ResourcesWatcher(){
         pushToSaveQueue({ mutationKey: "regenerateContractsMutation" });
     }, [sessionTime])
 
+    useEffect(() => {
+        if(!saveFile?.id) return;
+        if(sessionTime === 0) return;
+
+        const regeneratedTime = saveFile?.potentialContracts?.regeneratedTime || SCALING_REGENERATED_TIME;
+        if(sessionTime % regeneratedTime !== 0) return;
+
+        pushToSaveQueue({ mutationKey: "regenerateBusinessesMutation" });
+    }, [sessionTime])
+
 
 
     //______________________________________________________________________________________

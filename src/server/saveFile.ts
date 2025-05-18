@@ -22,7 +22,7 @@ import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 import { CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE, DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { addResourceRewards, getRandomNumber, xpToLevel } from "@/utils";
-import { canHireMerc, getRandomContracts, getRandomMercs } from "@/utils/mercs";
+import { canHireMerc, getRandomBusinesses, getRandomContracts, getRandomMercs } from "@/utils/mercs";
 import { calculateSuccessChance } from "@/utils/contracts";
 import { getJobShare, handleScaling } from "@/utils/scaling";
 
@@ -53,6 +53,7 @@ export const readSaveFile = async (id?: string | null) => serverAction<SaveFile>
 const rawCreateSaveFile = async () => {
     const mercs = getRandomMercs({}, 0, 3);
     const contracts = getRandomContracts(0, 3);
+    const businesses = getRandomBusinesses(0, 3);
     return await db.saveFile.create({ 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: { 
@@ -64,6 +65,10 @@ const rawCreateSaveFile = async () => {
             potentialContracts: {
                 ...DEFAULT_SAVE_FILE.potentialContracts,
                 contracts,
+            },
+            potentialBusinesses: {
+                ...DEFAULT_SAVE_FILE.potentialBusinesses,
+                businesses,
             },
         } 
     })
@@ -241,9 +246,10 @@ export const assignMerc = async ({
         }
         else if(slot === "unassign"){
             let newMercSlots = { ...selectedBusiness.mercSlots };
-            for (const [k, value] of Object.entries(newMercSlots)) {
+            for (const [k, v] of Object.entries(newMercSlots)) {
                 const key = k as keyof typeof newMercSlots;
-                if(value.key === mercKey) delete newMercSlots[key];
+                const value = v as typeof newMercSlots[typeof key];
+                if(value?.key === mercKey) delete newMercSlots[key];
             }
             selectedBusiness.mercSlots = newMercSlots;
         }
@@ -500,4 +506,33 @@ export const regenerateContracts = async ({
             updatedAt: new Date(),
         }
     });
-}, { trace: "regenerateContracts" })
+}, { trace: "regenerateContracts" });
+
+
+
+//______________________________________________________________________________________
+// ===== Businesses Up =====
+
+export const regenerateBusinesses = async ({
+    id, 
+    inGameTime,
+    timeLeft 
+}: Readonly<{ 
+    id: string; 
+    inGameTime?: number; 
+    timeLeft?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
+    const saveFile = await rawReadSaveFile(id);
+    const levelPlayer = xpToLevel((saveFile?.resources?.xp ?? 0), SCALING_CORE_MAGIC_NUMBER_PLAYER) || 0;
+    const businesses = getRandomBusinesses(levelPlayer, 3);
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: { 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            potentialBusinesses: { regeneratedTime: timeLeftToUse, businesses } as any,
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    });
+}, { trace: "regenerateBusinesses" });
