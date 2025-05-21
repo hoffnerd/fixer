@@ -1,7 +1,7 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
-import type { Contract } from "@/types";
+import type { Business, BusinessMercSlots } from "@/types";
 import type { RESOURCES_INFO } from "@/data/_config";
 // Packages -------------------------------------------------------------------------
 import { SettingsIcon } from "lucide-react";
@@ -32,22 +32,22 @@ import { getHighestRoleLevel } from "@/utils/contracts";
 //______________________________________________________________________________________
 // ===== Micro-Components =====
 
-function DetailsSheet({ children, contract }: Readonly<{ children?: React.ReactNode; contract: Contract; }>) {
-    const highestRoleLevel = getHighestRoleLevel(contract);
+function DetailsSheet({ children, business }: Readonly<{ children?: React.ReactNode; business: Business; }>) {
+    // const highestRoleLevel = getHighestRoleLevel(business);
     return (
         <Sheet>
             {children}
             <SheetContent side="right">
                 <SheetHeader>
-                    <SheetTitle className="flex justify-center">Contract Details</SheetTitle>
+                    <SheetTitle className="flex justify-center">Business Details</SheetTitle>
                 </SheetHeader>
                 <div className="px-4 pb-4">
-                    <h3 className="text-xl font-bold pb-4">{contract.display} - {contract.roleDisplay}</h3>
+                    {/* <h3 className="text-xl font-bold pb-4">{business.display} - {business.roleDisplay}</h3>
                     <p className="pb-4">Level: {highestRoleLevel}</p>
-                    <p className="pb-4">Description: {contract.description}</p>
+                    <p className="pb-4">Description: {business.description}</p>
                     <p>Rewards:</p>
                     <ul className="whitespace-nowrap pb-4">
-                        {Object.entries(contract.rewards).map(([key, value]) => (
+                        {Object.entries(business.rewards).map(([key, value]) => (
                             <ResourceBadge 
                                 key={key} 
                                 resourceKey={key as keyof typeof RESOURCES_INFO} 
@@ -58,7 +58,7 @@ function DetailsSheet({ children, contract }: Readonly<{ children?: React.ReactN
                     <p>Intel Bonuses:</p>
                     <p className="pb-4">None</p>
                     <p>Research Costs:</p>
-                    <p className="pb-4">None</p>
+                    <p className="pb-4">None</p> */}
                 </div>
             </SheetContent>
         </Sheet>
@@ -70,7 +70,7 @@ function DetailsSheet({ children, contract }: Readonly<{ children?: React.ReactN
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function ContractCardHeader({ contract }: Readonly<{ contract: Contract; }>) {
+export default function BusinessCardHeader({ business }: Readonly<{ business: Business; }>) {
 
     //______________________________________________________________________________________
     // ===== Stores =====
@@ -83,17 +83,20 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
     //______________________________________________________________________________________
     // ===== On Click Functions =====
 
-    const cancelClick = () => pushToSaveQueue({ mutationKey: "cancelContractMutation", props: { contractKey: contract.key } });
+    const cancelClick = () => pushToSaveQueue({ 
+        mutationKey: "", 
+        props: { businessKey: business.key } 
+    });
 
-    const unassignClick = () => {
-        if(!contract?.mercSlots?.main?.key) return;
+    const unassignClick = (slot: keyof BusinessMercSlots) => {
+        if(!business?.mercSlots?.[slot]?.key) return;
         pushToSaveQueue({ 
-            mutationKey: "assignMercMutation",
+            mutationKey: "",
             props: { 
-                assignType:"contract", 
-                mercKey: contract.mercSlots.main.key, 
-                contractKey: contract.key,
-                slot: "unassign",
+                assignType: "business", 
+                mercKey: business.mercSlots[slot].key, 
+                businessKey: business.key,
+                slot,
             }
         })
     }
@@ -108,16 +111,16 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                 <div className="flex justify-between border-b border-b-white/10">
                     <div className="w-full flex justify-between">
                         <div className="mx-auto">
-                            <div className="p-[10px]">{contract.display} - {contract.roleDisplay}</div>
+                            <div className="p-[10px]">{business.display} - {business.roleDisplay}</div>
                         </div>
                         <div className="border-x border-x-white/10">
                             <div className="p-[10px]">
-                                <BusinessTimer contract={contract} />
+                                <BusinessTimer business={business} />
                             </div>
                         </div>
                     </div>
-                    {contract.stage !== "unsigned" && (
-                        <DetailsSheet contract={contract}>
+                    {business.stage !== "closed" && (
+                        <DetailsSheet business={business}>
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="rounded-none">
@@ -126,7 +129,7 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
                                     <DropdownMenuLabel className="text-center neonEffect neText neTextGlow neColorBlue">
-                                        Manage Contract
+                                        Manage Business
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
@@ -134,10 +137,22 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                                             <DropdownMenuItem>View Details</DropdownMenuItem>
                                         </SheetTrigger>
                                         <DropdownMenuItem 
-                                            onClick={unassignClick} 
-                                            disabled={isGameSaving || (!contract?.mercSlots?.main?.key) || contract.stage !== "signed"}
+                                            onClick={() => unassignClick("manager")}
+                                            disabled={isGameSaving || (!business?.mercSlots?.manager?.key)}
                                         >
-                                            Unassign Merc
+                                            Unassign Manager
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem 
+                                            onClick={() => unassignClick("security")}
+                                            disabled={isGameSaving || (!business?.mercSlots?.security?.key)}
+                                        >
+                                            Unassign Security
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem 
+                                            onClick={() => unassignClick("illicitActivity")}
+                                            disabled={isGameSaving || (!business?.mercSlots?.illicitActivity?.key)}
+                                        >
+                                            Unassign Illicit Activity
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
@@ -147,7 +162,7 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                                             onClick={cancelClick} 
                                             disabled={isGameSaving}
                                         >
-                                            Cancel Contract
+                                            Sell Business
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                 </DropdownMenuContent>
@@ -156,7 +171,7 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                     )}
                 </div>
                 <div className="grid grid-cols-3 gap-[0.1rem] pb-[0.1rem] bg-white/10">
-                    {Object.entries(contract.rewards).map(([key, value]) => {
+                    {Object.entries(business.staticIncome).map(([key, value]) => {
                         if(key === "xp") return null;
                         return (
                             <div key={key} className="bg-primary-foreground flex justify-center">
@@ -165,7 +180,7 @@ export default function ContractCardHeader({ contract }: Readonly<{ contract: Co
                                     classNames={{ iconComponent: "h-4 w-4" }}
                                     resourceKey={key as keyof typeof RESOURCES_INFO} 
                                     value={(value ?? 0) as number}
-                                    options={{ hideTooltip: true, elementType: "div" }}
+                                    options={{ hideTooltip: true, elementType: "div", separator: " ≈" }}
                                 />
                             </div>
                         )

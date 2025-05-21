@@ -17,6 +17,7 @@ import { cn } from "@/lib/shadcn";
 interface Options {
     hideTooltip?: boolean;
     elementType?: "li" | "div" | "fragment";
+    separator?: string;
 }
 
 
@@ -27,6 +28,7 @@ interface Options {
 const DEFAULT_OPTIONS: Options = {
     hideTooltip: false,
     elementType: "li",
+    separator: ":"
 };
 
 
@@ -71,7 +73,7 @@ export default function ResourceBadge({
 
     //______________________________________________________________________________________
     // ===== Options =====
-    const { hideTooltip, elementType } = { ...DEFAULT_OPTIONS, ...options };
+    const { hideTooltip, elementType, separator } = { ...DEFAULT_OPTIONS, ...options };
 
     //______________________________________________________________________________________
     // ===== Constants =====
@@ -86,7 +88,7 @@ export default function ResourceBadge({
                 ? <IconComponent className={classNames?.iconComponent} />
                 : <ResourceToolTip resourceInfo={resourceInfo} />
             }
-            <span className={classNames?.spanText}>: {value}</span>
+            <span className={classNames?.spanText}>{separator} {value}</span>
         </ElementType>
     );
 }

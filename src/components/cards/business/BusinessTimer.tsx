@@ -1,7 +1,7 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
-import type { Contract } from "@/types";
+import type { Business } from "@/types";
 // Packages -------------------------------------------------------------------------
 import { useEffect, useState } from "react";
 // Data -----------------------------------------------------------------------------
@@ -24,18 +24,18 @@ import { xpToLevel } from "@/utils";
 function TimeLeft({
     children,
     className,
-    contract,
+    business,
     timeUntilDefault = SCALING_REGENERATED_TIME,
 }: Readonly<{
     children?: React.ReactNode;
     className?: string;
-    contract: Contract;
+    business: Business;
     timeUntilDefault?: number;
 }>) {
 
     //______________________________________________________________________________________
     // ===== Constants =====
-    const level = xpToLevel((contract.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
+    const level = xpToLevel((business.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
 
 
 
@@ -53,8 +53,8 @@ function TimeLeft({
     const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const isGameSaving = useGameStore((state) => state.isGameSaving);
     const sessionTime = useGameStore((state) => state.sessionTime);
-    const contractTimes = useGameStore((state) => state.contractTimes);
-    const contractTime = contractTimes[contract.key];
+    const businessTimes = useGameStore((state) => state.businessTimes);
+    const businessTime = businessTimes[business.key];
 
 
 
@@ -70,36 +70,28 @@ function TimeLeft({
     useEffect(() => {
         if(sessionStartTime !== null) return;
         setSessionStartTime(sessionTime);
-        setInitialTimes({ contractKey: contract.key, time: timeUntilDefault, timeLeft: timeUntilDefault });
+        setInitialTimes({ businessKey: business.key, time: timeUntilDefault, timeLeft: timeUntilDefault });
     }, [sessionTime])
-
-    // useEffect(() => {
-    //     if(sessionStartTime === null) return;
-    //     setTimeUntil(SCALING_REGENERATED_TIME - ((sessionTime - sessionStartTime) % SCALING_REGENERATED_TIME));
-    // }, [sessionTime])
 
     useEffect(() => {
         if(sessionStartTime === null) return;
-        if(!contractTime) return;
-        if(contractTime.timeLeft <= 0) return;
-        updateTimes({ contractKey: contract.key });
+        if(!businessTime) return;
+        if(businessTime.timeLeft <= 0) return;
+        updateTimes({ businessKey: business.key });
     }, [sessionTime])
 
     useEffect(() => {
-        // console.log({ trace: "TimeLeft useEffect", contractTime, contract });
-        if(!contractTime) return;
-        if(contractTime.timeLeft > 0) return;
-        removeTimes({ contractKey: contract.key });
-        if(contract.stage === "signed"){
-            pushToSaveQueue({ mutationKey: "cancelContractMutation", props: { contractKey: contract.key } });
+        // console.log({ trace: "TimeLeft useEffect", businessTime, business });
+        if(!businessTime) return;
+        if(businessTime.timeLeft > 0) return;
+        
+        if((!business?.mercSlots?.manager?.key) && (!business?.mercSlots?.security?.key) && (!business?.mercSlots?.illicitActivity?.key)){
+            // Close/remove business
+            removeTimes({ businessKey: business.key });
+        } else {
+            // Income hits account
         }
-        if(contract.stage === "researching"){
-            pushToSaveQueue({ mutationKey: "updateContractStageMutation", props: { contractKey: contract.key, stage: "signed" } });
-        }
-        if(contract.stage === "inProgress"){
-            pushToSaveQueue({ mutationKey: "completeContractMutation", props: { contractKey: contract.key } });
-        }
-    }, [ contractTime?.timeLeft ])
+    }, [ businessTime?.timeLeft ])
 
 
     //______________________________________________________________________________________
@@ -107,7 +99,7 @@ function TimeLeft({
      return (
         <ToolTipCapsule content={children} options={{ childrenAs: "trigger" }}>
             <span className={className}>
-                <ReadableTime timeInSeconds={contractTime?.timeLeft ?? timeUntilDefault} options={{ showHours: false }} />
+                <ReadableTime timeInSeconds={businessTime?.timeLeft ?? timeUntilDefault} options={{ showHours: false }} />
             </span>
         </ToolTipCapsule>
     );
@@ -125,35 +117,48 @@ function TimeLeft({
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function BusinessTimer({ contract }: Readonly<{ contract: Contract; }>) {
+export default function BusinessTimer({ business }: Readonly<{ business: Business; }>) {
+
+    //______________________________________________________________________________________
+    // ===== Constants =====
+    const regeneratedTime = business?.time ?? SCALING_REGENERATED_TIME;
+    const timeUntil = business?.mercSlots?.manager?.key ? regeneratedTime/2 : regeneratedTime;
+
 
     //______________________________________________________________________________________
     // ===== Component Return =====
-    switch (contract.stage) {
-        case "unsigned": return (
-            <ToolTipCapsule content="Time until contract completion once started." options={{ childrenAs: "trigger" }}>
+
+    if(business?.stage === "closed"){
+        return (
+            <ToolTipCapsule content="How long until the business income hits your account." options={{ childrenAs: "trigger" }}>
                 <span>
-                    <ReadableTime timeInSeconds={contract.time} options={{ showHours: false }} />
+                    <ReadableTime timeInSeconds={timeUntil} options={{ showHours: false }} />
                 </span>
             </ToolTipCapsule>
-        );
-        case "signed": return (
-            <TimeLeft key="signed" className="neonEffect neText neTextGlow neColorRed" contract={contract}>
-                Time until contract will auto-cancel due to lack of progress.
-            </TimeLeft>
-        );
-        case "researching": return (
-            <TimeLeft key="researching" className="neonEffect neText neTextGlow neColorBlue" contract={contract}>
-                Time until more intel has been gathered about this contract.
-            </TimeLeft>
-        );
-        case "inProgress": return (
-            <TimeLeft key="inProgress" className="neonEffect neText neTextGlow neColorGreen" contract={contract} timeUntilDefault={contract.time}>
-            {/* <TimeLeft key="inProgress" className="neonEffect neText neTextGlow neColorGreen" contract={contract} timeUntilDefault={10}> */}
-                Time until this contract is completed.
-            </TimeLeft>
-        );
-        case "completed": return <span className="neonEffect neText neTextGlow neColorGreen">00:00:00</span>;
-        default: return <span>Unknown</span>;
+        )
     }
+    
+    if((!business?.mercSlots?.manager?.key) && (!business?.mercSlots?.security?.key) && (!business?.mercSlots?.illicitActivity?.key)) {
+        return (
+            <TimeLeft key="noMercs" className="neonEffect neText neTextGlow neColorRed" business={business}>
+                Time until you lose this business due to no mercs being assigned and the business forced to be closed.
+            </TimeLeft>
+        )
+    }
+
+    if(!business?.mercSlots?.manager?.key) {
+        return (
+            <TimeLeft key="openNoManager" className="neonEffect neText neTextGlow neColorGreen" business={business} timeUntilDefault={timeUntil}>
+            {/* <TimeLeft key="openNoManager" className="neonEffect neText neTextGlow neColorGreen" business={business} timeUntilDefault={10}> */}
+                Time until income hits your account.
+            </TimeLeft>
+        )
+    }
+
+    return (
+        <TimeLeft key="openWithManager" className="neonEffect neText neTextGlow neColorGreen" business={business} timeUntilDefault={timeUntil}>
+        {/* <TimeLeft key="openWithManager" className="neonEffect neText neTextGlow neColorGreen" business={business} timeUntilDefault={10}> */}
+            Time until income hits your account.
+        </TimeLeft>
+    )
 }

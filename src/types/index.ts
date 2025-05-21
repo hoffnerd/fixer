@@ -260,7 +260,7 @@ export interface SaveQueueObj {
     props?: {
         income?: ResourceRewards;
         assignType?: "contract" | "business"
-        slot?: MercSlot
+        slot?: MercSlot;
         mercKey?: string;
         contractKey?: string;
         businessKey?: string;
