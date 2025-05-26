@@ -3,13 +3,10 @@
 // Types ----------------------------------------------------------------------------
 import type { Contract } from "@/types";
 // Packages -------------------------------------------------------------------------
-import { useEffect, useState } from "react";
 // Data -----------------------------------------------------------------------------
-import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
-import { useSaveFile } from "@/hooks/useSaveFile";
 // Components -----------------------------------------------------------------------
 import { Card, CardContent, CardFooter } from "@/components/shadcn/ui/card";
 import { Button } from "@/components/shadcn/ui/button";
@@ -18,7 +15,6 @@ import ContractSignedContent from "./contract/ContractSignedContent";
 import ContractSignedFooter from "./contract/ContractSignedFooter";
 import ProgressBarFooter from "./ProgressBarFooter";
 // Other ----------------------------------------------------------------------------
-import { xpToLevel } from "@/utils";
 import { getHighestRoleLevel } from "@/utils/contracts";
 
 
@@ -78,28 +74,6 @@ function ContractStageContent({ contract }: Readonly<{ contract: Contract; }>) {
 // ===== Component =====
 
 export default function ContractCard({ contract }: Readonly<{ contract: Contract; }>) {
-
-
-
-    //______________________________________________________________________________________
-    // ===== Stores =====
-    const sessionTime = useGameStore((state) => state.sessionTime);
-
-
-
-    //______________________________________________________________________________________
-    // ===== State =====
-    const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
-
-
-    //______________________________________________________________________________________
-    // ===== Use Effect =====
-
-    useEffect(() => {
-        if(sessionStartTime !== null) return;
-        setSessionStartTime(sessionTime);
-    }, [sessionTime])
-    
 
     //______________________________________________________________________________________
     // ===== Component Return =====

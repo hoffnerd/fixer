@@ -6,7 +6,7 @@ import type { ContractStageSwappable, MercAssignType, MercSlot } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 // Server ---------------------------------------------------------------------------
-import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage, completeContract, regenerateBusinesses, purchaseBusiness } from "@/server/saveFile";
+import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage, completeContract, regenerateBusinesses, purchaseBusiness, forecloseBusiness, sellBusiness, incomeBusiness } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Other ----------------------------------------------------------------------------
@@ -226,6 +226,62 @@ export function useSaveFile() {
         },
     })
 
+    const forecloseBusinessMutation = useMutation({
+        mutationFn: async (props: Readonly<{ businessKey: string; inGameTime: number; }>) => {
+            if(!data?.data?.id) return;
+            return await forecloseBusiness({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
+    const sellBusinessMutation = useMutation({
+        mutationFn: async (props: Readonly<{ businessKey: string; inGameTime: number; }>) => {
+            if(!data?.data?.id) return;
+            return await sellBusiness({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            if(data?.data?.message){
+                if(data?.data?.hasSucceeded) toast.success(data.data.message);
+                else toast.error(data.data.message);
+            }
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
+    const incomeBusinessMutation = useMutation({
+        mutationFn: async (props: Readonly<{ businessKey: string; inGameTime: number; }>) => {
+            if(!data?.data?.id) return;
+            return await incomeBusiness({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            if(data?.data?.message){
+                if(data?.data?.hasSucceeded) toast.success(data.data.message);
+                else toast.error(data.data.message);
+            }
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
     const regenerateBusinessesMutation = useMutation({
         mutationFn: async (props: Readonly<{ inGameTime: number; timeLeft?: number; }>) => {
             if(!data?.data?.id) return;
@@ -263,7 +319,6 @@ export function useSaveFile() {
         saveFile: data?.data,
         saveFileId: data?.data?.id,
         clearSaveFile,
-        updateResourcesMutation,
 
         mutations: {
             updateResourcesMutation,
@@ -279,6 +334,9 @@ export function useSaveFile() {
             regenerateContractsMutation,
 
             purchaseBusinessMutation,
+            forecloseBusinessMutation,
+            sellBusinessMutation,
+            incomeBusinessMutation,
             regenerateBusinessesMutation,
         }
     }

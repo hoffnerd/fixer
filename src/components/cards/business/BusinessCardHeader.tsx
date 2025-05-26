@@ -26,6 +26,9 @@ import ResourceBadge from "../../ResourceBadge";
 import BusinessTimer from "./BusinessTimer";
 // Other ----------------------------------------------------------------------------
 import { getHighestRoleLevel } from "@/utils/contracts";
+import { generateResources } from "@/utils/mercs";
+import { xpToLevel } from "@/utils";
+import { businessUnassignClick, getBusinessDisplay } from "@/utils/businesses";
 
 
 
@@ -42,7 +45,7 @@ function DetailsSheet({ children, business }: Readonly<{ children?: React.ReactN
                     <SheetTitle className="flex justify-center">Business Details</SheetTitle>
                 </SheetHeader>
                 <div className="px-4 pb-4">
-                    {/* <h3 className="text-xl font-bold pb-4">{business.display} - {business.roleDisplay}</h3>
+                    {/* <h3 className="text-xl font-bold pb-4">{getBusinessDisplay(business)}</h3>
                     <p className="pb-4">Level: {highestRoleLevel}</p>
                     <p className="pb-4">Description: {business.description}</p>
                     <p>Rewards:</p>
@@ -70,36 +73,25 @@ function DetailsSheet({ children, business }: Readonly<{ children?: React.ReactN
 //______________________________________________________________________________________
 // ===== Component =====
 
-export default function BusinessCardHeader({ business }: Readonly<{ business: Business; }>) {
+export default function BusinessCardHeader({ business, levelPlayer }: Readonly<{ business: Business; levelPlayer: number; }>) {
 
     //______________________________________________________________________________________
     // ===== Stores =====
     const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
     const isGameSaving = useGameStore((state) => state.isGameSaving);
-    const sessionTime = useGameStore((state) => state.sessionTime);
+    const resourceEstimate = generateResources({ 
+        level: levelPlayer, 
+        xpEntity: business.xp, 
+        innateRole: business.innateRole, 
+        innateSubRole: business.innateSubRole 
+    });
 
     
 
     //______________________________________________________________________________________
     // ===== On Click Functions =====
 
-    const cancelClick = () => pushToSaveQueue({ 
-        mutationKey: "", 
-        props: { businessKey: business.key } 
-    });
-
-    const unassignClick = (slot: keyof BusinessMercSlots) => {
-        if(!business?.mercSlots?.[slot]?.key) return;
-        pushToSaveQueue({ 
-            mutationKey: "",
-            props: { 
-                assignType: "business", 
-                mercKey: business.mercSlots[slot].key, 
-                businessKey: business.key,
-                slot,
-            }
-        })
-    }
+    const unassignClick = (mercKey?: string) => businessUnassignClick({ pushToSaveQueue, business, mercKey })
 
 
 
@@ -111,7 +103,7 @@ export default function BusinessCardHeader({ business }: Readonly<{ business: Bu
                 <div className="flex justify-between border-b border-b-white/10">
                     <div className="w-full flex justify-between">
                         <div className="mx-auto">
-                            <div className="p-[10px]">{business?.roleDisplay ? `${business.display} - ${business.roleDisplay}` : business.display}</div>
+                            <div className="p-[10px]">{getBusinessDisplay(business)}</div>
                         </div>
                         <div className="border-x border-x-white/10">
                             <div className="p-[10px]">
@@ -137,19 +129,19 @@ export default function BusinessCardHeader({ business }: Readonly<{ business: Bu
                                             <DropdownMenuItem>View Details</DropdownMenuItem>
                                         </SheetTrigger>
                                         <DropdownMenuItem 
-                                            onClick={() => unassignClick("manager")}
+                                            onClick={() => unassignClick(business?.mercSlots?.manager?.key)}
                                             disabled={isGameSaving || (!business?.mercSlots?.manager?.key)}
                                         >
                                             Unassign Manager
                                         </DropdownMenuItem>
                                         <DropdownMenuItem 
-                                            onClick={() => unassignClick("security")}
+                                            onClick={() => unassignClick(business?.mercSlots?.security?.key)}
                                             disabled={isGameSaving || (!business?.mercSlots?.security?.key)}
                                         >
                                             Unassign Security
                                         </DropdownMenuItem>
                                         <DropdownMenuItem 
-                                            onClick={() => unassignClick("illicitActivity")}
+                                            onClick={() => unassignClick(business?.mercSlots?.illicitActivity?.key)}
                                             disabled={isGameSaving || (!business?.mercSlots?.illicitActivity?.key)}
                                         >
                                             Unassign Illicit Activity
@@ -159,7 +151,10 @@ export default function BusinessCardHeader({ business }: Readonly<{ business: Bu
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem
                                             className="text-primary-foreground neonEffect neBackground neBackgroundHover neColorRed"
-                                            onClick={cancelClick} 
+                                            onClick={() => pushToSaveQueue({ 
+                                                mutationKey: "sellBusinessMutation", 
+                                                props: { businessKey: business.key } 
+                                            })} 
                                             disabled={isGameSaving}
                                         >
                                             Sell Business
@@ -171,7 +166,7 @@ export default function BusinessCardHeader({ business }: Readonly<{ business: Bu
                     )}
                 </div>
                 <div className="grid grid-cols-3 gap-[0.1rem] pb-[0.1rem] bg-white/10">
-                    {Object.entries(business.staticIncome).map(([key, value]) => {
+                    {Object.entries(resourceEstimate).map(([key, value]) => {
                         if(key === "xp") return null;
                         return (
                             <div key={key} className="bg-primary-foreground flex justify-center">
@@ -180,7 +175,11 @@ export default function BusinessCardHeader({ business }: Readonly<{ business: Bu
                                     classNames={{ iconComponent: "h-4 w-4" }}
                                     resourceKey={key as keyof typeof RESOURCES_INFO} 
                                     value={(value ?? 0) as number}
-                                    options={{ hideTooltip: true, elementType: "div", separator: " ≈" }}
+                                    options={{ 
+                                        hideTooltip: true, 
+                                        elementType: "div", 
+                                        separator: (<span className="text-xs">&nbsp;≈</span>) as any as string 
+                                    }}
                                 />
                             </div>
                         )

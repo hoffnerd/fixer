@@ -51,6 +51,9 @@ const getRequiredMutationProps = (saveQueueObj: SaveQueueObj) => {
             return { contractKey: props.contractKey };
 
         case "purchaseBusinessMutation": 
+        case "forecloseBusinessMutation": 
+        case "sellBusinessMutation": 
+        case "incomeBusinessMutation": 
             if(!props?.businessKey) return { error: "No Business provided!" };
             return { businessKey: props.businessKey };
             

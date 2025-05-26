@@ -32,6 +32,13 @@ export const getRange = ({ min, max, step=1 }: Readonly<{ min: number; max: numb
     return result;
 }
 
+export const getRangeDisplay = (range?: Array<number>) => {
+    if(!range) return "Unknown";
+    if(range.length === 0) return "Unknown";
+    if(range.length === 1) return `${range[0]}%`;
+    return `${range[0]}%-${range[range.length-1]}%`;
+}
+
 
 
 //______________________________________________________________________________________

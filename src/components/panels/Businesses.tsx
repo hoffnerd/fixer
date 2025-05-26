@@ -37,13 +37,13 @@ function Business({ saveFile, business }: Readonly<{ saveFile: SaveFile; busines
                 </div>
                 <div className="flex justify-end">
                     <ul className="whitespace-nowrap">
-                        {Object.entries(business.income).map(([key, value]) => (
+                        {/* {Object.entries(business.income).map(([key, value]) => (
                             <ResourceBadge 
                                 key={key} 
                                 resourceKey={key as keyof typeof RESOURCES_INFO} 
                                 value={(value ?? 0) as number}
                             />
-                        ))}
+                        ))} */}
                     </ul>
                 </div>
             </CardContent>

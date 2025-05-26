@@ -87,9 +87,12 @@ function TimeLeft({
         
         if((!business?.mercSlots?.manager?.key) && (!business?.mercSlots?.security?.key) && (!business?.mercSlots?.illicitActivity?.key)){
             // Close/remove business
+            pushToSaveQueue({ mutationKey: "forecloseBusinessMutation", props: { businessKey: business.key } });
             removeTimes({ businessKey: business.key });
         } else {
             // Income hits account
+            pushToSaveQueue({ mutationKey: "incomeBusinessMutation", props: { businessKey: business.key } });
+            setSessionStartTime(null);
         }
     }, [ businessTime?.timeLeft ])
 
@@ -141,7 +144,8 @@ export default function BusinessTimer({ business }: Readonly<{ business: Busines
     if((!business?.mercSlots?.manager?.key) && (!business?.mercSlots?.security?.key) && (!business?.mercSlots?.illicitActivity?.key)) {
         return (
             <TimeLeft key="noMercs" className="neonEffect neText neTextGlow neColorRed" business={business}>
-                Time until you lose this business due to no mercs being assigned and the business forced to be closed.
+                <div>Time until you lose this business due to no mercs</div>
+                <div>being assigned and the business forced to be closed.</div>
             </TimeLeft>
         )
     }

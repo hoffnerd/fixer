@@ -96,7 +96,7 @@ const generateEntityLevel = (level:number, scaleCore:{ min: number; max: number;
     return Math.max(0, (level + levelDifference));
 }
 
-const generateResources = ({
+export const generateResources = ({
     level,
     xpEntity,
     innateRole,

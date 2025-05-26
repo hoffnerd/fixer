@@ -33,6 +33,7 @@ export interface HandleScalingOptions extends XPs {
     magicNumber?: number;
     exponent?: number;
     scale?: "small" | "medium" | "large";
+    entityType?: "business" | "contract";
 }
 
 type GetScaleProps = HandleScalingOptions & Levels;
@@ -120,14 +121,16 @@ export const getComps = (props:GetScaleProps) => {
 }
 
 export const getJobShare = (props:GetScaleProps) => {
-    let { levelPlayer, levelPlayerLowest, levelEntity, levelEntityLowest } = { ...props };
+    let { levelPlayer, levelPlayerLowest, levelEntity, levelEntityLowest, entityType } = { ...props };
     if(levelPlayer < 1) levelPlayer = 1;
     if(levelPlayerLowest < 1) levelPlayerLowest = 1;
     if(levelEntity < 1) levelEntity = 1;
     if(levelEntityLowest < 1) levelEntityLowest = 1;
     const step = 1; // 0.01
-    const min = calculateJobShare(levelPlayerLowest, levelEntityLowest);
-    const max = calculateJobShare(levelPlayer, levelEntity);
+    const minTemp = calculateJobShare(levelPlayerLowest, levelEntityLowest);
+    const maxTemp = calculateJobShare(levelPlayer, levelEntity);
+    const min = entityType === "business" ? Math.floor( (minTemp ?? 0) / 2 ) : minTemp;
+    const max = entityType === "business" ? Math.floor( (maxTemp ?? 0) / 2 ) : maxTemp;
     const range = getRange({ min, max, step });
     return { step, min, max, range, value: getRandomItemFromArray(range)! };
 }

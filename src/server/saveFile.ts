@@ -2,6 +2,9 @@
 
 // Types ----------------------------------------------------------------------------
 import type {
+    Businesses,
+    BusinessMercSlot,
+    BusinessMercSlots,
     Contracts,
     ContractStageSwappable,
     DynamicMessage,
@@ -20,12 +23,13 @@ import type {
 import { db } from "./db";
 import { serverAction } from "@/_legoBlocks/nextjsCommon/server/actions";
 // Data -----------------------------------------------------------------------------
-import { CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE, DEFAULT_SAVE_FILE, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
+import { CONTRACT_MERC_DEATH_CHANCE_ON_FAILURE, DEFAULT_SAVE_FILE, SCALING_BUSINESS_INCOME_MULTIPLIER, SCALING_CORE_MAGIC_NUMBER_PLAYER, SCALING_REGENERATED_TIME } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { addResourceRewards, getRandomNumber, xpToLevel } from "@/utils";
 import { canHireMerc, getRandomBusinesses, getRandomContracts, getRandomMercs } from "@/utils/mercs";
 import { calculateSuccessChance } from "@/utils/contracts";
 import { getJobShare, handleScaling } from "@/utils/scaling";
+import { calculateBusinessTotalJobShare, getBusinessDisplay, getBusinessMercs } from "@/utils/businesses";
 
 
 
@@ -221,18 +225,17 @@ export const assignMerc = async ({
         if(!selectedContract) throw new Error("Contract not found");
         if(!selectedContract.mercSlots) selectedContract.mercSlots = {};
 
-
-        if(slot === "main"){
-            selectedContract.mercSlots[slot] = { key: mercKey };
-        } 
-        else if(slot === "unassign"){
+        if(slot === "unassign"){
             let newMercSlots = { ...selectedContract.mercSlots };
             for (const [k, value] of Object.entries(newMercSlots)) {
                 const key = k as keyof typeof newMercSlots;
                 if(value?.key && value.key === mercKey) delete newMercSlots[key];
             }
             selectedContract.mercSlots = newMercSlots;
-        }
+        } else {
+            // @ts-ignore
+            selectedContract.mercSlots[slot] = { key: mercKey };
+        } 
 
         data.contracts = { ...saveFile.contracts, [contractKey]: selectedContract };
     }
@@ -241,11 +244,8 @@ export const assignMerc = async ({
         let selectedBusiness = saveFile.businesses?.[businessKey];
         if(!selectedBusiness) throw new Error("Business not found");
         if(!selectedBusiness.mercSlots) selectedBusiness.mercSlots = {};
-
-        if(slot === "manager" || slot === "security"){
-            selectedBusiness.mercSlots[slot] = { key: mercKey };
-        }
-        else if(slot === "unassign"){
+        
+        if(slot === "unassign"){
             let newMercSlots = { ...selectedBusiness.mercSlots };
             for (const [k, v] of Object.entries(newMercSlots)) {
                 const key = k as keyof typeof newMercSlots;
@@ -253,6 +253,9 @@ export const assignMerc = async ({
                 if(value?.key === mercKey) delete newMercSlots[key];
             }
             selectedBusiness.mercSlots = newMercSlots;
+        } else {
+            // @ts-ignore
+            selectedBusiness.mercSlots[slot] = { key: mercKey };
         }
 
         data.businesses = { ...saveFile.businesses, [businessKey]: selectedBusiness };
@@ -553,6 +556,148 @@ export const purchaseBusiness = async ({
         }
     } as any);
 }, { trace: "purchaseBusiness" });
+
+export const forecloseBusiness = async ({
+    id, 
+    businessKey,
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    businessKey: string;
+    inGameTime?: number; 
+}>) => serverAction<SaveFile>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.businesses) throw new Error("No businesses to foreclose!");
+
+    let selectedBusiness = saveFile.businesses?.[businessKey];
+    if(!selectedBusiness) throw new Error("Business not found!");
+
+    let mercs: Mercs = { ...saveFile.mercs };
+    Object.entries(selectedBusiness?.mercSlots ?? {}).forEach(([k, v]) => {
+        const slotKey = k as keyof BusinessMercSlots;
+        const slotObj = v as BusinessMercSlot;
+        if(!slotObj?.key) return;
+        let selectedMerc = { ...saveFile.mercs[slotObj.key] } as Merc;
+        delete selectedMerc.mercSlot;
+        mercs[slotObj.key] = selectedMerc;
+    });
+
+    let businesses: Businesses = { ...saveFile.businesses };
+    if(businesses[businessKey]) delete businesses[businessKey];
+
+    let newResources = { ...saveFile.resources };
+    if(newResources?.xp && newResources.xp > 0) newResources.xp -= ((selectedBusiness.staticIncome.xp ?? 0) * SCALING_BUSINESS_INCOME_MULTIPLIER);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            resources: newResources,
+            businesses,
+            mercs,
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "forecloseBusiness" });
+
+export const sellBusiness = async ({
+    id, 
+    businessKey,
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    businessKey: string;
+    inGameTime?: number; 
+}>) => serverAction<{ newSaveFile: SaveFile; hasSucceeded: boolean; message?: String; }>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.businesses) throw new Error("No businesses to foreclose!");
+
+    let hasSucceeded = false;
+    let message = "";
+    let selectedBusiness = saveFile.businesses?.[businessKey];
+    if(!selectedBusiness) throw new Error("Business not found!");
+
+    let mercs: Mercs = { ...saveFile.mercs };
+    Object.entries(selectedBusiness?.mercSlots ?? {}).forEach(([k, v]) => {
+        const slotKey = k as keyof BusinessMercSlots;
+        const slotObj = v as BusinessMercSlot;
+        if(!slotObj?.key) return;
+        let selectedMerc = { ...saveFile.mercs[slotObj.key] } as Merc;
+        delete selectedMerc.mercSlot;
+        mercs[slotObj.key] = selectedMerc;
+    });
+
+    let businesses: Businesses = { ...saveFile.businesses };
+    if(businesses[businessKey]) delete businesses[businessKey];
+
+    hasSucceeded = true;
+    message = "Successfully sold business for: TODO";
+
+    let newResources = { ...saveFile.resources };
+    if(newResources?.xp && newResources.xp > 0) newResources.xp += ((selectedBusiness.staticIncome.xp ?? 0) * SCALING_BUSINESS_INCOME_MULTIPLIER);
+
+    // TODO: ADD SELLING OF BUSINESS INCOME
+
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const newSaveFile = await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            resources: newResources,
+            businesses,
+            mercs,
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+    
+    return { newSaveFile, hasSucceeded, message };
+}, { trace: "sellBusiness" });
+
+export const incomeBusiness = async ({
+    id, 
+    businessKey,
+    inGameTime,
+}: Readonly<{ 
+    id: string;
+    businessKey: string;
+    inGameTime?: number; 
+}>) => serverAction<{ newSaveFile: SaveFile; hasSucceeded: boolean; message?: String; }>(async () => {
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.businesses) throw new Error("No businesses found!");
+
+    let hasSucceeded = false;
+    let hasMercDied = false;
+    let message = "";
+    let data: SaveFileOptional = {
+        inGameTime: inGameTime ?? saveFile?.inGameTime,
+    };
+    let selectedBusiness = saveFile.businesses[businessKey];
+    if(!selectedBusiness) throw new Error("Business not found!");
+
+    const assignedMercs = getBusinessMercs({ saveFile, business: selectedBusiness });
+    if((assignedMercs?.count ?? 0) <= 0) throw new Error("No mercs assigned to business!");
+
+    let newResources = { ...saveFile.resources };
+
+    const { value: jobShare } = calculateBusinessTotalJobShare({ saveFile, business: selectedBusiness, assignedMercs });
+    
+    const roll = getRandomNumber(0, 100);
+
+    message = `Rolled ${roll} for ${getBusinessDisplay(selectedBusiness)} with a share of ${jobShare}. TODO`;
+    hasSucceeded = true;
+    
+    // TODO: ADD INCOME TO BUSINESS
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const newSaveFile = await db.saveFile.update({
+        where: { id },
+        data: { ...data, updatedAt: new Date() }
+    } as any) as unknown as SaveFile;
+    
+    return { newSaveFile, hasSucceeded, message };
+}, { trace: "incomeBusiness" });
 
 export const regenerateBusinesses = async ({
     id, 

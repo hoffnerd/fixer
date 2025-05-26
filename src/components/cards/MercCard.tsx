@@ -28,6 +28,7 @@ import ResourceBadge from "../ResourceBadge";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
 import { canHireMerc } from "@/utils/mercs";
+import { getBusinessDisplay } from "@/utils/businesses";
 
 
 
@@ -118,7 +119,7 @@ function MercCardHiredContent({
     const business = (merc?.mercSlot && merc.mercSlot.type === "business" && merc.mercSlot.businessKey && saveFile?.businesses?.[merc.mercSlot.businessKey]) as Business | null;
     const jobDisplay = contract?.display 
         ? `${contract.display} - ${contract.roleDisplay}`
-        : business?.display ?? null;
+        : getBusinessDisplay(business) ?? null;
 
     return (
         <div className="px-6">

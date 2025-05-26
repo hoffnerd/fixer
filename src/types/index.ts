@@ -246,15 +246,21 @@ export interface SaveFileOptional {
 export interface SaveQueueObj {
     mutationKey: 
         "updateResourcesMutation" 
+
         | "hireMercMutation"
         | "assignMercMutation"
         | "regenerateMercsMutation"
+
         | "signContractMutation"
         | "updateContractStageMutation"
         | "completeContractMutation"
         | "regenerateContractsMutation"
         | "cancelContractMutation"
+
         | "regenerateBusinessesMutation"
+        | "forecloseBusinessMutation"
+        | "sellBusinessMutation"
+        | "incomeBusinessMutation"
         | "purchaseBusinessMutation"
 
         ;

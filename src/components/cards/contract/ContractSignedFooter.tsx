@@ -131,43 +131,6 @@ function ContractNoMercFooter({ contract }: Readonly<{ contract: Contract; }>) {
 export default function ContractSignedFooter({ contract }: Readonly<{ contract: Contract; }>) {
 
     //______________________________________________________________________________________
-    // ===== Constants =====
-    const level = xpToLevel((contract.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
-
-
-
-    //______________________________________________________________________________________
-    // ===== Hooks =====
-    const { saveFile } = useSaveFile();
-
-
-
-    //______________________________________________________________________________________
-    // ===== Stores =====
-    const pushToSaveQueue = useGameStore((state) => state.pushToSaveQueue);
-    const isGameSaving = useGameStore((state) => state.isGameSaving);
-    const sessionTime = useGameStore((state) => state.sessionTime);
-
-
-
-    //______________________________________________________________________________________
-    // ===== State =====
-
-
-    //______________________________________________________________________________________
-    // ===== Use Effect =====
-
-
-    //______________________________________________________________________________________
-    // ===== Functions =====
-
-    const onClick = () => {
-        console.log({ trace: "onClick", contract });
-        // pushToSaveQueue({ mutationKey: "signContractMutation", props: { contractKey: contract.key } });
-    }
-
-
-    //______________________________________________________________________________________
     // ===== Component Return =====
     return (
         <div className="w-full grid grid-cols-6">
