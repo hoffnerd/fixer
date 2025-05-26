@@ -33,7 +33,7 @@ import { getHighestRoleLevel } from "@/utils/contracts";
 // ===== Micro-Components =====
 
 function DetailsSheet({ children, business }: Readonly<{ children?: React.ReactNode; business: Business; }>) {
-    // const highestRoleLevel = getHighestRoleLevel(business);
+    // const highestRoleLevel = getHighestRoleLevel(business.roleLevels, SCALING_BUSINESS_LEVEL);
     return (
         <Sheet>
             {children}
@@ -111,7 +111,7 @@ export default function BusinessCardHeader({ business }: Readonly<{ business: Bu
                 <div className="flex justify-between border-b border-b-white/10">
                     <div className="w-full flex justify-between">
                         <div className="mx-auto">
-                            <div className="p-[10px]">{business.display} - {business.roleDisplay}</div>
+                            <div className="p-[10px]">{business?.roleDisplay ? `${business.display} - ${business.roleDisplay}` : business.display}</div>
                         </div>
                         <div className="border-x border-x-white/10">
                             <div className="p-[10px]">

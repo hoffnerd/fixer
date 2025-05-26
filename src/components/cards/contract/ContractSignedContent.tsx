@@ -25,7 +25,7 @@ export default function ContractSignedContent({ contract }: Readonly<{ contract:
     // ===== Constants =====
     const level = xpToLevel((contract.xp ?? 0), SCALING_CORE_MAGIC_NUMBER);
     const mercKey = contract?.mercSlots?.main?.key;
-    const highestRoleLevel = getHighestRoleLevel(contract);
+    const highestRoleLevel = getHighestRoleLevel(contract.roleLevels);
 
 
 

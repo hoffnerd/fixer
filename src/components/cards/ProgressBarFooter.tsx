@@ -1,7 +1,7 @@
 "use client"
 
 // Types ----------------------------------------------------------------------------
-import type { Contract } from "@/types";
+import type { Business, Contract } from "@/types";
 // Packages -------------------------------------------------------------------------
 // Data -----------------------------------------------------------------------------
 // Stores ---------------------------------------------------------------------------
@@ -21,23 +21,32 @@ export default function ProgressBarFooter({
     className,
     classNameIndicator,
     contract,
+    business,
 }: Readonly<{
     className?: string;
     classNameIndicator?: string;
-    contract: Contract;
+    contract?: Contract;
+    business?: Business;
 }>) {
 
     //______________________________________________________________________________________
     // ===== Stores =====
     const contractTimes = useGameStore((state) => state.contractTimes);
-    const contractTime = contractTimes[contract.key];
+    const contractTime = contract?.key ? contractTimes[contract.key] : null;
+
+    const businessTimes = useGameStore((state) => state.businessTimes);
+    const businessTime = business?.key ? businessTimes[business.key] : null;
+
+    const timeLeft = contractTime?.timeLeft ?? businessTime?.timeLeft ?? 0;
+    const time = contractTime?.time ?? businessTime?.time ?? 1;
 
     //______________________________________________________________________________________
     // ===== Component Return =====
-    if(!contractTime) return <></>;
+    if(contract?.key && (!contractTime)) return <></>;
+    if(business?.key && (!businessTime)) return <></>;
     return (
         <ProgressCustom 
-            value={( Math.abs(( contractTime.timeLeft / contractTime.time ) - 1) * 100)}
+            value={( Math.abs(( timeLeft / time ) - 1) * 100)}
             className={cn("h-4 rounded-none", className)}
             classNameIndicator={cn("neonEffect neBackground neColorGreen", classNameIndicator)}
         />

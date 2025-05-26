@@ -16,7 +16,7 @@ import { Button } from "@/components/shadcn/ui/button";
 import ContractCardHeader from "./contract/ContractCardHeader";
 import ContractSignedContent from "./contract/ContractSignedContent";
 import ContractSignedFooter from "./contract/ContractSignedFooter";
-import ContractProgressBarFooter from "./contract/ContractProgressBarFooter";
+import ProgressBarFooter from "./ProgressBarFooter";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
 import { getHighestRoleLevel } from "@/utils/contracts";
@@ -50,16 +50,16 @@ function ContractStageFooter({ contract }: Readonly<{ contract: Contract; }>) {
     if(contract.stage === "signed") return (
         <div className="flex flex-col w-full">
             <ContractSignedFooter contract={contract} />
-            <ContractProgressBarFooter contract={contract} classNameIndicator="neColorRed" />
+            <ProgressBarFooter contract={contract} classNameIndicator="neColorRed" />
         </div>
     )
     if(contract.stage === "researching") return <span>Researching</span>
-    if(contract.stage === "inProgress") return <ContractProgressBarFooter contract={contract} />
+    if(contract.stage === "inProgress") return <ProgressBarFooter contract={contract} />
     return <span>Unknown</span>
 }
 
 function ContractStageContent({ contract }: Readonly<{ contract: Contract; }>) {
-    const highestRoleLevel = getHighestRoleLevel(contract);
+    const highestRoleLevel = getHighestRoleLevel(contract.roleLevels);
     if(contract.stage === "unsigned") return <>
         <div className="grid grid-cols-3 gap-1">
             <span className="col-span-2">Level:</span>

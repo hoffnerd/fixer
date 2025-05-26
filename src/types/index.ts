@@ -253,8 +253,9 @@ export interface SaveQueueObj {
         | "updateContractStageMutation"
         | "completeContractMutation"
         | "regenerateContractsMutation"
-        | "regenerateBusinessesMutation"
         | "cancelContractMutation"
+        | "regenerateBusinessesMutation"
+        | "purchaseBusinessMutation"
 
         ;
     props?: {

@@ -6,7 +6,7 @@ import type { ContractStageSwappable, MercAssignType, MercSlot } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 // Server ---------------------------------------------------------------------------
-import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage, completeContract, regenerateBusinesses } from "@/server/saveFile";
+import { hireMerc, readSaveFile, regenerateContracts, regenerateMercs, signContract, cancelContract, updateResources, assignMerc, updateContractStage, completeContract, regenerateBusinesses, purchaseBusiness } from "@/server/saveFile";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Other ----------------------------------------------------------------------------
@@ -205,6 +205,27 @@ export function useSaveFile() {
         },
     })
 
+
+
+    //______________________________________________________________________________________
+    // ===== Business Mutations =====
+
+    const purchaseBusinessMutation = useMutation({
+        mutationFn: async (props: Readonly<{ businessKey: string; inGameTime: number; timeLeft?: number; }>) => {
+            if(!data?.data?.id) return;
+            return await purchaseBusiness({ id: data.data.id, ...props });
+        },
+        onMutate: () => setStoreKeyValuePair({ isGameSaving: true }),
+        onSuccess: async (data) => {
+            if(data?.error) throw new Error(data?.message ?? "Unknown Error!");
+            await queryClient.invalidateQueries({ queryKey: ['saveFile'] })
+        },
+        onError: (error) => {
+            setStoreKeyValuePair({ isGameSaving: false });
+            toast.error(error?.message || "Unknown Error!");
+        },
+    })
+
     const regenerateBusinessesMutation = useMutation({
         mutationFn: async (props: Readonly<{ inGameTime: number; timeLeft?: number; }>) => {
             if(!data?.data?.id) return;
@@ -256,6 +277,8 @@ export function useSaveFile() {
             completeContractMutation,
             cancelContractMutation,
             regenerateContractsMutation,
+
+            purchaseBusinessMutation,
             regenerateBusinessesMutation,
         }
     }

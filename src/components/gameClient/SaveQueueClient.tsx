@@ -49,6 +49,10 @@ const getRequiredMutationProps = (saveQueueObj: SaveQueueObj) => {
         case "completeContractMutation": 
             if(!props?.contractKey) return { error: "No Contract provided!" };
             return { contractKey: props.contractKey };
+
+        case "purchaseBusinessMutation": 
+            if(!props?.businessKey) return { error: "No Business provided!" };
+            return { businessKey: props.businessKey };
             
         case "updateContractStageMutation": 
             if(!props?.contractKey) return { error: "No Contract provided!" };

@@ -244,7 +244,7 @@ const generateRandomBusiness = (level=0, index=0, options:Readonly<{ shouldUseLe
         innateRole,
         innateSubRole,
         roleLevels,
-        stage: "open",
+        stage: "closed",
         xp: xpEntity,
         display: businessType.display,
         roleDisplay,

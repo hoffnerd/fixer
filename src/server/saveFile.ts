@@ -9,6 +9,7 @@ import type {
     MercAssignType,
     Mercs,
     MercSlot,
+    PotentialBusinesses,
     PotentialContracts,
     PotentialMercs,
     ResourceRewards,
@@ -512,6 +513,46 @@ export const regenerateContracts = async ({
 
 //______________________________________________________________________________________
 // ===== Businesses Up =====
+
+export const purchaseBusiness = async ({
+    id, 
+    businessKey,
+    inGameTime,
+    timeLeft,
+}: Readonly<{ 
+    id: string;
+    businessKey: string;
+    inGameTime?: number; 
+    timeLeft?: number;
+}>) => serverAction<SaveFile>(async () => {
+    const timeLeftToUse = timeLeft ?? SCALING_REGENERATED_TIME;
+    const saveFile = await rawReadSaveFile(id);
+    if(!saveFile?.potentialBusinesses) throw new Error("No potential businesses to sign");
+
+    let selectedBusiness = saveFile.potentialBusinesses.businesses?.[businessKey];
+    if(!selectedBusiness) throw new Error("Business not found");
+    selectedBusiness.stage = "open";
+
+    let potentialBusinesses: PotentialBusinesses = { ...saveFile.potentialBusinesses };
+    if(potentialBusinesses.businesses?.[businessKey]) delete potentialBusinesses.businesses[businessKey];
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await db.saveFile.update({ 
+        where: { id }, 
+        data: {
+            businesses: {
+                ...saveFile.businesses,
+                [businessKey]: selectedBusiness
+            },
+            potentialBusinesses: {
+                ...potentialBusinesses,
+                regeneratedTime: timeLeftToUse,
+            },
+            inGameTime: inGameTime ?? saveFile?.inGameTime,
+            updatedAt: new Date(),
+        }
+    } as any);
+}, { trace: "purchaseBusiness" });
 
 export const regenerateBusinesses = async ({
     id, 

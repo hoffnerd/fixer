@@ -14,6 +14,7 @@ import {
 import MercCard from "./cards/MercCard";
 import type { Business, Contract, Merc, SaveFile } from "@/types";
 import ContractCard from "./cards/ContractCard";
+import BusinessCard from "./cards/BusinessCard";
 // Other ---------------------------------------------------------------------------
 
 
@@ -49,17 +50,16 @@ export function EntityCarousel({ type }: Readonly<{ type: Type; }>) {
     const { saveFile } = useSaveFile();
     const entities = saveFile?.id ? decideWhatEntitiesToUse(type, saveFile) : {};
 
-    
+    console.log({ trace: "EntityCarousel", entities, type });
 
     //______________________________________________________________________________________
     // ===== Functions =====
 
     const renderCard = (entity: Merc | Contract | Business) => { 
-        console.log({ trace: "renderCard", entity, type });
         switch (type) {
             case "mercs": return <MercCard merc={entity as Merc} />;
             case "contracts": return <ContractCard contract={entity as Contract} />;
-            case "businesses": return <></>;
+            case "businesses": return <BusinessCard business={entity as Business} />;
             default: return <></>;
         }
     }

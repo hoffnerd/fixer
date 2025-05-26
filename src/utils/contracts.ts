@@ -15,14 +15,13 @@ import { getJobShare, handleScaling } from "./scaling";
 //______________________________________________________________________________________    
 // ===== Functions =====
 
-export const getHighestRoleLevel = (contract: Contract) => {
-    const { roleLevels } = contract;
+export const getHighestRoleLevel = (roleLevels: MercRoleLevels, scalingLevel=SCALING_CONTRACT_LEVEL) => {
     let highestRoleLevel = 0;
     Object.keys(roleLevels).forEach(key => {
         const level = roleLevels[key as keyof typeof roleLevels];
         if(level > highestRoleLevel) highestRoleLevel = level;
     });
-    highestRoleLevel -= SCALING_CONTRACT_LEVEL;
+    highestRoleLevel -= scalingLevel;
     if(highestRoleLevel < 0) return 0;
     return highestRoleLevel;
 }

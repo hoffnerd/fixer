@@ -5,7 +5,7 @@ import type { Business } from "@/types";
 // Packages -------------------------------------------------------------------------
 import { useEffect, useState } from "react";
 // Data -----------------------------------------------------------------------------
-import { SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
+import { SCALING_BUSINESS_LEVEL, SCALING_CORE_MAGIC_NUMBER } from "@/data/_config";
 // Stores ---------------------------------------------------------------------------
 import { useGameStore } from "@/stores/useGameStore";
 // Hooks ----------------------------------------------------------------------------
@@ -14,12 +14,11 @@ import { useSaveFile } from "@/hooks/useSaveFile";
 import { Card, CardContent, CardFooter } from "@/components/shadcn/ui/card";
 import { Button } from "@/components/shadcn/ui/button";
 import BusinessCardHeader from "./business/BusinessCardHeader";
-import BusinessSignedContent from "./business/BusinessSignedContent";
-import BusinessSignedFooter from "./business/BusinessSignedFooter";
-import BusinessProgressBarFooter from "./business/BusinessProgressBarFooter";
+import BusinessOpenedContent from "./business/BusinessOpenedContent";
+import ProgressBarFooter from "./ProgressBarFooter";
 // Other ----------------------------------------------------------------------------
 import { xpToLevel } from "@/utils";
-import { getHighestRoleLevel } from "@/utils/businesses";
+import { getHighestRoleLevel } from "@/utils/contracts";
 
 
 
@@ -39,37 +38,33 @@ function BusinessStageFooter({ business }: Readonly<{ business: Business; }>) {
 
     const onClick = () => {
         console.log({ trace: "onClick", key: business.key, stage: business.stage });
-        if(business.stage === "unsigned") return pushToSaveQueue({ mutationKey: "signBusinessMutation", props: { businessKey: business.key } });
+        if(business.stage === "closed") return pushToSaveQueue({ mutationKey: "purchaseBusinessMutation", props: { businessKey: business.key } });
     }
 
-    if(business.stage === "unsigned") return <>
+    if(business.stage === "closed") return <>
         <Button variant="neonEffect" className="w-full neColorBlue rounded-none" onClick={onClick} disabled={isGameSaving}>
-            Sign
+            Purchase
         </Button>
     </>
-    if(business.stage === "signed") return (
-        <div className="flex flex-col w-full">
-            <BusinessSignedFooter business={business} />
-            <BusinessProgressBarFooter business={business} classNameIndicator="neColorRed" />
-        </div>
-    )
-    if(business.stage === "researching") return <span>Researching</span>
-    if(business.stage === "inProgress") return <BusinessProgressBarFooter business={business} />
-    return <span>Unknown</span>
+    if((!business?.mercSlots?.manager?.key) && (!business?.mercSlots?.security?.key) && (!business?.mercSlots?.illicitActivity?.key)){ 
+        return <ProgressBarFooter business={business} classNameIndicator="neColorRed" />
+    }
+    return <ProgressBarFooter business={business} />
 }
 
 function BusinessStageContent({ business }: Readonly<{ business: Business; }>) {
-    const highestRoleLevel = getHighestRoleLevel(business);
-    if(business.stage === "unsigned") return <>
+    const highestRoleLevel = getHighestRoleLevel(business.roleLevels, SCALING_BUSINESS_LEVEL);
+    if(business.stage === "closed") return <>
         <div className="grid grid-cols-3 gap-1">
             <span className="col-span-2">Level:</span>
             <span>{highestRoleLevel}</span>
         </div>
-        <div className="text-xs text-gray-500 max-h-20 overflow-hidden text-ellipsis">
-            {DESCRIPTION}
-        </div>
+        <span className="col-span-3">Type of Business:</span>
+        <span className={`ml-4 mt-[-8px] col-span-3 neonEffect neText neTextGlow neColorBlue`}>
+            {business?.roleDisplay ? `${business.display} - ${business.roleDisplay}` : business.display}
+        </span>
     </>
-    return <BusinessSignedContent business={business} />
+    return <BusinessOpenedContent business={business} />
 }
 
 
