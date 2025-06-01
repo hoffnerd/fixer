@@ -1,8 +1,8 @@
 
 // Types ----------------------------------------------------------------------------
-import type { Merc, Business, MercRoleLevels, GameStoreFunctions, SaveFile } from "@/types";
+import type { Merc, Business, MercRoleLevels, GameStoreFunctions, SaveFile, BusinessMercSlots } from "@/types";
 // Data -----------------------------------------------------------------------------
-import { CONTRACT_WEIGHT_ROLE_FACTOR, CONTRACT_WEIGHT_UNFORESEEN, SCALING_CONTRACT_LEVEL, SCALING_CORE_MAGIC_NUMBER_PLAYER } from "@/data/_config";
+import { CONTRACT_WEIGHT_ROLE_FACTOR, CONTRACT_WEIGHT_UNFORESEEN, DEFAULT_MERC_ROLE_LEVELS, SCALING_CONTRACT_LEVEL, SCALING_CORE_MAGIC_NUMBER_PLAYER } from "@/data/_config";
 // Other ----------------------------------------------------------------------------
 import { getRandomItemFromArray, getRandomNumber, getRange, getRangeDisplay, xpToLevel } from ".";
 import { getJobShare, handleScaling, type HandleScalingOptions } from "./scaling";
@@ -99,6 +99,24 @@ const findBusinessRoles = ({
     };
 }
 
+const getMergedMerc = (assignedMercs: { manager?: Merc | null; security?: Merc | null; illicitActivity?: Merc | null; }): Merc => {
+    let possibleSlotKeys: Array<keyof BusinessMercSlots> = [];
+    let roleLevels: MercRoleLevels = { ...DEFAULT_MERC_ROLE_LEVELS };
+    Object.entries(assignedMercs).forEach(([k, v]) => {
+        const slotKey = k as keyof BusinessMercSlots;
+        const merc = v as Merc | null;
+        if(!merc?.key) return;
+        possibleSlotKeys.push(slotKey);
+        Object.entries(merc.roleLevels).forEach(([k, v]) => {
+            const role = k as keyof MercRoleLevels;
+            roleLevels[role] += v;
+        });
+    })
+    const selectedSlotKey = getRandomItemFromArray<keyof BusinessMercSlots>(possibleSlotKeys)!;
+    const selectedMerc: Merc = assignedMercs[selectedSlotKey]!;
+    return { ...selectedMerc, roleLevels };
+}
+
 
 
 //______________________________________________________________________________________    
@@ -152,8 +170,15 @@ const calculateUnforeseenEvent = (business: Business, intelBonus: number = 0) =>
     return { ...unforeseenEvent, number: unforeseenEventNumber };
 }
 
-export const calculateSuccessChance = (business: Business, merc: Merc) => {
-    const totalRoleFactor = calculateTotalRoleFactor(business, merc);
+export const calculateBusinessSuccessChance = ({
+    business,
+    assignedMercs,
+}:Readonly<{
+    business: Business,
+    assignedMercs: { manager?: Merc | null; security?: Merc | null; illicitActivity?: Merc | null; count: number; }
+}>) => {
+    const mergedMerc = getMergedMerc(assignedMercs);
+    const totalRoleFactor = calculateTotalRoleFactor(business, mergedMerc);
     const intelBonus = calculateIntelBonus(business);
     const unforeseenEvent = calculateUnforeseenEvent(business, intelBonus);
     let successChance = Math.floor(
@@ -260,6 +285,19 @@ export const getBusinessAvgSuccessChanceDisplay = ({
 
     const min = Math.floor((managerMinMax.min + securityMinMax.min + illicitActivityMinMax.min) / mercs.count);
     const max = Math.floor((managerMinMax.max + securityMinMax.max + illicitActivityMinMax.max) / mercs.count);
+    if(max === min) return `${min}%`;
+    return `${min}%-${max}%`;
+}
+
+export const getBusinessTotalSuccessChanceDisplay = ({
+    business,
+    assignedMercs,
+}:Readonly<{
+    business: Business,
+    assignedMercs: { manager?: Merc | null; security?: Merc | null; illicitActivity?: Merc | null; count: number; }
+}>) => {
+    const mergedMerc = getMergedMerc(assignedMercs);
+    const { min, max } = getBusinessMinMaxSuccessChance({ business, merc: mergedMerc });
     if(max === min) return `${min}%`;
     return `${min}%-${max}%`;
 }

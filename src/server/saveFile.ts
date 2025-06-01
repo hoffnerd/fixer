@@ -29,7 +29,7 @@ import { addResourceRewards, getRandomNumber, xpToLevel } from "@/utils";
 import { canHireMerc, getRandomBusinesses, getRandomContracts, getRandomMercs } from "@/utils/mercs";
 import { calculateSuccessChance } from "@/utils/contracts";
 import { getJobShare, handleScaling } from "@/utils/scaling";
-import { calculateBusinessTotalJobShare, getBusinessDisplay, getBusinessMercs } from "@/utils/businesses";
+import { calculateBusinessSuccessChance, calculateBusinessTotalJobShare, getBusinessDisplay, getBusinessMercs } from "@/utils/businesses";
 
 
 
@@ -683,6 +683,7 @@ export const incomeBusiness = async ({
 
     const { value: jobShare } = calculateBusinessTotalJobShare({ saveFile, business: selectedBusiness, assignedMercs });
     
+    const { successChance, unforeseenEvent } = calculateBusinessSuccessChance({ business: selectedBusiness, assignedMercs });
     const roll = getRandomNumber(0, 100);
 
     message = `Rolled ${roll} for ${getBusinessDisplay(selectedBusiness)} with a share of ${jobShare}. TODO`;

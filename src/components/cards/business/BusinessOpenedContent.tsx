@@ -16,7 +16,13 @@ import ToolTipCapsule from "@/_legoBlocks/nextjsCommon/components/shadcn/ToolTip
 import { xpToLevel } from "@/utils";
 import { getHighestRoleLevel } from "@/utils/contracts";
 import BusinessAssignButton from "./BusinessAssignButton";
-import { getBusinessAvgSuccessChanceDisplay, getBusinessDisplay, getBusinessMercs, getBusinessTotalJobShareDisplay } from "@/utils/businesses";
+import { 
+    // getBusinessAvgSuccessChanceDisplay, 
+    getBusinessTotalSuccessChanceDisplay,
+    getBusinessDisplay, 
+    getBusinessMercs, 
+    getBusinessTotalJobShareDisplay, 
+} from "@/utils/businesses";
 
 
 
@@ -37,7 +43,8 @@ export default function BusinessOpenedContent({ business }: Readonly<{ business:
     const { saveFile } = useSaveFile();
     const assignedMercs = getBusinessMercs({ saveFile, business });
     const totalMercShare = getBusinessTotalJobShareDisplay({ saveFile, business, assignedMercs });
-    const avgSuccessChance = getBusinessAvgSuccessChanceDisplay({ saveFile, business, assignedMercs });
+    // const avgSuccessChance = getBusinessAvgSuccessChanceDisplay({ saveFile, business, assignedMercs });
+    const totalSuccessChance = getBusinessTotalSuccessChanceDisplay({ business, assignedMercs });
 
 
     //______________________________________________________________________________________
@@ -72,8 +79,8 @@ export default function BusinessOpenedContent({ business }: Readonly<{ business:
 
             {assignedMercs?.count > 0 && <>
                 <span className="col-span-2">Avg Highest Yield Chance:</span>
-                <span className={`pl-3 neonEffect neText neTextGlow  ${avgSuccessChance === "Unknown" ? "neColorRed" : "neColorGreen"}`}>
-                    {avgSuccessChance}
+                <span className={`pl-3 neonEffect neText neTextGlow  ${totalSuccessChance === "Unknown" ? "neColorRed" : "neColorGreen"}`}>
+                    {totalSuccessChance}
                 </span>
             </>}
 
